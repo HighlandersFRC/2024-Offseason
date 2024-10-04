@@ -39,10 +39,10 @@ public class AutoPositionalShoot extends Command {
   private double shotTime = 0;
   private double reachedSetPointTime = 0;
   private boolean hasShot;
-  private double shotPauseTime = 0.0;
+  private double shotPauseTime = 1;
 
   private double shooterDegreesAllowedError = 0.75;
-  private double shooterRPMAllowedError = 100;
+  private double shooterRPMAllowedError = 148;
   private double driveAngleAllowedError = 2;
 
   private double lookAheadTime = 0.0;
@@ -138,12 +138,12 @@ public class AutoPositionalShoot extends Command {
       // System.out.println("-----------red------");
       x = Constants.Physical.FIELD_LENGTH;
       angleX = x - (Constants.Physical.SPEAKER_DEPTH / 2);
-      angleY = Constants.Physical.SPEAKER_Y - 0.2;
+      angleY = Constants.Physical.SPEAKER_Y - 0.0;
     } else {
       // System.out.println("-----------blue------");
       x = Constants.Physical.SPEAKER_X;
       angleX = x + (Constants.Physical.SPEAKER_DEPTH / 2);
-      angleY = Constants.Physical.SPEAKER_Y + 0.2;
+      angleY = Constants.Physical.SPEAKER_Y + 0.0;
     }
 
     if (drive.getMT2OdometryY() < 2.0){
@@ -153,6 +153,7 @@ public class AutoPositionalShoot extends Command {
 
   @Override
   public void execute() {
+    SmartDashboard.putBoolean("Has Shot", hasShot);
     // System.out.println("Auto Shoot");
 
     double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
@@ -204,8 +205,13 @@ public class AutoPositionalShoot extends Command {
       this.numTimesHitSetPoint = 0;
     }
 
+
+    SmartDashboard.putBoolean("Num Times Hit Checkpoint", this.numTimesHitSetPoint >= 2);
+    SmartDashboard.putBoolean("Left RPM Hit Range", Math.abs(this.shooter.getLeftShooterRPM() - this.shooterRPM) <= this.shooterRPMAllowedError);
+    SmartDashboard.putBoolean("Right RPM Hit Range", Math.abs(-this.shooter.getRightShooterRPM() - this.shooterRPM/2) <= this.shooterRPMAllowedError);
+    SmartDashboard.putNumber("Right error", Math.abs(-this.shooter.getRightShooterRPM() - this.shooterRPM/2));
     Logger.recordOutput("shooter rpm error",  Math.abs(this.shooter.getLeftShooterRPM() - this.shooterRPM));
-    if (this.numTimesHitSetPoint >= 2 && Math.abs(this.shooter.getLeftShooterRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(this.shooter.getRightShooterRPM() - this.shooterRPM/2) <= this.shooterRPMAllowedError){
+    if (this.numTimesHitSetPoint >= 2 && Math.abs(this.shooter.getLeftShooterRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(-this.shooter.getRightShooterRPM() - this.shooterRPM/2) <= this.shooterRPMAllowedError){
       this.hasReachedSetPoint = true;
       this.reachedSetPointTime = Timer.getFPGATimestamp();
       turnResult = 0;
@@ -219,11 +225,13 @@ public class AutoPositionalShoot extends Command {
       lights.clearAnimations();
       lights.setCandleRGB(0, 255, 0);
       // System.out.println("Shooting");
-      this.feeder.setRPM(this.feederRPM);
+      // this.feeder.setRPM(this.feederRPM);
+      this.feeder.setPercent(0.4);
       this.hasShot = true;
       this.shotTime = Timer.getFPGATimestamp();
     } else {
-      this.feeder.setRPM(0.0);
+      // this.feeder.setRPM(0.0);
+      this.feeder.setPercent(0);
     }
 
     if (Timer.getFPGATimestamp() - this.startTime >= this.timeout){

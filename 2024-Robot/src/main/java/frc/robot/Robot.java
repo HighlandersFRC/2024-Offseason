@@ -110,6 +110,7 @@ public class Robot extends LoggedRobot {
  
   @Override
   public void robotPeriodic() {
+    SmartDashboard.putNumber("Raw Shooter Angle", shooter.getRawShooterAngle());
     SmartDashboard.putBoolean("Beam Break", intake.getBeamBreak());
     SmartDashboard.putNumber("Shooter Angle", shooter.getShooterAngle());
     shooterAngleDegreesTuning = SmartDashboard.getNumber("Shooter Angle Degrees (tuning)", 0);
