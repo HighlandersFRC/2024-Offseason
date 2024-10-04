@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
@@ -16,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.AngleShooter;
+import frc.robot.commands.defaults.ShooterDefault;
 
 public class Shooter extends SubsystemBase {
   private final TalonFX leftShooter = new TalonFX(Constants.CANInfo.SHOOTER_LEFT_MOTOR_ID, "Canivore");
@@ -48,6 +51,7 @@ public class Shooter extends SubsystemBase {
     leftShooter.getConfigurator().apply(flywheelConfiguration);
     rightShooter.getConfigurator().apply(flywheelConfiguration);
     shooterAngle.getConfigurator().apply(angleConfiguration);
+    setDefaultCommand(new ShooterDefault(this));
   }
 
   public boolean alignedPreset = true;
@@ -62,14 +66,14 @@ public class Shooter extends SubsystemBase {
   public void setShooterAngle(double angle /* degrees */) {
     this.angleConfiguration.Slot0.kG = 14*Math.sin(getShooterAngle()*Math.PI/180);
     shooterAngle.getConfigurator().apply(angleConfiguration);
-    this.shooterAngle.setControl(this.anglePositionMotionProfileRequest.withPosition(((angle-20)/360)*Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO));
+    this.shooterAngle.setControl(this.anglePositionMotionProfileRequest.withPosition(((angle-Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG)/360)*Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO));
     
   }
 
   public double getShooterAngle() {
     // SmartDashboard.putString("Angle Request", this.shooterAngle.getAppliedControl().getControlInfo().toString());
     // SmartDashboard.putNumber("zero ", (shooterAngle.getRotorPosition().getValueAsDouble()*360)/Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO);
-    return (((shooterAngle.getRotorPosition().getValueAsDouble())*360)/Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO+20);
+    return (((shooterAngle.getRotorPosition().getValueAsDouble())*360)/Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO+Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG);
   }
 
   public void setShooterRPM(double left, double right){
@@ -90,5 +94,6 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     // SmartDashboard.putNumber("Angle Motor Current", shooterAngle.getTorqueCurrent().getValue());
+    Logger.recordOutput("shooter angle", shooterAngle.getPosition().getValueAsDouble());
   }
 }

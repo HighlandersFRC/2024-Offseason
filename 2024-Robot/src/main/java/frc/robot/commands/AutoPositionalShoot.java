@@ -197,12 +197,14 @@ public class AutoPositionalShoot extends Command {
     this.pid.updatePID(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
     double turnResult = -pid.getResult();
 
+    Logger.recordOutput("shooter angle error",  Math.abs(this.shooter.getShooterAngle() - this.shooterDegrees));
     if (Math.abs(this.shooter.getShooterAngle() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees) - Constants.SetPoints.standardizeAngleDegrees(targetAngle)) <= this.driveAngleAllowedError){
       this.numTimesHitSetPoint ++;
     } else {
       this.numTimesHitSetPoint = 0;
     }
 
+    Logger.recordOutput("shooter rpm error",  Math.abs(this.shooter.getLeftShooterRPM() - this.shooterRPM));
     if (this.numTimesHitSetPoint >= 2 && Math.abs(this.shooter.getLeftShooterRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(this.shooter.getRightShooterRPM() - this.shooterRPM/2) <= this.shooterRPMAllowedError){
       this.hasReachedSetPoint = true;
       this.reachedSetPointTime = Timer.getFPGATimestamp();
