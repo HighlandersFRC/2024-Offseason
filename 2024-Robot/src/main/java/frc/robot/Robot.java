@@ -223,6 +223,16 @@ public class Robot extends LoggedRobot {
     }
     this.drive.setFieldSide(fieldSide);
     this.peripherals.setFieldSide(fieldSide);
+    System.out.print("Selected Auto: ");
+    final int selectedPath = Constants.getSelectedPathIndex();
+    if (selectedPath == -1) {
+      System.out.println("Do Nothing");
+      new DoNothing().schedule();
+    } else {
+      this.autos[selectedPath].schedule();
+      this.drive.autoInit(autoPoints[selectedPath]);
+      System.out.println(Constants.paths[selectedPath]);
+    }
   }
 
   @Override
