@@ -66,14 +66,18 @@ public class Shooter extends SubsystemBase {
   public void setShooterAngle(double angle /* degrees */) {
     this.angleConfiguration.Slot0.kG = 14*Math.sin(getShooterAngle()*Math.PI/180);
     shooterAngle.getConfigurator().apply(angleConfiguration);
-    this.shooterAngle.setControl(this.anglePositionMotionProfileRequest.withPosition(((angle-Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG)/360)*Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO));
+    this.shooterAngle.setControl(this.anglePositionMotionProfileRequest.withPosition(((angle-Constants.SetPoints.SHOOTER_MIN_DEG)/360)*Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO));
     
   }
 
   public double getShooterAngle() {
     // SmartDashboard.putString("Angle Request", this.shooterAngle.getAppliedControl().getControlInfo().toString());
     // SmartDashboard.putNumber("zero ", (shooterAngle.getRotorPosition().getValueAsDouble()*360)/Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO);
-    return (((shooterAngle.getRotorPosition().getValueAsDouble())*360)/Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO+Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG);
+    return (((shooterAngle.getRotorPosition().getValueAsDouble())/Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO)*360+Constants.SetPoints.SHOOTER_MIN_DEG);
+  }
+
+  public double getRawShooterAngle() {
+    return (((shooterAngle.getRotorPosition().getValueAsDouble())*360));
   }
 
   public void setShooterRPM(double left, double right){
