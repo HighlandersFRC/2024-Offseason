@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -1455,6 +1457,99 @@ public class Drive extends SubsystemBase {
 
         return velocityArray;
     }
+  }
+
+  public Number[] purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
+      JSONArray pathPoints) {
+    JSONObject targetPoint = pathPoints.getJSONObject(pathPoints.length() - 1);
+    int targetIndex = pathPoints.length() - 1;
+    if (this.fieldSide == "blue") {
+      currentX = Constants.Physical.FIELD_LENGTH - currentX;
+      currentTheta = Math.PI - currentTheta;
+    }
+    for (int i = currentIndex; i < pathPoints.length(); i++) {
+      JSONObject point = pathPoints.getJSONObject(i);
+      double targetX = point.getDouble("x"), targetY = point.getDouble("y"),
+          targetTheta = point.getDouble("angle");
+      while (Math.abs(targetTheta - currentTheta) > Math.PI) {
+        if (targetTheta - currentTheta > Math.PI) {
+          targetTheta -= 2 * Math.PI;
+        } else if (targetTheta - currentTheta < -Math.PI) {
+          targetTheta += 2 * Math.PI;
+        }
+      }
+      if (!insideRadius((currentX - targetX) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
+          (currentY - targetY) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
+          (currentTheta - targetTheta) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS,
+          Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_DISTANCE)) {
+        targetIndex = i;
+        targetPoint = pathPoints.getJSONObject(i);
+        break;
+      }
+    }
+    double targetX = targetPoint.getDouble("x"), targetY = targetPoint.getDouble("y"),
+        targetTheta = targetPoint.getDouble("angle");
+
+    while (Math.abs(targetTheta - currentTheta) > Math.PI) {
+      if (targetTheta - currentTheta > Math.PI) {
+        targetTheta -= 2 * Math.PI;
+      } else if (targetTheta - currentTheta < -Math.PI) {
+        targetTheta += 2 * Math.PI;
+      }
+    }
+    // if (this.fieldSide == "blue") {
+    // currentX = Constants.Physical.FIELD_LENGTH - currentX;
+    // currentTheta = Math.PI - currentTheta;
+    // }
+    xPID.setSetPoint(targetX);
+    yPID.setSetPoint(targetY);
+    thetaPID.setSetPoint(targetTheta);
+
+    xPID.updatePID(currentX);
+    yPID.updatePID(currentY);
+    thetaPID.updatePID(currentTheta);
+
+    double xVelNoFF = xPID.getResult();
+    double yVelNoFF = yPID.getResult();
+    double thetaVelNoFF = -thetaPID.getResult();
+
+    double feedForwardX = targetPoint.getDouble("x_velocity") / 2;
+    double feedForwardY = targetPoint.getDouble("y_velocity") / 2;
+    double feedForwardTheta = -targetPoint.getDouble("angular_velocity") / 2;
+
+    double finalX = xVelNoFF + feedForwardX;
+    double finalY = yVelNoFF + feedForwardY;
+    double finalTheta = thetaVelNoFF + feedForwardTheta;
+    if (fieldSide == "blue") {
+      finalX = -finalX;
+      finalTheta = -finalTheta;
+    }
+    Number[] velocityArray = new Number[] {
+        finalX,
+        -finalY,
+        finalTheta,
+        targetIndex,
+    };
+
+    double velocityMag = Math
+        .sqrt(Math.pow(targetPoint.getDouble("x_velocity"), 2) + Math.pow(targetPoint.getDouble("y_velocity"), 2));
+    Logger.recordOutput("x-vel", velocityArray[0].doubleValue());
+    Logger.recordOutput("y-vel", velocityArray[1].doubleValue());
+    Logger.recordOutput("theta-vel", velocityArray[2].doubleValue());
+    Logger.recordOutput("wanted-theta-vel", targetPoint.getDouble("angular_velocity"));
+    Logger.recordOutput("pid-theta-vel", thetaVelNoFF);
+    Logger.recordOutput("FF-theta-vel", feedForwardTheta);
+    Logger.recordOutput("current point idx", currentIndex);
+    Logger.recordOutput("point idx", velocityArray[3].intValue());
+    Logger.recordOutput("look-ahead", Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_DISTANCE * velocityMag + 0.01);
+    return velocityArray;
+  }
+
+  public boolean insideRadius(double deltaX, double deltaY, double deltaTheta, double radius) {
+    Logger.recordOutput("deltax", deltaX);
+    Logger.recordOutput("deltay", deltaY);
+    Logger.recordOutput("deltaTheta", deltaTheta);
+    return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaTheta, 2)) < radius;
   }
   
   @Override

@@ -1,24 +1,37 @@
 package frc.robot;
 
+import java.io.File;
+import java.io.FileReader;
+import java.util.HashMap;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.AlignedPresetShoot;
 import frc.robot.commands.Amp;
 import frc.robot.commands.AngleShooter;
 import frc.robot.commands.AutoPositionalShoot;
 import frc.robot.commands.AutomaticallyIntake;
+import frc.robot.commands.DoNothing;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.DriveThetaAligned;
 import frc.robot.commands.MoveToPiece;
+import frc.robot.commands.PolarAutoFollower;
 import frc.robot.commands.PresetShoot;
 import frc.robot.commands.ReverseFeeder;
 import frc.robot.commands.RunIntake;
@@ -47,12 +60,32 @@ public class Robot extends LoggedRobot {
   private Intake intake = new Intake();
   private Feeder feeder = new Feeder();
   private Shooter shooter = new Shooter();
+  HashMap<String, Supplier<Command>> commandMap = new HashMap<String, Supplier<Command>>() {
+    {
+      put("Instant", () -> new InstantCommand());
+      put("Wait", () -> new DoNothing());
+      put("Intake", () -> new RunIntake(intake, feeder, shooter, 0.4));
+      put("Outtake", () -> new ReverseFeeder(intake, feeder, shooter));
+      put("Shoot",
+          () -> new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
+    }
+  };
+  HashMap<String, BooleanSupplier> conditionMap = new HashMap<String, BooleanSupplier>() {
+    {
+      put("Note In Intake", () -> intake.getBeamBreak());
+    }
+  };
   // private Logger logger = Logger.getInstance();
 
   private double shooterAngleDegreesTuning = 0;
   private double shooterRPMTuning = 0;
   private double startTime = Timer.getFPGATimestamp();
   private boolean checkedCAN = false;
+
+  File[] autoFiles = new File[Constants.paths.length];
+  Command[] autos = new Command[Constants.paths.length];
+  JSONObject[] autoJSONs = new JSONObject[Constants.paths.length];
+  JSONArray[] autoPoints = new JSONArray[Constants.paths.length];
 
   String fieldSide = "blue";
 
@@ -106,6 +139,20 @@ public class Robot extends LoggedRobot {
     lights.clearAnimations();
     lights.setCommandRunning(true);
     lights.setRGBFade();
+
+    for (int i = 0; i < Constants.paths.length; i++){
+      try {
+        autoFiles[i] = new File(Filesystem.getDeployDirectory().getPath() + "/" + Constants.paths[i]);
+        FileReader scanner = new FileReader(autoFiles[i]);
+        autoJSONs[i] = new JSONObject(new JSONTokener(scanner));
+        autoPoints[i] = (JSONArray) autoJSONs[i].getJSONArray("paths").getJSONObject(0).getJSONArray("sampled_points");
+        autos[i] = new PolarAutoFollower(autoJSONs[i], drive, lights, peripherals, commandMap, conditionMap);
+      } catch (Exception e) {
+        System.out.println("ERROR LOADING PATH "+Constants.paths[i]+":" + e);
+      }
+    }
+    OI.init();
+    System.out.println("end robot init");
   }
  
   @Override
@@ -138,14 +185,15 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput("IMU", peripherals.getPigeonAngle());
     Logger.recordOutput("Left Shooter Speed", shooter.getLeftShooterRPM());
     Logger.recordOutput("Right Shooter Speed", shooter.getRightShooterRPM());
-
+    
+    Constants.periodic();
     lights.periodic();
     // tof.periodic();
     proximity.periodic();
 
     // drive.periodic(); // remove for competition
     peripherals.periodic();
-
+    
     // System.out.println("0-1: " + (t1 - t0));
 
     // SmartDashboard.putNumber("Carriage Rotation", climber.getCarriageRotationDegrees());

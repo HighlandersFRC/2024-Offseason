@@ -4,9 +4,39 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.Logger;
+
 import frc.robot.tools.math.Vector;
 
 public final class Constants {
+  public static final String[] paths = new String[]{
+    "4 Far.polarauto",
+    "4 Far 123.polarauto",
+    "4 Far 231.polarauto",
+    "5 piece.polarauto",
+    "3 amp.polarauto",
+    "3 amp 231.polarauto",
+    "1 Exit.polarauto",
+  };
+
+  public static int getSelectedPathIndex(){
+    String selectedAuto = OI.autoSendableChooser.getSelected();
+    for (int i = 0; i < paths.length; i++) {
+      if (selectedAuto.equals(paths[i])) {
+        return i;
+      }
+    }
+    return -1;
+  }
+  
+  public static void periodic(){
+    int index = getSelectedPathIndex();
+    if (index == -1){
+      Logger.recordOutput("Selected Auto", "Do Nothing");
+    } else {
+      Logger.recordOutput("Selected Auto", paths[index]);
+    }
+  }
 
   //Physical constants (e.g. field and robot dimensions)
   public static final class Physical {
@@ -66,7 +96,11 @@ public final class Constants {
   //Subsystem setpoint constants
   public static final class SetPoints {
     //drive
-
+    //how far forward to look when the linear radius and the angular radius equal their constants
+    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.48;
+    public static final double AUTONOMOUS_END_ACCURACY = 0.20;
+    public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1.0;
+    public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
     //intake
     // public static final double INTAKE_DOWN_ANGLE_ROT = -0.32;
     public static final double INTAKE_DOWN_ANGLE_ROT = -0.32;
