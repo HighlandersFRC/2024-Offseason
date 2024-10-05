@@ -4,6 +4,7 @@
 
 package frc.robot.commands.defaults;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
@@ -11,6 +12,9 @@ import frc.robot.subsystems.Shooter;
 public class ShooterDefault extends Command {
   /** Creates a new ShooterDefault. */
   Shooter shooter;
+  private double initTime;
+  private boolean isZeroed = false;
+  private int numTimesOverCurrentLimit = 0;
   public ShooterDefault(Shooter shooter) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
@@ -19,12 +23,16 @@ public class ShooterDefault extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    this.initTime = Timer.getFPGATimestamp();
+    this.numTimesOverCurrentLimit = 0;
+    this.isZeroed = false;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.setShooterAngle(Constants.SetPoints.SHOOTER_MIN_DEG);
+    shooter.setShooterAngle(Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG);
     shooter.setShooterPercent(0, 0);
   }
 

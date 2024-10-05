@@ -123,20 +123,20 @@ public final class Constants {
     }
 
     //shooter
-    public static final double SHOOTER_MAX_DEG = 270.0;
-    public static final double SHOOTER_MIN_DEG = 20.0;
-    public static final double SHOOTER_AMP_ANGLE_PRESET_DEG = 145.0;
-    public static final double SHOOTER_CENTER_OFFSET_DEG = 0.0;
+    public static final double SHOOTER_MAX_DEG = 180.0;
+    public static final double SHOOTER_MIN_DEG = -70.0;
+    public static final double SHOOTER_AMP_ANGLE_PRESET_DEG = 55.0;
+    public static final double SHOOTER_CENTER_OFFSET_DEG = -90.0;
     public static final double SHOOTER_CENTER_OFFSET_ROT = degreesToRotations(SHOOTER_CENTER_OFFSET_DEG);
-    public static final double SHOOTER_DOWN_ANGLE_ROT = 1/18;
-    public static final double SHOOTER_MAX_ANGLE_ROT = 0.7;
+    public static final double SHOOTER_DOWN_ANGLE_ROT = -7.0/36.0;
+    public static final double SHOOTER_MAX_ANGLE_ROT = 0.7-1.0/4.0;
     // public static final double SHOOTER_MAX_ANGLE_ROT = 0.07;
     public static final double SHOOTER_DOWN_ANGLE_DEG = rotationsToDegrees(SHOOTER_DOWN_ANGLE_ROT);
     public static final double SHOOTER_MAX_ANGLE_DEG = rotationsToDegrees(SHOOTER_MAX_ANGLE_ROT);
 
-    public static final double[] SHOOTER_SUBWOOFER_PRESET = {1750, 3500, 65};
+    public static final double[] SHOOTER_SUBWOOFER_PRESET = {1750, 3500, -25};
     // public static final double[] SHOOTER_PODIUM_PRESET = {2500, 5000, 40, 150};
-    public static final double[] SHOOTER_PODIUM_PRESET = {3000, 6000, 157, -27};
+    public static final double[] SHOOTER_PODIUM_PRESET = {3000, 6000, 67, -27};
 
     public static double[] getLookupTable() {
       double[] table = {0, 0, 0.0};
@@ -181,28 +181,28 @@ public final class Constants {
     public static final double LIMELIGHT_ANGLE_OFFSET = 2.5;
     public static final double DISTANCE_OFFSET = 0.1;
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
-      { 1.16064, 20.51,  75    ,3500 , 5, 2},
-      { 1.397  , 14.71,  71    ,3600 , 4.5, 2},
-      { 1.5748 , 10.85,  67    ,3700 , 4, 2},
-      { 1.72045, 8.70,   63    ,3800 , 3.5, 2},
-      { 1.778  , 7.63,   61    ,3900 , 3, 2},
-      { 1.8542 , 6.56,   59    ,3940 , 2.5, 2},
-      { 2.0066 , 4.15,   57    ,4000 , 2.5, 2},
-      { 2.159  , 1.75,   55    ,4143 , 2.5, 2},
-      { 2.314  , 0.21,   53    ,4270 , 2.25, 2},
-      { 2.464  , -1.58,  51    ,4499 , 2.25, 2},
-      { 2.6132 , -2.60,  48    ,4550 , 2.25, 2},
-      { 2.8702 , -4.34,  45    ,4635 , 2, 2},
-      { 3.0226 , -5.08,  42    ,4800 , 2, 2},
-      { 3.175  , -6.01,  40    ,5100 , 2, 2},
-      { 3.429  , -7.49,  38    ,5300 , 1.75, 2},
-      { 3.688  , -8.54,  36    ,5500 , 1.75, 2},
-      { 3.937  , -9.45,  34    ,5940 , 1.75, 2},
-      { 4.191  , -10.33, 33    ,6200 , 1.75, 2},
-      { 4.445  , -10.87, 31.6  ,6400 , 1.5, 2},
-      { 4.699  , -11.21, 31.3  ,6500 , 1.5, 2},
-      { 4.953  , -11.84, 29.45 ,6600 , 1.5, 2},
-      { 5.206  , -12.83, 27    ,6800 , 1.5, 2}
+      { 1.16064, 20.51,  -15    ,3500 , 5, 2},
+      { 1.397  , 14.71,  -19    ,3600 , 4.5, 2},
+      { 1.5748 , 10.85,  -23    ,3700 , 4, 2},
+      { 1.72045, 8.70,   -27    ,3800 , 3.5, 2},
+      { 1.778  , 7.63,   -29    ,3900 , 3, 2},
+      { 1.8542 , 6.56,   -31    ,3940 , 2.5, 2},
+      { 2.0066 , 4.15,   -33    ,4000 , 2.5, 2},
+      { 2.159  , 1.75,   -35    ,4143 , 2.5, 2},
+      { 2.314  , 0.21,   -37    ,4270 , 2.25, 2},
+      { 2.464  , -1.58,  -39    ,4499 , 2.25, 2},
+      { 2.6132 , -2.60,  -42    ,4550 , 2.25, 2},
+      { 2.8702 , -4.34,  -45    ,4635 , 2, 2},
+      { 3.0226 , -5.08,  -48    ,4800 , 2, 2},
+      { 3.175  , -6.01,  -50    ,5100 , 2, 2},
+      { 3.429  , -7.49,  -52    ,5300 , 1.75, 2},
+      { 3.688  , -8.54,  -54    ,5500 , 1.75, 2},
+      { 3.937  , -9.45,  -56    ,5940 , 1.75, 2},
+      { 4.191  , -10.33, -57    ,6200 , 1.75, 2},
+      { 4.445  , -10.87, -58.4  ,6400 , 1.5, 2},
+      { 4.699  , -11.21, -58.7  ,6500 , 1.5, 2},
+      { 4.953  , -11.84, -60.55 ,6600 , 1.5, 2},
+      { 5.206  , -12.83, -63    ,6800 , 1.5, 2}
     };
 
     public static double[] getMovingAverageWeights(int numMeasurements){

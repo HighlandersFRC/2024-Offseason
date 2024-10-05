@@ -263,7 +263,7 @@ public class AutoPositionalShoot extends Command {
   public void end(boolean interrupted) {
     this.feeder.setRPM(0);
     this.shooter.setShooterRPM(0, 0);
-    this.shooter.setShooterAngle(26);
+    this.shooter.setShooterAngle(Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG);
     lights.clearAnimations();
     lights.setCommandRunning(false);
   }

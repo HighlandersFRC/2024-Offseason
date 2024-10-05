@@ -13,6 +13,7 @@ import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -32,6 +33,7 @@ public class Shooter extends SubsystemBase {
   private final PositionTorqueCurrentFOC anglePositionMotionProfileRequest = new PositionTorqueCurrentFOC(0.0);
   // private final DynamicMotionMagicTorqueCurrentFOC anglePositionMotionProfileRequest = new DynamicMotionMagicTorqueCurrentFOC(0, 0, 0, 0, 0, 0, false, false, false);
   private final VelocityTorqueCurrentFOC flywheelVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
+  private final TorqueCurrentFOC angleFalconCurrentRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
   /** Creates a new Shooter. */
   public Shooter() {}
 
@@ -44,13 +46,19 @@ public class Shooter extends SubsystemBase {
     
     // this.angleConfiguration.Feedback.SensorToMechanismRatio = Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO;
     this.angleConfiguration.Slot0.kP = 3.3;
-    this.angleConfiguration.Slot0.kI = 0.08;
-    this.angleConfiguration.Slot0.kD = 0.6;
-    this.angleConfiguration.Slot0.GravityType = GravityTypeValue.Elevator_Static;
+    this.angleConfiguration.Slot0.kI = 0.00;
+    this.angleConfiguration.Slot0.kD = 0.0;
+    this.angleConfiguration.Slot0.kG = 14;
+    this.angleConfiguration.Feedback.RotorToSensorRatio = 1.0;
+    this.angleConfiguration.Feedback.SensorToMechanismRatio = Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO;
+    this.angleConfiguration.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
     leftShooter.getConfigurator().apply(flywheelConfiguration);
     rightShooter.getConfigurator().apply(flywheelConfiguration);
     shooterAngle.getConfigurator().apply(angleConfiguration);
+    this.shooterAngle.setNeutralMode(NeutralModeValue.Brake);
+    setShooterEncoder(Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG);
+    System.out.println("constant: " + Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG);
     setDefaultCommand(new ShooterDefault(this));
   }
 
@@ -64,16 +72,30 @@ public class Shooter extends SubsystemBase {
 
 
   public void setShooterAngle(double angle /* degrees */) {
-    this.angleConfiguration.Slot0.kG = 14*Math.sin(getShooterAngle()*Math.PI/180);
     shooterAngle.getConfigurator().apply(angleConfiguration);
-    this.shooterAngle.setControl(this.anglePositionMotionProfileRequest.withPosition(((angle-Constants.SetPoints.SHOOTER_MIN_DEG)/360)*Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO));
-    
+    this.shooterAngle.setControl(this.anglePositionMotionProfileRequest.withPosition(Constants.degreesToRotations(angle)));
+  }
+
+  public void setShooterEncoder(double degrees){
+    System.out.println("degrees: " + degrees);
+    double rotations = Constants.degreesToRotations(degrees);
+    // double val = rotations * Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO;
+    // System.out.println("New Value: " + val);
+    this.shooterAngle.setPosition(rotations);
+  }
+
+  public double getAngleCurrent(){
+    return this.shooterAngle.getStatorCurrent().getValueAsDouble();
+  }
+
+  public void setAngleTorqueCurrent(double current, double maxPercent){
+    this.shooterAngle.setControl(this.angleFalconCurrentRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
   }
 
   public double getShooterAngle() {
     // SmartDashboard.putString("Angle Request", this.shooterAngle.getAppliedControl().getControlInfo().toString());
     // SmartDashboard.putNumber("zero ", (shooterAngle.getRotorPosition().getValueAsDouble()*360)/Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO);
-    return (((shooterAngle.getRotorPosition().getValueAsDouble())/Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO)*360+Constants.SetPoints.SHOOTER_MIN_DEG);
+    return (((shooterAngle.getPosition().getValueAsDouble()))*360);
   }
 
   public double getRawShooterAngle() {

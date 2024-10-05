@@ -12,16 +12,14 @@ import frc.robot.subsystems.Shooter;
 public class RunIntake extends Command {
   Intake intake;
   Feeder feeder;
-  Shooter shooter;
   double percent;
   private boolean noteIn;
   /** Creates a new RunIntake. */
-  public RunIntake(Intake intake, Feeder feeder, Shooter shooter, double percent) {
+  public RunIntake(Intake intake, Feeder feeder, double percent) {
     this.intake = intake;
     this.feeder = feeder;
-    this.shooter = shooter;
     this.percent = percent;
-    addRequirements(intake, feeder, shooter);
+    addRequirements(intake, feeder);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -33,7 +31,6 @@ public class RunIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.setShooterAngle(20);
     if(!intake.getBeamBreak()) {
       noteIn = true;
     }

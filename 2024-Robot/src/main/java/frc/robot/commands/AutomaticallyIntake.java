@@ -26,7 +26,7 @@ public class AutomaticallyIntake extends ParallelDeadlineGroup {
     
     // Add the deadline command in the super() call. Add other commands using
     // addCommands().
-    super(new RunIntake(intake, feeder, shooter, 0.4));
+    super(new RunIntake(intake, feeder, 0.4));
     // this.drive = drive;
     // this.peripherals = peripherals;
     // this.intake = intake;
