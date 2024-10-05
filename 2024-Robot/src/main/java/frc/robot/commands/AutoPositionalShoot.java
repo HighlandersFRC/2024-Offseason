@@ -22,6 +22,7 @@ import frc.robot.tools.math.Vector;
 
 public class AutoPositionalShoot extends Command {
   public static boolean canSeeTag;
+  private Intake intake;
   private Drive drive;
   private Shooter shooter;
   private Feeder feeder;
@@ -41,9 +42,9 @@ public class AutoPositionalShoot extends Command {
   private boolean hasShot;
   private double shotPauseTime = 1;
 
-  private double shooterDegreesAllowedError = 0.75;
+  private double shooterDegreesAllowedError = 2;
   private double shooterRPMAllowedError = 148;
-  private double driveAngleAllowedError = 2;
+  private double driveAngleAllowedError = 3;
 
   private double lookAheadTime = 0.0;
 
@@ -78,7 +79,8 @@ public class AutoPositionalShoot extends Command {
   private double angleX;
   private double angleY;
 
-  public AutoPositionalShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, boolean auto) {
+  public AutoPositionalShoot(Intake intake, Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, boolean auto) {
+    this.intake = intake;
     this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
@@ -88,10 +90,11 @@ public class AutoPositionalShoot extends Command {
     this.defaultShooterAngle = defaultShooterAngle;
     this.defaultFlywheelRPM = defaultFlywheelRPM;
     this.auto = auto;
-    addRequirements(this.drive, this.shooter, this.feeder, this.lights);
+    addRequirements(this.intake, this.drive, this.shooter, this.feeder, this.lights);
   }
 
-  public AutoPositionalShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, double timeout, boolean auto) {
+  public AutoPositionalShoot(Intake intake, Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, double timeout, boolean auto) {
+    this.intake = intake;
     this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
@@ -103,7 +106,7 @@ public class AutoPositionalShoot extends Command {
     this.timeout = timeout;
     this.auto = auto;
     this.numTimesNoTrack = 0;
-    addRequirements(this.drive, this.shooter, this.feeder, this.lights);
+    addRequirements(this.intake, this.drive, this.shooter, this.feeder, this.lights);
   }
 
   public AutoPositionalShoot(Intake intake, Feeder feeder2, Lights lights2, IntakePosition kdown, int i, int j, boolean b, boolean c) {
@@ -112,6 +115,7 @@ public class AutoPositionalShoot extends Command {
 
 @Override
   public void initialize() {
+    this.intake.setPercent(0.3);
     this.startTime = Timer.getFPGATimestamp();
     this.pigeonAngles = new ArrayList<Double>();
     this.hasShot = false;
@@ -138,12 +142,12 @@ public class AutoPositionalShoot extends Command {
       // System.out.println("-----------red------");
       x = Constants.Physical.FIELD_LENGTH;
       angleX = x - (Constants.Physical.SPEAKER_DEPTH / 2);
-      angleY = Constants.Physical.SPEAKER_Y - 0.0;
+      angleY = Constants.Physical.SPEAKER_Y + 0.3;
     } else {
       // System.out.println("-----------blue------");
       x = Constants.Physical.SPEAKER_X;
       angleX = x + (Constants.Physical.SPEAKER_DEPTH / 2);
-      angleY = Constants.Physical.SPEAKER_Y + 0.0;
+      angleY = Constants.Physical.SPEAKER_Y - 0.3;
     }
 
     if (drive.getMT2OdometryY() < 2.0){
@@ -199,7 +203,7 @@ public class AutoPositionalShoot extends Command {
     double turnResult = -pid.getResult();
 
     Logger.recordOutput("shooter angle error",  Math.abs(this.shooter.getShooterAngle() - this.shooterDegrees));
-    if (Math.abs(this.shooter.getShooterAngle() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees) - Constants.SetPoints.standardizeAngleDegrees(targetAngle)) <= this.driveAngleAllowedError){
+    if (Math.abs(this.shooter.getShooterAngle() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees) - (Constants.SetPoints.standardizeAngleDegrees(targetAngle))) <= this.driveAngleAllowedError){
       this.numTimesHitSetPoint ++;
     } else {
       this.numTimesHitSetPoint = 0;
@@ -207,7 +211,7 @@ public class AutoPositionalShoot extends Command {
 
 
     SmartDashboard.putBoolean("Num Times Hit Checkpoint", this.numTimesHitSetPoint >= 2);
-    SmartDashboard.putBoolean("Left RPM Hit Range", Math.abs(this.shooter.getLeftShooterRPM() - this.shooterRPM) <= this.shooterRPMAllowedError);
+    SmartDashboard.putNumber("Left RPM Hit", this.shooter.getLeftShooterRPM() - this.shooterRPM);
     SmartDashboard.putBoolean("Right RPM Hit Range", Math.abs(-this.shooter.getRightShooterRPM() - this.shooterRPM/2) <= this.shooterRPMAllowedError);
     SmartDashboard.putNumber("Right error", Math.abs(-this.shooter.getRightShooterRPM() - this.shooterRPM/2));
     Logger.recordOutput("shooter rpm error",  Math.abs(this.shooter.getLeftShooterRPM() - this.shooterRPM));
@@ -216,7 +220,7 @@ public class AutoPositionalShoot extends Command {
       this.reachedSetPointTime = Timer.getFPGATimestamp();
       turnResult = 0;
     }
-
+    SmartDashboard.putNumber("Added Theta", peripherals.getAddedTheta(peripherals.getPigeonAngle(), this.distToSpeakerMeters, 0.18));
     this.drive.driveAutoAligned(turnResult);
     this.shooter.setShooterRPM(this.shooterRPM, this.shooterRPM/2);
     this.shooter.setShooterAngle(this.shooterDegrees);
@@ -261,6 +265,7 @@ public class AutoPositionalShoot extends Command {
 
   @Override
   public void end(boolean interrupted) {
+    this.intake.setPercent(0);
     this.feeder.setRPM(0);
     this.shooter.setShooterRPM(0, 0);
     this.shooter.setShooterAngle(Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG);

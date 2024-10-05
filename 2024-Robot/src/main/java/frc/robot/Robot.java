@@ -67,7 +67,7 @@ public class Robot extends LoggedRobot {
       put("Intake", () -> new RunIntake(intake, feeder, 0.4));
       put("Outtake", () -> new ReverseFeeder(intake, feeder, shooter));
       put("Shoot",
-          () -> new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
+          () -> new AutoPositionalShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
     }
   };
   HashMap<String, BooleanSupplier> conditionMap = new HashMap<String, BooleanSupplier>() {
@@ -264,19 +264,22 @@ public class Robot extends LoggedRobot {
     double[] lookupTable = {shooterRPMTuning, shooterRPMTuning/2, shooterAngleDegreesTuning};
     //Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
+    // OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverRT.whileTrue(new RunIntake(intake, feeder, 0.4));
-    OI.driverA.whileTrue(new PresetShoot(shooter, feeder, lookupTable));
+    // OI.driverA.whileTrue(new PresetShoot(shooter, feeder, lookupTable));
     // OI.driverA.whileTrue(new AlignedPresetShoot(shooter, feeder, drive, peripherals,
     // Constants.SetPoints.SHOOTER_PODIUM_PRESET));
-    // OI.driverA.whileTrue(new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
+    OI.driverA.whileTrue(new AutoPositionalShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
     OI.driverB.onTrue(new Amp(shooter, drive, peripherals));
     OI.driverLT.whileTrue(new ReverseFeeder(intake, feeder, shooter));
-    OI.driverY.whileTrue(new MoveToPiece(drive, peripherals, intake));
+    // OI.driverY.whileTrue(new MoveToPiece(drive, peripherals, intake));
+    OI.driverX.whileTrue(new AngleShooter(shooter, -55));
+    OI.driverY.whileTrue(new AngleShooter(shooter, 90));
   }
 
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putNumber("Shooter Angle Target", shooter.getShooterAngleTarget());
     SmartDashboard.putNumber("Left RPM", shooter.getLeftShooterRPM());
     SmartDashboard.putNumber("Right RPM", shooter.getRightShooterRPM());
   }

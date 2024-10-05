@@ -5,6 +5,7 @@
 package frc.robot.commands.defaults;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
@@ -33,6 +34,9 @@ public class ShooterDefault extends Command {
   @Override
   public void execute() {
     shooter.setShooterAngle(Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG);
+    if(shooter.getShooterAngle() < -60 && Math.abs(shooter.getShooterAngleTarget()-Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG) < 1) {
+      shooter.setShooterAnglePercent(0.0);
+    }
     shooter.setShooterPercent(0, 0);
   }
 

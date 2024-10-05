@@ -275,7 +275,7 @@ public final class Constants {
      * @return An array containing the calculated flywheel velocity and note velocity.
      */
     public static double[] getShooterValuesFromDistance(double dist) {
-      return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist), getInterpolatedValue(0, 4, dist), };
+      return new double[] {getInterpolatedValue(0, 2, dist)-3, getInterpolatedValue(0, 3, dist), getInterpolatedValue(0, 4, dist), };
       // return new double[] {25, getInterpolatedValue(0, 3, dist)};
     }
 
