@@ -25,7 +25,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.AlignedPresetShoot;
 import frc.robot.commands.Amp;
 import frc.robot.commands.AngleShooter;
+import frc.robot.commands.AutoNonThetaShoot;
 import frc.robot.commands.AutoPositionalShoot;
+import frc.robot.commands.AutoSpinUp;
 import frc.robot.commands.AutomaticallyIntake;
 import frc.robot.commands.DoNothing;
 import frc.robot.commands.DriveAutoAligned;
@@ -64,10 +66,15 @@ public class Robot extends LoggedRobot {
     {
       put("Instant", () -> new InstantCommand());
       put("Wait", () -> new DoNothing());
-      put("Intake", () -> new RunIntake(intake, feeder, 0.4));
+      put("Intake", () -> new RunIntake(intake, feeder, 0.6));
       put("Outtake", () -> new ReverseFeeder(intake, feeder, shooter));
-      put("Shoot",
-          () -> new AutoPositionalShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
+      put("Auto Shoot", () -> new AutoPositionalShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
+      put("Track Target", () -> new AutoNonThetaShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
+      put("Preset Shot 1", () -> new PresetShoot(intake, shooter, feeder, 6000, 3000, -45));
+      put("Preset Shot 2", () -> new PresetShoot(intake, shooter, feeder, 6000, 3000, -55));
+      put("Spin Up", () -> new AutoSpinUp(drive, shooter, peripherals, lights, 1200, 26, 7000, false));
+
+
     }
   };
   HashMap<String, BooleanSupplier> conditionMap = new HashMap<String, BooleanSupplier>() {
@@ -265,20 +272,24 @@ public class Robot extends LoggedRobot {
     //Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     // OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
-    OI.driverRT.whileTrue(new RunIntake(intake, feeder, 0.4));
+    OI.driverRT.whileTrue(new RunIntake(intake, feeder, 0.6));
     // OI.driverA.whileTrue(new PresetShoot(shooter, feeder, lookupTable));
     // OI.driverA.whileTrue(new AlignedPresetShoot(shooter, feeder, drive, peripherals,
     // Constants.SetPoints.SHOOTER_PODIUM_PRESET));
     OI.driverA.whileTrue(new AutoPositionalShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
     OI.driverB.onTrue(new Amp(shooter, drive, peripherals));
     OI.driverLT.whileTrue(new ReverseFeeder(intake, feeder, shooter));
-    // OI.driverY.whileTrue(new MoveToPiece(drive, peripherals, intake));
-    OI.driverX.whileTrue(new AngleShooter(shooter, -55));
-    OI.driverY.whileTrue(new AngleShooter(shooter, 90));
+    OI.driverY.whileTrue(new AutoNonThetaShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
+    OI.driverX.whileTrue(new PresetShoot(intake, shooter, feeder, 6000, 3000, -45));
   }
 
   @Override
   public void teleopPeriodic() {
+    if(!intake.getBeamBreak()) {
+      OI.driverController.setRumble(RumbleType.kBothRumble, 1);
+    } else {
+      OI.driverController.setRumble(RumbleType.kBothRumble, 0);
+    }
     SmartDashboard.putNumber("Shooter Angle Target", shooter.getShooterAngleTarget());
     SmartDashboard.putNumber("Left RPM", shooter.getLeftShooterRPM());
     SmartDashboard.putNumber("Right RPM", shooter.getRightShooterRPM());

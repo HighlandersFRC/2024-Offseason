@@ -20,7 +20,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.tools.controlloops.PID;
 import frc.robot.tools.math.Vector;
 
-public class AutoPositionalShoot extends Command {
+public class AutoNonThetaShoot extends Command {
   public static boolean canSeeTag;
   private Intake intake;
   private Drive drive;
@@ -79,7 +79,7 @@ public class AutoPositionalShoot extends Command {
   private double angleX;
   private double angleY;
 
-  public AutoPositionalShoot(Intake intake, Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, boolean auto) {
+  public AutoNonThetaShoot(Intake intake, Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, boolean auto) {
     this.intake = intake;
     this.drive = drive;
     this.shooter = shooter;
@@ -90,10 +90,10 @@ public class AutoPositionalShoot extends Command {
     this.defaultShooterAngle = defaultShooterAngle;
     this.defaultFlywheelRPM = defaultFlywheelRPM;
     this.auto = auto;
-    addRequirements(this.intake, this.drive, this.shooter, this.feeder, this.lights);
+    addRequirements(this.intake, this.shooter, this.feeder, this.lights);
   }
 
-  public AutoPositionalShoot(Intake intake, Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, double timeout, boolean auto) {
+  public AutoNonThetaShoot(Intake intake, Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, double timeout, boolean auto) {
     this.intake = intake;
     this.drive = drive;
     this.shooter = shooter;
@@ -106,10 +106,10 @@ public class AutoPositionalShoot extends Command {
     this.timeout = timeout;
     this.auto = auto;
     this.numTimesNoTrack = 0;
-    addRequirements(this.intake, this.drive, this.shooter, this.feeder, this.lights);
+    addRequirements(this.intake, this.shooter, this.feeder, this.lights);
   }
 
-  public AutoPositionalShoot(Intake intake, Feeder feeder2, Lights lights2, IntakePosition kdown, int i, int j, boolean b, boolean c) {
+  public AutoNonThetaShoot(Intake intake, Feeder feeder2, Lights lights2, IntakePosition kdown, int i, int j, boolean b, boolean c) {
     //TODO Auto-generated constructor stub
 }
 
@@ -203,7 +203,7 @@ public class AutoPositionalShoot extends Command {
     double turnResult = -pid.getResult();
 
     Logger.recordOutput("shooter angle error",  Math.abs(this.shooter.getShooterAngle() - this.shooterDegrees));
-    if (Math.abs(this.shooter.getShooterAngle() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees) - (Constants.SetPoints.standardizeAngleDegrees(targetAngle))) <= this.driveAngleAllowedError){
+    if (Math.abs(this.shooter.getShooterAngle() - this.shooterDegrees) <= this.shooterDegreesAllowedError){
       this.numTimesHitSetPoint ++;
     } else {
       this.numTimesHitSetPoint = 0;
@@ -221,7 +221,7 @@ public class AutoPositionalShoot extends Command {
       turnResult = 0;
     }
     SmartDashboard.putNumber("Added Theta", peripherals.getAddedTheta(peripherals.getPigeonAngle(), this.distToSpeakerMeters, 0.18));
-    this.drive.driveAutoAligned(turnResult);
+    // this.drive.driveAutoAligned(turnResult);
     this.shooter.setShooterRPM(this.shooterRPM, this.shooterRPM/2);
     this.shooter.setShooterAngle(this.shooterDegrees);
     

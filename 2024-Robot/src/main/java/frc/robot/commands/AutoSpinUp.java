@@ -20,12 +20,11 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.tools.controlloops.PID;
 import frc.robot.tools.math.Vector;
 
-public class AutoPositionalShoot extends Command {
+public class AutoSpinUp  extends Command {
   public static boolean canSeeTag;
   private Intake intake;
   private Drive drive;
   private Shooter shooter;
-  private Feeder feeder;
   private Peripherals peripherals;
   private Lights lights;
 
@@ -79,25 +78,21 @@ public class AutoPositionalShoot extends Command {
   private double angleX;
   private double angleY;
 
-  public AutoPositionalShoot(Intake intake, Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, boolean auto) {
-    this.intake = intake;
+  public AutoSpinUp(Drive drive, Shooter shooter, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, boolean auto) {
     this.drive = drive;
     this.shooter = shooter;
-    this.feeder = feeder;
     this.peripherals = peripherals;
     this.lights = lights;
     this.feederRPM = feederRPM;
     this.defaultShooterAngle = defaultShooterAngle;
     this.defaultFlywheelRPM = defaultFlywheelRPM;
     this.auto = auto;
-    addRequirements(this.intake, this.drive, this.shooter, this.feeder, this.lights);
+    addRequirements(this.shooter, this.lights);
   }
 
-  public AutoPositionalShoot(Intake intake, Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, double timeout, boolean auto) {
-    this.intake = intake;
+  public AutoSpinUp(Drive drive, Shooter shooter, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, double timeout, boolean auto) {
     this.drive = drive;
     this.shooter = shooter;
-    this.feeder = feeder;
     this.peripherals = peripherals;
     this.lights = lights;
     this.feederRPM = feederRPM;
@@ -106,10 +101,10 @@ public class AutoPositionalShoot extends Command {
     this.timeout = timeout;
     this.auto = auto;
     this.numTimesNoTrack = 0;
-    addRequirements(this.intake, this.drive, this.shooter, this.feeder, this.lights);
+    addRequirements(this.shooter, this.lights);
   }
 
-  public AutoPositionalShoot(Intake intake, Feeder feeder2, Lights lights2, IntakePosition kdown, int i, int j, boolean b, boolean c) {
+  public AutoSpinUp(Intake intake, Feeder feeder2, Lights lights2, IntakePosition kdown, int i, int j, boolean b, boolean c) {
     //TODO Auto-generated constructor stub
 }
 
@@ -203,7 +198,7 @@ public class AutoPositionalShoot extends Command {
     double turnResult = -pid.getResult();
 
     Logger.recordOutput("shooter angle error",  Math.abs(this.shooter.getShooterAngle() - this.shooterDegrees));
-    if (Math.abs(this.shooter.getShooterAngle() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees) - (Constants.SetPoints.standardizeAngleDegrees(targetAngle))) <= this.driveAngleAllowedError){
+    if (Math.abs(this.shooter.getShooterAngle() - this.shooterDegrees) <= this.shooterDegreesAllowedError){
       this.numTimesHitSetPoint ++;
     } else {
       this.numTimesHitSetPoint = 0;
@@ -221,22 +216,9 @@ public class AutoPositionalShoot extends Command {
       turnResult = 0;
     }
     SmartDashboard.putNumber("Added Theta", peripherals.getAddedTheta(peripherals.getPigeonAngle(), this.distToSpeakerMeters, 0.18));
-    this.drive.driveAutoAligned(turnResult);
+    // this.drive.driveAutoAligned(turnResult);
     this.shooter.setShooterRPM(this.shooterRPM, this.shooterRPM/2);
     this.shooter.setShooterAngle(this.shooterDegrees);
-    
-    if (this.hasReachedSetPoint == true){
-      lights.clearAnimations();
-      lights.setCandleRGB(0, 255, 0);
-      // System.out.println("Shooting");
-      // this.feeder.setRPM(this.feederRPM);
-      this.feeder.setPercent(0.7);
-      this.hasShot = true;
-      this.shotTime = Timer.getFPGATimestamp();
-    } else {
-      // this.feeder.setRPM(0.0);
-      this.feeder.setPercent(0);
-    }
 
     if (Timer.getFPGATimestamp() - this.startTime >= this.timeout){
       this.hasReachedSetPoint = true;
@@ -266,7 +248,6 @@ public class AutoPositionalShoot extends Command {
   @Override
   public void end(boolean interrupted) {
     this.intake.setPercent(0);
-    this.feeder.setRPM(0);
     this.shooter.setShooterRPM(0, 0);
     this.shooter.setShooterAngle(Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG);
     lights.clearAnimations();

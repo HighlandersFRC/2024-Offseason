@@ -35,9 +35,7 @@ public class OI {
     public static JoystickButton operatorB = new JoystickButton(operatorController, 2);
 
     public static JoystickButton operatorY = new JoystickButton(operatorController, 4);
-    public static JoystickButton operatorA = new JoystickButton(operatorController, 1);
-
-    
+    public static JoystickButton operatorA = new JoystickButton(operatorController, 1);    
 
     public static BooleanSupplier operatorRTSupplier = () -> getOperatorRTPercent() > Constants.OperatorConstants.RIGHT_TRIGGER_DEADZONE;
     public static BooleanSupplier operatorLTSupplier = () -> getOperatorLTPercent() > Constants.OperatorConstants.LEFT_TRIGGER_DEADZONE;

@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Peripherals;
 import frc.robot.subsystems.Shooter;
 
@@ -16,12 +17,12 @@ import frc.robot.subsystems.Shooter;
 public class AlignedPresetShoot extends ParallelRaceGroup {
   /** Creates a new AlignedPresetShoot. */
 
-  public AlignedPresetShoot(Shooter shooter, Feeder feeder, Drive drive, Peripherals peripherals, double[] leftRightAngleTheta) {
+  public AlignedPresetShoot(Intake intake, Shooter shooter, Feeder feeder, Drive drive, Peripherals peripherals, double[] leftRightAngleTheta) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     double[] leftRightAngle = {leftRightAngleTheta[0], leftRightAngleTheta[1], leftRightAngleTheta[2]};
     addCommands(
-      new PresetShoot(shooter, feeder, leftRightAngle),
+      new PresetShoot(intake, shooter, feeder, leftRightAngle[0], leftRightAngle[1],  leftRightAngle[2] ),
       new DriveThetaAligned(drive, peripherals, shooter, leftRightAngleTheta[3]),
       new EndAfterA()
     );

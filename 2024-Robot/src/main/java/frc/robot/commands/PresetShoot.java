@@ -10,9 +10,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
 public class PresetShoot extends Command {
+  Intake intake;
   Shooter shooter;
   Feeder feeder;
   double left;
@@ -22,19 +24,21 @@ public class PresetShoot extends Command {
   double shootTime;
   boolean shot = false;
   /** Creates a new RunShooter. */
-  public PresetShoot(Shooter shooter, Feeder feeder, double[] leftRightAngle /* input in RPM */  /* degrees, resting position is 20 */) {
+  public PresetShoot(Intake intake, Shooter shooter, Feeder feeder, double left, double right, double angle /* input in RPM */  /* degrees, resting position is -70 */) {
+    this.intake = intake;
     this.shooter = shooter;
     this.feeder = feeder;
-    this.left = leftRightAngle[0];
-    this.right = leftRightAngle[1];
-    this.angle = leftRightAngle[2];
-    addRequirements(this.shooter, this.feeder);
+    this.left = left;
+    this.right = right;
+    this.angle = angle;
+    addRequirements(this.intake, this.shooter, this.feeder);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    intake.setPercent(0.7);
     startTime = Timer.getFPGATimestamp();
     shot = false;
     shooter.alignedPreset = true;
@@ -51,7 +55,7 @@ public class PresetShoot extends Command {
     //   intake.setPercent(0.4);
     // }
     if((Math.abs(shooter.getLeftShooterRPM() - left)/left < 0.1 && Math.abs(shooter.getShooterAngle()-angle) < 1 && Math.abs(shooter.getRightShooterRPM() + right)/right < 0.1/*   && shooter.alignedPreset */) || Timer.getFPGATimestamp() - startTime > 2) {
-      feeder.setPercent(1);
+      feeder.setPercent(0.7);
       shootTime = Timer.getFPGATimestamp();
       shot = true;
     }
@@ -69,6 +73,7 @@ public class PresetShoot extends Command {
     this.shooter.setShooterAngle(Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG);
     this.shooter.setShooterRPM(0.0, 0.0);
     this.feeder.setPercent(0.0);
+    this.intake.setPercent(0);
   }
 
   // Returns true when the command should end.

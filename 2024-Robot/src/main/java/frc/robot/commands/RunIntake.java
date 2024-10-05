@@ -35,7 +35,7 @@ public class RunIntake extends Command {
       noteIn = true;
     }
     intake.setPercent(percent);
-    feeder.setPercent(percent);
+    feeder.setPercent(0.3);
   }
 
   // Called once the command ends or is interrupted.
