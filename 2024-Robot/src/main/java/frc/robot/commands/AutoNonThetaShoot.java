@@ -115,7 +115,7 @@ public class AutoNonThetaShoot extends Command {
 
 @Override
   public void initialize() {
-    this.intake.setPercent(0.7);
+    this.intake.setPercent(0.85);
     this.startTime = Timer.getFPGATimestamp();
     this.pigeonAngles = new ArrayList<Double>();
     this.hasShot = false;
@@ -220,23 +220,24 @@ public class AutoNonThetaShoot extends Command {
       this.reachedSetPointTime = Timer.getFPGATimestamp();
       turnResult = 0;
     }
-    SmartDashboard.putNumber("Added Theta", peripherals.getAddedTheta(peripherals.getPigeonAngle(), this.distToSpeakerMeters, 0.18));
     // this.drive.driveAutoAligned(turnResult);
     this.shooter.setShooterRPM(this.shooterRPM, this.shooterRPM/2);
     this.shooter.setShooterAngle(this.shooterDegrees);
     
-    if (this.hasReachedSetPoint == true){
-      lights.clearAnimations();
-      lights.setCandleRGB(0, 255, 0);
+    // if (this.hasReachedSetPoint == true){
+    //   lights.clearAnimations();
+    //   lights.setCandleRGB(0, 255, 0);
       // System.out.println("Shooting");
       // this.feeder.setRPM(this.feederRPM);
+    if(Timer.getFPGATimestamp() - startTime > 0.2) {
       this.feeder.setPercent(0.7);
-      this.hasShot = true;
-      this.shotTime = Timer.getFPGATimestamp();
-    } else {
-      // this.feeder.setRPM(0.0);
-      this.feeder.setPercent(0);
     }
+    //   this.hasShot = true;
+    //   this.shotTime = Timer.getFPGATimestamp();
+    // } else {
+    //   // this.feeder.setRPM(0.0);
+    //   this.feeder.setPercent(0);
+    // }
 
     if (Timer.getFPGATimestamp() - this.startTime >= this.timeout){
       this.hasReachedSetPoint = true;
@@ -279,14 +280,15 @@ public class AutoNonThetaShoot extends Command {
     // System.out.println("Has Shot " + this.hasShot);
     // System.out.println("Time Since Shot " + (Timer.getFPGATimestamp() - this.shotTime));
 
-    if (this.shooterDegrees > 90){
-      return true;
-    } else if (this.hasShot && Timer.getFPGATimestamp() - this.shotTime >= this.shotPauseTime){
-      return true;
-    } else if (Timer.getFPGATimestamp() - this.startTime > this.timeout + 1.0){
-      return true;
-    } else {
-      return false;
-    }
+    // if (this.shooterDegrees > 90){
+    //   return true;
+    // } else if (this.hasShot && Timer.getFPGATimestamp() - this.shotTime >= this.shotPauseTime){
+    //   return true;
+    // } else if (Timer.getFPGATimestamp() - this.startTime > this.timeout + 1.0){
+    //   return true;
+    // } else {
+    //   return false;
+    // }
+    return (Math.PI==Math.E);
   }
 }

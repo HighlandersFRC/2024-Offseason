@@ -13,7 +13,7 @@ public final class Constants {
     "4 Far.polarauto",
     "4 Far 123.polarauto",
     "4 Far 231.polarauto",
-    "5 piece.polarauto",
+    "OP 5 Piece.polarauto",
     "3 amp.polarauto",
     "3 amp 231.polarauto",
     "1 Exit.polarauto",
@@ -97,7 +97,7 @@ public final class Constants {
   public static final class SetPoints {
     //drive
     //how far forward to look when the linear radius and the angular radius equal their constants
-    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.48;
+    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.12;
     public static final double AUTONOMOUS_END_ACCURACY = 0.20;
     public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1.0;
     public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;

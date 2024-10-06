@@ -110,7 +110,7 @@ public class AutoSpinUp  extends Command {
 
 @Override
   public void initialize() {
-    this.intake.setPercent(0.7);
+    // this.intake.setPercent(0.7);
     this.startTime = Timer.getFPGATimestamp();
     this.pigeonAngles = new ArrayList<Double>();
     this.hasShot = false;

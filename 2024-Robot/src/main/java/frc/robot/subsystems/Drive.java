@@ -321,10 +321,10 @@ public class Drive extends SubsystemBase {
   public void autoInit(JSONArray pathPoints){
     // runs at start of autonomous
     // System.out.println("Auto init");
-    JSONArray firstPoint = pathPoints.getJSONArray(0);
-    double firstPointX = firstPoint.getDouble(1);
-    double firstPointY = firstPoint.getDouble(2);
-    double firstPointAngle = firstPoint.getDouble(3);
+    JSONObject firstPoint = pathPoints.getJSONObject(0);
+    double firstPointX = firstPoint.getDouble("x");
+    double firstPointY = firstPoint.getDouble("y");
+    double firstPointAngle = firstPoint.getDouble("angle");
 
     // changing odometry if on red side, don't need to change y because it will be the same for autos on either side
     if(this.fieldSide == "blue") {
@@ -1463,6 +1463,9 @@ public class Drive extends SubsystemBase {
       JSONArray pathPoints) {
     JSONObject targetPoint = pathPoints.getJSONObject(pathPoints.length() - 1);
     int targetIndex = pathPoints.length() - 1;
+    double currentXVel = pathPoints.getJSONObject(currentIndex).getDouble("x_velocity"), currentYVel = pathPoints.getJSONObject(currentIndex).getDouble("y_velocity");
+    double linearVelocity = Constants.getDistance(currentXVel, currentYVel, 0, 0);
+    double scaledLookahead = Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_DISTANCE * linearVelocity + 0.05;
     if (this.fieldSide == "blue") {
       currentX = Constants.Physical.FIELD_LENGTH - currentX;
       currentTheta = Math.PI - currentTheta;
@@ -1481,7 +1484,7 @@ public class Drive extends SubsystemBase {
       if (!insideRadius((currentX - targetX) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
           (currentY - targetY) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
           (currentTheta - targetTheta) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS,
-          Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_DISTANCE)) {
+          scaledLookahead)) {
         targetIndex = i;
         targetPoint = pathPoints.getJSONObject(i);
         break;

@@ -79,7 +79,7 @@ public class Robot extends LoggedRobot {
   };
   HashMap<String, BooleanSupplier> conditionMap = new HashMap<String, BooleanSupplier>() {
     {
-      put("Note In Intake", () -> intake.getBeamBreak());
+      put("Note in Robot", () -> intake.getBeamBreak());
     }
   };
   // private Logger logger = Logger.getInstance();
