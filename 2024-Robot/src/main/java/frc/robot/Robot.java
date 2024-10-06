@@ -27,11 +27,13 @@ import frc.robot.commands.Amp;
 import frc.robot.commands.AngleShooter;
 import frc.robot.commands.AutoNonThetaShoot;
 import frc.robot.commands.AutoPositionalShoot;
+import frc.robot.commands.AutoShoot2;
 import frc.robot.commands.AutoSpinUp;
 import frc.robot.commands.AutomaticallyIntake;
 import frc.robot.commands.DoNothing;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.DriveThetaAligned;
+import frc.robot.commands.IntakeSecondNote;
 import frc.robot.commands.MoveToPiece;
 import frc.robot.commands.PolarAutoFollower;
 import frc.robot.commands.PresetShoot;
@@ -73,13 +75,13 @@ public class Robot extends LoggedRobot {
       put("Preset Shot 1", () -> new PresetShoot(intake, shooter, feeder, 6000, 3000, -45));
       put("Preset Shot 2", () -> new PresetShoot(intake, shooter, feeder, 6000, 3000, -55));
       put("Spin Up", () -> new AutoSpinUp(drive, shooter, peripherals, lights, 1200, 26, 7000, false));
-
-
+      put("Intake 2nd", () -> new IntakeSecondNote(intake, 0.4));
+      put("Shoot 2", () -> new AutoShoot2(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
     }
   };
   HashMap<String, BooleanSupplier> conditionMap = new HashMap<String, BooleanSupplier>() {
     {
-      put("Note in Robot", () -> intake.getBeamBreak());
+      put("Note in Robot", () -> !intake.getBeamBreak());
     }
   };
   // private Logger logger = Logger.getInstance();
@@ -188,6 +190,7 @@ public class Robot extends LoggedRobot {
     } catch(Exception e) {
       System.out.println("Problem with logging");
     }
+    Logger.recordOutput("Wheel Odometry", drive.getOdometry());
     Logger.recordOutput("Swerve Module States", drive.getModuleStates());
     Logger.recordOutput("Swerve Module Setpoints", drive.getModuleSetpoints());
     Logger.recordOutput("IMU", peripherals.getPigeonAngle());

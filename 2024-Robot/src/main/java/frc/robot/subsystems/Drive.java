@@ -1516,9 +1516,9 @@ public class Drive extends SubsystemBase {
     double yVelNoFF = yPID.getResult();
     double thetaVelNoFF = -thetaPID.getResult();
 
-    double feedForwardX = targetPoint.getDouble("x_velocity") / 2;
-    double feedForwardY = targetPoint.getDouble("y_velocity") / 2;
-    double feedForwardTheta = -targetPoint.getDouble("angular_velocity") / 2;
+    double feedForwardX = targetPoint.getDouble("x_velocity") / 3;
+    double feedForwardY = targetPoint.getDouble("y_velocity") / 3;
+    double feedForwardTheta = -targetPoint.getDouble("angular_velocity") / 3;
 
     double finalX = xVelNoFF + feedForwardX;
     double finalY = yVelNoFF + feedForwardY;

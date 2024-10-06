@@ -247,7 +247,7 @@ public class AutoSpinUp  extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    this.intake.setPercent(0);
+    // this.intake.setPercent(0);
     this.shooter.setShooterRPM(0, 0);
     this.shooter.setShooterAngle(Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG);
     lights.clearAnimations();

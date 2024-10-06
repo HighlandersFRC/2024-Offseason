@@ -20,7 +20,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.tools.controlloops.PID;
 import frc.robot.tools.math.Vector;
 
-public class AutoNonThetaShoot extends Command {
+public class AutoShoot2 extends Command {
   public static boolean canSeeTag;
   private Intake intake;
   private Drive drive;
@@ -78,8 +78,9 @@ public class AutoNonThetaShoot extends Command {
   private double targetAngle;
   private double angleX;
   private double angleY;
+  private double setpointTime;
 
-  public AutoNonThetaShoot(Intake intake, Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, boolean auto) {
+  public AutoShoot2(Intake intake, Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, boolean auto) {
     this.intake = intake;
     this.drive = drive;
     this.shooter = shooter;
@@ -90,10 +91,10 @@ public class AutoNonThetaShoot extends Command {
     this.defaultShooterAngle = defaultShooterAngle;
     this.defaultFlywheelRPM = defaultFlywheelRPM;
     this.auto = auto;
-    addRequirements(this.intake, this.shooter, this.feeder, this.lights);
+    addRequirements(this.intake, this.drive, this.shooter, this.feeder, this.lights);
   }
 
-  public AutoNonThetaShoot(Intake intake, Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, double timeout, boolean auto) {
+  public AutoShoot2(Intake intake, Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, double timeout, boolean auto) {
     this.intake = intake;
     this.drive = drive;
     this.shooter = shooter;
@@ -106,16 +107,15 @@ public class AutoNonThetaShoot extends Command {
     this.timeout = timeout;
     this.auto = auto;
     this.numTimesNoTrack = 0;
-    addRequirements(this.intake, this.shooter, this.feeder, this.lights);
+    addRequirements(this.intake, this.drive, this.shooter, this.feeder, this.lights);
   }
 
-  public AutoNonThetaShoot(Intake intake, Feeder feeder2, Lights lights2, IntakePosition kdown, int i, int j, boolean b, boolean c) {
+  public AutoShoot2(Intake intake, Feeder feeder2, Lights lights2, IntakePosition kdown, int i, int j, boolean b, boolean c) {
     //TODO Auto-generated constructor stub
 }
 
 @Override
   public void initialize() {
-    this.intake.setPercent(0.85);
     this.startTime = Timer.getFPGATimestamp();
     this.pigeonAngles = new ArrayList<Double>();
     this.hasShot = false;
@@ -136,6 +136,7 @@ public class AutoNonThetaShoot extends Command {
     lights.setStrobePurple();
     this.distToSpeakerMeters = 0;
     this.angleToSpeakerDegrees = 0;
+    this.setpointTime = 0.0;
     this.targetPigeonAngleDegrees = this.peripherals.getPigeonAngle() - this.peripherals.getFrontCamTargetTx();
 
     if (drive.getFieldSide() == "red"){
@@ -203,7 +204,7 @@ public class AutoNonThetaShoot extends Command {
     double turnResult = -pid.getResult();
 
     Logger.recordOutput("shooter angle error",  Math.abs(this.shooter.getShooterAngle() - this.shooterDegrees));
-    if (Math.abs(this.shooter.getShooterAngle() - this.shooterDegrees) <= this.shooterDegreesAllowedError){
+    if (Math.abs(this.shooter.getShooterAngle() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees) - (Constants.SetPoints.standardizeAngleDegrees(targetAngle))) <= this.driveAngleAllowedError){
       this.numTimesHitSetPoint ++;
     } else {
       this.numTimesHitSetPoint = 0;
@@ -220,24 +221,28 @@ public class AutoNonThetaShoot extends Command {
       this.reachedSetPointTime = Timer.getFPGATimestamp();
       turnResult = 0;
     }
-    // this.drive.driveAutoAligned(turnResult);
+    SmartDashboard.putNumber("Added Theta", peripherals.getAddedTheta(peripherals.getPigeonAngle(), this.distToSpeakerMeters, 0.18));
+    this.drive.driveAutoAligned(turnResult);
     this.shooter.setShooterRPM(this.shooterRPM, this.shooterRPM/2);
     this.shooter.setShooterAngle(this.shooterDegrees);
     
-    // if (this.hasReachedSetPoint == true){
-    //   lights.clearAnimations();
-    //   lights.setCandleRGB(0, 255, 0);
+    if (this.hasReachedSetPoint == true){
+      this.setpointTime = Timer.getFPGATimestamp();
+      lights.clearAnimations();
+      lights.setCandleRGB(0, 255, 0);
       // System.out.println("Shooting");
       // this.feeder.setRPM(this.feederRPM);
-    // if(Timer.getFPGATimestamp() - startTime > 0.2) {
       this.feeder.setPercent(0.7);
-    // }
-    //   this.hasShot = true;
-    //   this.shotTime = Timer.getFPGATimestamp();
-    // } else {
-    //   // this.feeder.setRPM(0.0);
-    //   this.feeder.setPercent(0);
-    // }
+      this.intake.setPercent(0.7);
+      this.hasShot = true;
+      this.shotTime = Timer.getFPGATimestamp();
+    } else {
+      // this.feeder.setRPM(0.0);
+      this.feeder.setPercent(0);
+    }
+
+    if (Timer.getFPGATimestamp() - setpointTime > 0.4){
+    }
 
     if (Timer.getFPGATimestamp() - this.startTime >= this.timeout){
       this.hasReachedSetPoint = true;
@@ -280,15 +285,14 @@ public class AutoNonThetaShoot extends Command {
     // System.out.println("Has Shot " + this.hasShot);
     // System.out.println("Time Since Shot " + (Timer.getFPGATimestamp() - this.shotTime));
 
-    // if (this.shooterDegrees > 90){
-    //   return true;
-    // } else if (this.hasShot && Timer.getFPGATimestamp() - this.shotTime >= this.shotPauseTime){
-    //   return true;
-    // } else if (Timer.getFPGATimestamp() - this.startTime > this.timeout + 1.0){
-    //   return true;
-    // } else {
-    //   return false;
-    // }
-    return (Math.PI==Math.E);
+    if (this.shooterDegrees > 90){
+      return true;
+    } else if (this.hasShot && Timer.getFPGATimestamp() - this.shotTime >= this.shotPauseTime){
+      return true;
+    } else if (Timer.getFPGATimestamp() - this.startTime > this.timeout + 1.0){
+      return true;
+    } else {
+      return false;
+    }
   }
 }

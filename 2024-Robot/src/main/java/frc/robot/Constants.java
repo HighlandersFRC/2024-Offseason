@@ -16,7 +16,7 @@ public final class Constants {
     "OP 5 Piece.polarauto",
     "3 amp.polarauto",
     "3 amp 231.polarauto",
-    "1 Exit.polarauto",
+    "OP Center Auto.polarauto",
   };
 
   public static int getSelectedPathIndex(){
@@ -97,8 +97,8 @@ public final class Constants {
   public static final class SetPoints {
     //drive
     //how far forward to look when the linear radius and the angular radius equal their constants
-    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.12;
-    public static final double AUTONOMOUS_END_ACCURACY = 0.20;
+    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.08;
+    public static final double AUTONOMOUS_END_ACCURACY = 0.10;
     public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1.0;
     public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
     //intake
