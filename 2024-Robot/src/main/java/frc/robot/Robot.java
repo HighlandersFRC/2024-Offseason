@@ -71,9 +71,9 @@ public class Robot extends LoggedRobot {
       put("Intake", () -> new RunIntake(intake, feeder, 0.6));
       put("Outtake", () -> new ReverseFeeder(intake, feeder, shooter));
       put("Auto Shoot", () -> new AutoPositionalShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
-      put("Track Target", () -> new AutoNonThetaShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
-      put("Preset Shot 1", () -> new PresetShoot(intake, shooter, feeder, 6000, 3000, -45));
-      put("Preset Shot 2", () -> new PresetShoot(intake, shooter, feeder, 6000, 3000, -55));
+      put("Track Target", () -> new AutoNonThetaShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, -3, false));
+      put("Preset Shot 1", () -> new PresetShoot(drive, intake, shooter, feeder, 6000, 3000, -45));
+      put("Preset Shot 2", () -> new PresetShoot(drive, intake, shooter, feeder, 6000, 3000, -55));
       put("Spin Up", () -> new AutoSpinUp(drive, shooter, peripherals, lights, 1200, 26, 7000, false));
       put("Intake 2nd", () -> new IntakeSecondNote(intake, 0.4));
       put("Shoot 2", () -> new AutoShoot2(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
@@ -196,6 +196,7 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput("IMU", peripherals.getPigeonAngle());
     Logger.recordOutput("Left Shooter Speed", shooter.getLeftShooterRPM());
     Logger.recordOutput("Right Shooter Speed", shooter.getRightShooterRPM());
+
     
     Constants.periodic();
     lights.periodic();
@@ -270,20 +271,18 @@ public class Robot extends LoggedRobot {
     this.peripherals.setFieldSide(fieldSide);
     this.drive.setFieldSide(fieldSide);
 
-    //CONTROLS
-    double[] lookupTable = {shooterRPMTuning, shooterRPMTuning/2, shooterAngleDegreesTuning};
     //Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     // OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverRT.whileTrue(new RunIntake(intake, feeder, 0.6));
-    // OI.driverA.whileTrue(new PresetShoot(shooter, feeder, lookupTable));
+    // OI.driverA.whileTrue(new PresetShoot(drive, intake, shooter, feeder, shooterRPMTuning, shooterRPMTuning/2, shooterAngleDegreesTuning));
     // OI.driverA.whileTrue(new AlignedPresetShoot(shooter, feeder, drive, peripherals,
     // Constants.SetPoints.SHOOTER_PODIUM_PRESET));
     OI.driverA.whileTrue(new AutoPositionalShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
     OI.driverB.onTrue(new Amp(shooter, drive, peripherals));
     OI.driverLT.whileTrue(new ReverseFeeder(intake, feeder, shooter));
-    OI.driverY.whileTrue(new AutoNonThetaShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
-    OI.driverX.whileTrue(new PresetShoot(intake, shooter, feeder, 6000, 3000, -45));
+    OI.driverY.whileTrue(new AutoNonThetaShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, 0, false));
+    OI.driverX.whileTrue(new PresetShoot(drive, intake, shooter, feeder, 6000, 3000, -45));
   }
 
   @Override

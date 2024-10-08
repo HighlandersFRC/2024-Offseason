@@ -22,7 +22,7 @@ public class AlignedPresetShoot extends ParallelRaceGroup {
     // addCommands(new FooCommand(), new BarCommand());
     double[] leftRightAngle = {leftRightAngleTheta[0], leftRightAngleTheta[1], leftRightAngleTheta[2]};
     addCommands(
-      new PresetShoot(intake, shooter, feeder, leftRightAngle[0], leftRightAngle[1],  leftRightAngle[2] ),
+      new PresetShoot(drive, intake, shooter, feeder, leftRightAngle[0], leftRightAngle[1],  leftRightAngle[2] ),
       new DriveThetaAligned(drive, peripherals, shooter, leftRightAngleTheta[3]),
       new EndAfterA()
     );

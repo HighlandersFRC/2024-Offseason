@@ -97,7 +97,7 @@ public final class Constants {
   public static final class SetPoints {
     //drive
     //how far forward to look when the linear radius and the angular radius equal their constants
-    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.08;
+    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.12;
     public static final double AUTONOMOUS_END_ACCURACY = 0.10;
     public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1.0;
     public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
@@ -181,28 +181,19 @@ public final class Constants {
     public static final double LIMELIGHT_ANGLE_OFFSET = 2.5;
     public static final double DISTANCE_OFFSET = 0.1;
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
-      { 1.16064, 20.51,  -15    ,3500 , 5, 2},
-      { 1.397  , 14.71,  -19    ,3600 , 4.5, 2},
-      { 1.5748 , 10.85,  -23    ,3700 , 4, 2},
-      { 1.72045, 8.70,   -27    ,3800 , 3.5, 2},
-      { 1.778  , 7.63,   -29    ,3900 , 3, 2},
-      { 1.8542 , 6.56,   -31    ,3940 , 2.5, 2},
-      { 2.0066 , 4.15,   -33    ,4000 , 2.5, 2},
-      { 2.159  , 1.75,   -35    ,4143 , 2.5, 2},
-      { 2.314  , 0.21,   -37    ,4270 , 2.25, 2},
-      { 2.464  , -1.58,  -39    ,4499 , 2.25, 2},
-      { 2.6132 , -2.60,  -42    ,4550 , 2.25, 2},
-      { 2.8702 , -4.34,  -45    ,4635 , 2, 2},
-      { 3.0226 , -5.08,  -48    ,4800 , 2, 2},
-      { 3.175  , -6.01,  -50    ,5100 , 2, 2},
-      { 3.429  , -7.49,  -52    ,5300 , 1.75, 2},
-      { 3.688  , -8.54,  -54    ,5500 , 1.75, 2},
-      { 3.937  , -9.45,  -56    ,5940 , 1.75, 2},
-      { 4.191  , -10.33, -57    ,6200 , 1.75, 2},
-      { 4.445  , -10.87, -58.4  ,6400 , 1.5, 2},
-      { 4.699  , -11.21, -58.7  ,6500 , 1.5, 2},
-      { 4.953  , -11.84, -60.55 ,6600 , 1.5, 2},
-      { 5.206  , -12.83, -63    ,6800 , 1.5, 2}
+      { 1.16064, 20.51,  -12    ,4000 , 5, 2},
+      { 1.4324 , 14.71,  -22    ,4100 , 4.5, 2},
+      { 1.7007 , 10.85,  -29    ,4200 , 4, 2},
+      { 1.9868 , 8.70,   -34    ,4300 , 3.5, 2},
+      { 2.1227 , 7.63,   -37    ,4350 , 3, 2},
+      { 2.4165 , 6.56,   -41    ,4400 , 2.5, 2},
+      { 2.6465 , 4.15,   -46    ,4450 , 2.5, 2},
+      { 2.9988 , 1.75,   -48    ,4500 , 2.5, 2},
+      { 3.5391 , 0.21,   -55    ,5000 , 2.25, 2},
+      { 3.8508 , -1.58,  -57    ,5500 , 2.25, 2},
+      { 4.3048 , -2.60,  -61    ,6500 , 2.25, 2},
+      { 4.9445 , -4.34,  -63    ,7500 , 2, 2},
+      { 5.4222 , -5.08,  -70    ,7500 , 2, 2},
     };
 
     public static double[] getMovingAverageWeights(int numMeasurements){

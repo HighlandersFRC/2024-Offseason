@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,15 +24,19 @@ public class PresetShoot extends Command {
   double angle;
   double startTime;
   double shootTime;
+  double distToSpeakerMeters;
+  double x;
   boolean shot = false;
+  Drive drive;
   /** Creates a new RunShooter. */
-  public PresetShoot(Intake intake, Shooter shooter, Feeder feeder, double left, double right, double angle /* input in RPM */  /* degrees, resting position is -70 */) {
+  public PresetShoot(Drive drive, Intake intake, Shooter shooter, Feeder feeder, double left, double right, double angle /* input in RPM */  /* degrees, resting position is -70 */) {
     this.intake = intake;
     this.shooter = shooter;
     this.feeder = feeder;
     this.left = left;
     this.right = right;
     this.angle = angle;
+    this.drive = drive;
     addRequirements(this.intake, this.shooter, this.feeder);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -42,6 +48,13 @@ public class PresetShoot extends Command {
     startTime = Timer.getFPGATimestamp();
     shot = false;
     shooter.alignedPreset = true;
+    if (drive.getFieldSide() == "red"){
+      // System.out.println("-----------red------");
+      x = Constants.Physical.FIELD_LENGTH;
+    } else {
+      // System.out.println("-----------blue------");
+      x = Constants.Physical.SPEAKER_X;
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -59,12 +72,14 @@ public class PresetShoot extends Command {
       shootTime = Timer.getFPGATimestamp();
       shot = true;
     }
-    SmartDashboard.putBoolean("Left RPM", Math.abs(shooter.getLeftShooterRPM() - left)/left < 0.1);
-    SmartDashboard.putBoolean("Right RPM", Math.abs(shooter.getRightShooterRPM() + right)/right < 0.1);
-    SmartDashboard.putBoolean("Theta Aligned", shooter.alignedPreset);
-    SmartDashboard.putBoolean("Angle", Math.abs(shooter.getShooterAngle()-angle) < 2);
-    SmartDashboard.putBoolean("Timeout", Timer.getFPGATimestamp() - startTime > 3);
-    SmartDashboard.putBoolean("Has Shot", shot);
+    this.distToSpeakerMeters = Constants.getDistance(x, Constants.Physical.SPEAKER_Y, drive.getMT2OdometryX(), drive.getMT2OdometryY());
+    Logger.recordOutput("DistToSpeakerMeters", distToSpeakerMeters);
+    Logger.recordOutput("Left RPM", Math.abs(shooter.getLeftShooterRPM() - left)/left < 0.1);
+    Logger.recordOutput("Right RPM", Math.abs(shooter.getRightShooterRPM() + right)/right < 0.1);
+    Logger.recordOutput("Theta Aligned", shooter.alignedPreset);
+    Logger.recordOutput("Angle", Math.abs(shooter.getShooterAngle()-angle) < 2);
+    Logger.recordOutput("Timeout", Timer.getFPGATimestamp() - startTime > 3);
+    Logger.recordOutput("Has Shot", shot);
   }
 
   // Called once the command ends or is interrupted.
