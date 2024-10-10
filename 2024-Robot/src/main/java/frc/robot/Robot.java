@@ -30,6 +30,7 @@ import frc.robot.commands.AutoPositionalShoot;
 import frc.robot.commands.AutoShoot2;
 import frc.robot.commands.AutoSpinUp;
 import frc.robot.commands.AutomaticallyIntake;
+import frc.robot.commands.DipShot;
 import frc.robot.commands.DoNothing;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.DriveThetaAligned;
@@ -84,7 +85,7 @@ public class Robot extends LoggedRobot {
       put("Note in Robot", () -> !intake.getBeamBreak());
     }
   };
-  // private Logger logger = Logger.getInstance();
+  private Logger logger = Logger.getInstance();
 
   private double shooterAngleDegreesTuning = 0;
   private double shooterRPMTuning = 0;
@@ -279,10 +280,10 @@ public class Robot extends LoggedRobot {
     // OI.driverA.whileTrue(new AlignedPresetShoot(shooter, feeder, drive, peripherals,
     // Constants.SetPoints.SHOOTER_PODIUM_PRESET));
     OI.driverA.whileTrue(new AutoPositionalShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
-    OI.driverB.onTrue(new Amp(shooter, drive, peripherals));
+    OI.driverB.whileTrue(new Amp(shooter, drive, peripherals));
     OI.driverLT.whileTrue(new ReverseFeeder(intake, feeder, shooter));
-    OI.driverY.whileTrue(new AutoNonThetaShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, 0, false));
-    OI.driverX.whileTrue(new PresetShoot(drive, intake, shooter, feeder, 6000, 3000, -45));
+    OI.driverPOVDown.whileTrue(new DipShot(drive, intake, shooter, feeder, 3500, 1750, -70));
+    OI.driverPOVRight.whileTrue(new PresetShoot(drive, intake, shooter, feeder, 5000, 2500, -30));
   }
 
   @Override

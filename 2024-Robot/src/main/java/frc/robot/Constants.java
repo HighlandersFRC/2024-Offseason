@@ -125,7 +125,7 @@ public final class Constants {
     //shooter
     public static final double SHOOTER_MAX_DEG = 180.0;
     public static final double SHOOTER_MIN_DEG = -70.0;
-    public static final double SHOOTER_AMP_ANGLE_PRESET_DEG = 55.0;
+    public static final double SHOOTER_AMP_ANGLE_PRESET_DEG = 52.0;
     public static final double SHOOTER_CENTER_OFFSET_DEG = -90.0;
     public static final double SHOOTER_CENTER_OFFSET_ROT = degreesToRotations(SHOOTER_CENTER_OFFSET_DEG);
     public static final double SHOOTER_DOWN_ANGLE_ROT = -7.0/36.0;

@@ -30,8 +30,8 @@ public class Amp extends ParallelRaceGroup {
 
     addCommands(
       new AngleShooter(shooter, Constants.SetPoints.SHOOTER_AMP_ANGLE_PRESET_DEG),
-      new DriveAutoAligned(drive, peripherals),
-      new EndOnRT()
+      new DriveAutoAligned(drive, peripherals)
+      // new EndOnRT()
     );
   }
 }
