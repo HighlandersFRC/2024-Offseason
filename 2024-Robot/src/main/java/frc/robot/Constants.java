@@ -97,7 +97,7 @@ public final class Constants {
   public static final class SetPoints {
     //drive
     //how far forward to look when the linear radius and the angular radius equal their constants
-    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.12;
+    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.14;
     public static final double AUTONOMOUS_END_ACCURACY = 0.10;
     public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1.0;
     public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
@@ -181,17 +181,17 @@ public final class Constants {
     public static final double LIMELIGHT_ANGLE_OFFSET = 2.5;
     public static final double DISTANCE_OFFSET = 0.1;
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
-      { 1.16064, 20.51,  -12    ,4000 , 5, 2},
-      { 1.4324 , 14.71,  -22    ,4100 , 4.5, 2},
-      { 1.7007 , 10.85,  -29    ,4200 , 4, 2},
-      { 1.9868 , 8.70,   -34    ,4300 , 3.5, 2},
-      { 2.1227 , 7.63,   -37    ,4350 , 3, 2},
-      { 2.4165 , 6.56,   -41    ,4400 , 2.5, 2},
-      { 2.6465 , 4.15,   -46    ,4450 , 2.5, 2},
-      { 2.9988 , 1.75,   -48    ,4500 , 2.5, 2},
-      { 3.5391 , 0.21,   -55    ,5000 , 2.25, 2},
-      { 3.8508 , -1.58,  -57    ,5500 , 2.25, 2},
-      { 4.3048 , -2.60,  -61    ,6500 , 2.25, 2},
+      { 1.16064, 20.51,  -12    ,5500 , 5, 2},
+      { 1.4324 , 14.71,  -22    ,5500 , 4.5, 2},
+      { 1.7007 , 10.85,  -29    ,5500 , 4, 2},
+      { 1.9868 , 8.70,   -34    ,5500 , 3.5, 2},
+      { 2.1227 , 7.63,   -37    ,5500 , 3, 2},
+      { 2.4165 , 6.56,   -41    ,5500 , 2.5, 2},
+      { 2.6465 , 4.15,   -46    ,5500 , 2.5, 2},
+      { 2.9988 , 1.75,   -50    ,5500 , 2.5, 2},
+      { 3.5391 , 0.21,   -53    ,5500 , 2.25, 2},
+      { 3.8508 , -1.58,  -55    ,5500 , 2.25, 2},
+      { 4.3048 , -2.60,  -60    ,6500 , 2.25, 2},
       { 4.9445 , -4.34,  -63    ,7500 , 2, 2},
       { 5.4222 , -5.08,  -70    ,7500 , 2, 2},
     };
