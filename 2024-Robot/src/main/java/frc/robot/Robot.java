@@ -71,7 +71,8 @@ public class Robot extends LoggedRobot {
       put("Intake", () -> new RunIntake(intake, feeder, 0.6));
       put("Outtake", () -> new ReverseFeeder(intake, feeder, shooter));
       put("Auto Shoot", () -> new AutoPositionalShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
-      put("Track Target", () -> new AutoNonThetaShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, -3, false));
+      put("Track Target", () -> new AutoNonThetaShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, -5, false));
+      put("Track Target 2", () -> new AutoNonThetaShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, 6, false));
       put("Preset Shot 1", () -> new PresetShoot(drive, intake, shooter, feeder, 6000, 3000, -45));
       put("Preset Shot 2", () -> new PresetShoot(drive, intake, shooter, feeder, 6000, 3000, -55));
       put("Spin Up", () -> new AutoSpinUp(drive, shooter, peripherals, lights, 1200, 26, 7000, false));
