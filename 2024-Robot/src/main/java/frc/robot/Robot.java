@@ -92,15 +92,16 @@ public class Robot extends LoggedRobot {
   private double startTime = Timer.getFPGATimestamp();
   private boolean checkedCAN = false;
 
-  File[] autoFiles = new File[Constants.paths.length];
-  Command[] autos = new Command[Constants.paths.length];
-  JSONObject[] autoJSONs = new JSONObject[Constants.paths.length];
-  JSONArray[] autoPoints = new JSONArray[Constants.paths.length];
+  File[] autoFiles;
+  Command[] autos;
+  JSONObject[] autoJSONs;
+  JSONArray[] autoPoints;
 
   String fieldSide = "blue";
 
   @Override
   public void robotInit() {
+    
     SmartDashboard.putNumber("Shooter Angle Degrees (tuning)", 0);
     SmartDashboard.putNumber("Shooter RPM (input)", 0);
     // System.out.println("Starting");
@@ -149,19 +150,23 @@ public class Robot extends LoggedRobot {
     lights.clearAnimations();
     lights.setCommandRunning(true);
     lights.setRGBFade();
-
-    for (int i = 0; i < Constants.paths.length; i++){
+    Constants.init();
+    OI.init();
+    autoFiles = new File[Constants.paths.size()];
+    autos = new Command[Constants.paths.size()];
+    autoJSONs = new JSONObject[Constants.paths.size()];
+    autoPoints = new JSONArray[Constants.paths.size()];
+    for (int i = 0; i < Constants.paths.size(); i++){
       try {
-        autoFiles[i] = new File(Filesystem.getDeployDirectory().getPath() + "/" + Constants.paths[i]);
+        autoFiles[i] = new File(Filesystem.getDeployDirectory().getPath() + "/" + Constants.paths.get(i));
         FileReader scanner = new FileReader(autoFiles[i]);
         autoJSONs[i] = new JSONObject(new JSONTokener(scanner));
         autoPoints[i] = (JSONArray) autoJSONs[i].getJSONArray("paths").getJSONObject(0).getJSONArray("sampled_points");
         autos[i] = new PolarAutoFollower(autoJSONs[i], drive, lights, peripherals, commandMap, conditionMap);
       } catch (Exception e) {
-        System.out.println("ERROR LOADING PATH "+Constants.paths[i]+":" + e);
+        System.out.println("ERROR LOADING PATH "+Constants.paths.get(i)+":" + e);
       }
     }
-    OI.init();
     System.out.println("end robot init");
   }
  
@@ -243,7 +248,7 @@ public class Robot extends LoggedRobot {
     } else {
       this.autos[selectedPath].schedule();
       this.drive.autoInit(autoPoints[selectedPath]);
-      System.out.println(Constants.paths[selectedPath]);
+      System.out.println(Constants.paths.get(selectedPath));
     }
   }
 

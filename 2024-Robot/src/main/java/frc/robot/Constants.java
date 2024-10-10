@@ -4,29 +4,35 @@
 
 package frc.robot;
 
+import java.io.File;
+import java.util.ArrayList;
+
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.tools.math.Vector;
 
 public final class Constants {
-  public static final String[] paths = new String[]{
-    "4 Far.polarauto",
-    "4 Far 123.polarauto",
-    "4 Far 231.polarauto",
-    "OP 5 Piece.polarauto",
-    "3 amp.polarauto",
-    "3 amp 231.polarauto",
-    "OP Center Auto.polarauto",
-  };
+  public static final ArrayList<String> paths = new ArrayList<String>();
 
   public static int getSelectedPathIndex(){
     String selectedAuto = OI.autoSendableChooser.getSelected();
-    for (int i = 0; i < paths.length; i++) {
-      if (selectedAuto.equals(paths[i])) {
+    for (int i = 0; i < paths.size(); i++) {
+      if (selectedAuto.equals(paths.get(i))) {
         return i;
       }
     }
     return -1;
+  }
+
+  public static void init(){
+    File[] autos = Filesystem.getDeployDirectory().listFiles();
+    for (File file : autos) {
+      if (file.getAbsolutePath().endsWith(".polarauto")){
+        paths.add(file.getName());
+      }
+      
+    }
   }
   
   public static void periodic(){
@@ -34,7 +40,7 @@ public final class Constants {
     if (index == -1){
       Logger.recordOutput("Selected Auto", "Do Nothing");
     } else {
-      Logger.recordOutput("Selected Auto", paths[index]);
+      Logger.recordOutput("Selected Auto", paths.get(index));
     }
   }
 

@@ -1552,6 +1552,7 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("deltax", deltaX);
     Logger.recordOutput("deltay", deltaY);
     Logger.recordOutput("deltaTheta", deltaTheta);
+    Logger.recordOutput("radius", radius);
     return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaTheta, 2)) < radius;
   }
   
