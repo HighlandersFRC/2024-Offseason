@@ -17,6 +17,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,6 +31,7 @@ import frc.robot.commands.AutoPositionalShoot;
 import frc.robot.commands.AutoShoot2;
 import frc.robot.commands.AutoSpinUp;
 import frc.robot.commands.AutomaticallyIntake;
+import frc.robot.commands.DipShot;
 import frc.robot.commands.DoNothing;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.DriveThetaAligned;
@@ -71,9 +73,10 @@ public class Robot extends LoggedRobot {
       put("Intake", () -> new RunIntake(intake, feeder, 0.6));
       put("Outtake", () -> new ReverseFeeder(intake, feeder, shooter));
       put("Auto Shoot", () -> new AutoPositionalShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
-      put("Track Target", () -> new AutoNonThetaShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
-      put("Preset Shot 1", () -> new PresetShoot(intake, shooter, feeder, 6000, 3000, -45));
-      put("Preset Shot 2", () -> new PresetShoot(intake, shooter, feeder, 6000, 3000, -55));
+      put("Track Target", () -> new AutoNonThetaShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, -5, false));
+      put("Track Target 2", () -> new AutoNonThetaShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, 6, false));
+      put("Preset Shot 1", () -> new PresetShoot(drive, intake, shooter, feeder, 6000, 3000, -45));
+      put("Preset Shot 2", () -> new PresetShoot(drive, intake, shooter, feeder, 6000, 3000, -55));
       put("Spin Up", () -> new AutoSpinUp(drive, shooter, peripherals, lights, 1200, 26, 7000, false));
       put("Intake 2nd", () -> new IntakeSecondNote(intake, 0.4));
       put("Shoot 2", () -> new AutoShoot2(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
@@ -84,22 +87,26 @@ public class Robot extends LoggedRobot {
       put("Note in Robot", () -> !intake.getBeamBreak());
     }
   };
-  // private Logger logger = Logger.getInstance();
+  private Logger logger = Logger.getInstance();
 
   private double shooterAngleDegreesTuning = 0;
   private double shooterRPMTuning = 0;
   private double startTime = Timer.getFPGATimestamp();
   private boolean checkedCAN = false;
 
-  File[] autoFiles = new File[Constants.paths.length];
-  Command[] autos = new Command[Constants.paths.length];
-  JSONObject[] autoJSONs = new JSONObject[Constants.paths.length];
-  JSONArray[] autoPoints = new JSONArray[Constants.paths.length];
+  File[] autoFiles;
+  Command[] autos;
+  JSONObject[] autoJSONs;
+  JSONArray[] autoPoints;
+  SendableChooser<String> fieldSideChooser = new SendableChooser<String>();
 
-  String fieldSide = "blue";
+  String fieldSide = "red";
 
   @Override
   public void robotInit() {
+    fieldSideChooser.setDefaultOption("red", "red");
+    fieldSideChooser.addOption("blue", "blue");
+    SmartDashboard.putData("Field Side", fieldSideChooser);;
     SmartDashboard.putNumber("Shooter Angle Degrees (tuning)", 0);
     SmartDashboard.putNumber("Shooter RPM (input)", 0);
     // System.out.println("Starting");
@@ -110,7 +117,7 @@ public class Robot extends LoggedRobot {
     // Logger.disableDeterministicTimestamps(); // See "Deterministic Timestamps" in the "Understanding Data Flow" page
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
     // System.out.println("Started Logger");
-    this.fieldSide = "blue";
+    this.fieldSide = "red";
 
 
     lights.init(fieldSide);
@@ -148,20 +155,25 @@ public class Robot extends LoggedRobot {
     lights.clearAnimations();
     lights.setCommandRunning(true);
     lights.setRGBFade();
-
-    for (int i = 0; i < Constants.paths.length; i++){
+    Constants.init();
+    OI.init();
+    autoFiles = new File[Constants.paths.size()];
+    autos = new Command[Constants.paths.size()];
+    autoJSONs = new JSONObject[Constants.paths.size()];
+    autoPoints = new JSONArray[Constants.paths.size()];
+    for (int i = 0; i < Constants.paths.size(); i++){
       try {
-        autoFiles[i] = new File(Filesystem.getDeployDirectory().getPath() + "/" + Constants.paths[i]);
+        autoFiles[i] = new File(Filesystem.getDeployDirectory().getPath() + "/" + Constants.paths.get(i));
         FileReader scanner = new FileReader(autoFiles[i]);
         autoJSONs[i] = new JSONObject(new JSONTokener(scanner));
         autoPoints[i] = (JSONArray) autoJSONs[i].getJSONArray("paths").getJSONObject(0).getJSONArray("sampled_points");
         autos[i] = new PolarAutoFollower(autoJSONs[i], drive, lights, peripherals, commandMap, conditionMap);
       } catch (Exception e) {
-        System.out.println("ERROR LOADING PATH "+Constants.paths[i]+":" + e);
+        System.out.println("ERROR LOADING PATH "+Constants.paths.get(i)+":" + e);
       }
     }
-    OI.init();
     System.out.println("end robot init");
+
   }
  
   @Override
@@ -196,6 +208,7 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput("IMU", peripherals.getPigeonAngle());
     Logger.recordOutput("Left Shooter Speed", shooter.getLeftShooterRPM());
     Logger.recordOutput("Right Shooter Speed", shooter.getRightShooterRPM());
+
     
     Constants.periodic();
     lights.periodic();
@@ -204,7 +217,7 @@ public class Robot extends LoggedRobot {
 
     // drive.periodic(); // remove for competition
     peripherals.periodic();
-    
+    fieldSide = fieldSideChooser.getSelected();
     // System.out.println("0-1: " + (t1 - t0));
 
     // SmartDashboard.putNumber("Carriage Rotation", climber.getCarriageRotationDegrees());
@@ -224,7 +237,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    if (OI.isBlueSide()) {
+    if (fieldSide == "blue") {
       System.out.println("ON BLUE SIDE");
       fieldSide = "blue";
     } else {
@@ -241,7 +254,7 @@ public class Robot extends LoggedRobot {
     } else {
       this.autos[selectedPath].schedule();
       this.drive.autoInit(autoPoints[selectedPath]);
-      System.out.println(Constants.paths[selectedPath]);
+      System.out.println(Constants.paths.get(selectedPath));
     }
   }
 
@@ -270,20 +283,18 @@ public class Robot extends LoggedRobot {
     this.peripherals.setFieldSide(fieldSide);
     this.drive.setFieldSide(fieldSide);
 
-    //CONTROLS
-    double[] lookupTable = {shooterRPMTuning, shooterRPMTuning/2, shooterAngleDegreesTuning};
     //Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     // OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverRT.whileTrue(new RunIntake(intake, feeder, 0.6));
-    // OI.driverA.whileTrue(new PresetShoot(shooter, feeder, lookupTable));
+    // OI.driverA.whileTrue(new PresetShoot(drive, intake, shooter, feeder, shooterRPMTuning, shooterRPMTuning/2, shooterAngleDegreesTuning));
     // OI.driverA.whileTrue(new AlignedPresetShoot(shooter, feeder, drive, peripherals,
     // Constants.SetPoints.SHOOTER_PODIUM_PRESET));
     OI.driverA.whileTrue(new AutoPositionalShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
-    OI.driverB.onTrue(new Amp(shooter, drive, peripherals));
+    OI.driverB.whileTrue(new Amp(shooter, drive, peripherals));
     OI.driverLT.whileTrue(new ReverseFeeder(intake, feeder, shooter));
-    OI.driverY.whileTrue(new AutoNonThetaShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
-    OI.driverX.whileTrue(new PresetShoot(intake, shooter, feeder, 6000, 3000, -45));
+    OI.driverPOVDown.whileTrue(new DipShot(drive, intake, shooter, feeder, 3500, 1750, -70));
+    OI.driverPOVRight.whileTrue(new PresetShoot(drive, intake, shooter, feeder, 5000, 2500, -30));
   }
 
   @Override

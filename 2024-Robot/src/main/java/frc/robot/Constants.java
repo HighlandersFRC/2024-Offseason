@@ -4,29 +4,35 @@
 
 package frc.robot;
 
+import java.io.File;
+import java.util.ArrayList;
+
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.tools.math.Vector;
 
 public final class Constants {
-  public static final String[] paths = new String[]{
-    "4 Far.polarauto",
-    "4 Far 123.polarauto",
-    "4 Far 231.polarauto",
-    "OP 5 Piece.polarauto",
-    "3 amp.polarauto",
-    "3 amp 231.polarauto",
-    "OP Center Auto.polarauto",
-  };
+  public static final ArrayList<String> paths = new ArrayList<String>();
 
   public static int getSelectedPathIndex(){
     String selectedAuto = OI.autoSendableChooser.getSelected();
-    for (int i = 0; i < paths.length; i++) {
-      if (selectedAuto.equals(paths[i])) {
+    for (int i = 0; i < paths.size(); i++) {
+      if (selectedAuto.equals(paths.get(i))) {
         return i;
       }
     }
     return -1;
+  }
+
+  public static void init(){
+    File[] autos = Filesystem.getDeployDirectory().listFiles();
+    for (File file : autos) {
+      if (file.getAbsolutePath().endsWith(".polarauto")){
+        paths.add(file.getName());
+      }
+      
+    }
   }
   
   public static void periodic(){
@@ -34,7 +40,7 @@ public final class Constants {
     if (index == -1){
       Logger.recordOutput("Selected Auto", "Do Nothing");
     } else {
-      Logger.recordOutput("Selected Auto", paths[index]);
+      Logger.recordOutput("Selected Auto", paths.get(index));
     }
   }
 
@@ -103,7 +109,7 @@ public final class Constants {
   public static final class SetPoints {
     //drive
     //how far forward to look when the linear radius and the angular radius equal their constants
-    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.08;
+    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.14;
     public static final double AUTONOMOUS_END_ACCURACY = 0.10;
     public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1.0;
     public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
@@ -131,7 +137,7 @@ public final class Constants {
     //shooter
     public static final double SHOOTER_MAX_DEG = 180.0;
     public static final double SHOOTER_MIN_DEG = -70.0;
-    public static final double SHOOTER_AMP_ANGLE_PRESET_DEG = 55.0;
+    public static final double SHOOTER_AMP_ANGLE_PRESET_DEG = 52.0;
     public static final double SHOOTER_CENTER_OFFSET_DEG = -90.0;
     public static final double SHOOTER_CENTER_OFFSET_ROT = degreesToRotations(SHOOTER_CENTER_OFFSET_DEG);
     public static final double SHOOTER_DOWN_ANGLE_ROT = -7.0/36.0;
@@ -187,28 +193,19 @@ public final class Constants {
     public static final double LIMELIGHT_ANGLE_OFFSET = 2.5;
     public static final double DISTANCE_OFFSET = 0.1;
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
-      { 1.16064, 20.51,  -15    ,3500 , 5, 2},
-      { 1.397  , 14.71,  -19    ,3600 , 4.5, 2},
-      { 1.5748 , 10.85,  -23    ,3700 , 4, 2},
-      { 1.72045, 8.70,   -27    ,3800 , 3.5, 2},
-      { 1.778  , 7.63,   -29    ,3900 , 3, 2},
-      { 1.8542 , 6.56,   -31    ,3940 , 2.5, 2},
-      { 2.0066 , 4.15,   -33    ,4000 , 2.5, 2},
-      { 2.159  , 1.75,   -35    ,4143 , 2.5, 2},
-      { 2.314  , 0.21,   -37    ,4270 , 2.25, 2},
-      { 2.464  , -1.58,  -39    ,4499 , 2.25, 2},
-      { 2.6132 , -2.60,  -42    ,4550 , 2.25, 2},
-      { 2.8702 , -4.34,  -45    ,4635 , 2, 2},
-      { 3.0226 , -5.08,  -48    ,4800 , 2, 2},
-      { 3.175  , -6.01,  -50    ,5100 , 2, 2},
-      { 3.429  , -7.49,  -52    ,5300 , 1.75, 2},
-      { 3.688  , -8.54,  -54    ,5500 , 1.75, 2},
-      { 3.937  , -9.45,  -56    ,5940 , 1.75, 2},
-      { 4.191  , -10.33, -57    ,6200 , 1.75, 2},
-      { 4.445  , -10.87, -58.4  ,6400 , 1.5, 2},
-      { 4.699  , -11.21, -58.7  ,6500 , 1.5, 2},
-      { 4.953  , -11.84, -60.55 ,6600 , 1.5, 2},
-      { 5.206  , -12.83, -63    ,6800 , 1.5, 2}
+      { 1.16064, 20.51,  -12    ,5500 , 5, 2},
+      { 1.4324 , 14.71,  -22    ,5500 , 4.5, 2},
+      { 1.7007 , 10.85,  -29    ,5500 , 4, 2},
+      { 1.9868 , 8.70,   -34    ,5500 , 3.5, 2},
+      { 2.1227 , 7.63,   -37    ,5500 , 3, 2},
+      { 2.4165 , 6.56,   -41    ,5500 , 2.5, 2},
+      { 2.6465 , 4.15,   -46    ,5500 , 2.5, 2},
+      { 2.9988 , 1.75,   -50    ,5500 , 2.5, 2},
+      { 3.5391 , 0.21,   -53    ,5500 , 2.25, 2},
+      { 3.8508 , -1.58,  -55    ,5500 , 2.25, 2},
+      { 4.3048 , -2.60,  -60    ,6500 , 2.25, 2},
+      { 4.9445 , -4.34,  -63    ,7500 , 2, 2},
+      { 5.4222 , -5.08,  -70    ,7500 , 2, 2},
     };
 
     // {distance(meters), hood angle(deg), RPM}

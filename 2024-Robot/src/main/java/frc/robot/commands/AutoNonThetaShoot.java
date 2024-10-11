@@ -78,8 +78,9 @@ public class AutoNonThetaShoot extends Command {
   private double targetAngle;
   private double angleX;
   private double angleY;
+  private double angleOffsetDeg;
 
-  public AutoNonThetaShoot(Intake intake, Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, boolean auto) {
+  public AutoNonThetaShoot(Intake intake, Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, double angleOffsetDeg, boolean auto) {
     this.intake = intake;
     this.drive = drive;
     this.shooter = shooter;
@@ -90,10 +91,11 @@ public class AutoNonThetaShoot extends Command {
     this.defaultShooterAngle = defaultShooterAngle;
     this.defaultFlywheelRPM = defaultFlywheelRPM;
     this.auto = auto;
+    this.angleOffsetDeg = angleOffsetDeg;
     addRequirements(this.intake, this.shooter, this.feeder, this.lights);
   }
 
-  public AutoNonThetaShoot(Intake intake, Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, double timeout, boolean auto) {
+  public AutoNonThetaShoot(Intake intake, Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, double angleOffsetDeg, double timeout, boolean auto) {
     this.intake = intake;
     this.drive = drive;
     this.shooter = shooter;
@@ -106,6 +108,7 @@ public class AutoNonThetaShoot extends Command {
     this.timeout = timeout;
     this.auto = auto;
     this.numTimesNoTrack = 0;
+    this.angleOffsetDeg = angleOffsetDeg;
     addRequirements(this.intake, this.shooter, this.feeder, this.lights);
   }
 
@@ -179,6 +182,7 @@ public class AutoNonThetaShoot extends Command {
     this.shooterDegrees = this.shooterValues[0];
     this.shooterRPM = this.shooterValues[1];
     this.shooterDegreesAllowedError = this.shooterValues[2];
+    shooterDegrees += angleOffsetDeg;
     // System.out.println("dist: " + distToSpeakerMeters);
     // System.out.println("x: " + x);
     // System.out.println("angle: " + angleToSpeakerDegrees);
@@ -229,9 +233,9 @@ public class AutoNonThetaShoot extends Command {
     //   lights.setCandleRGB(0, 255, 0);
       // System.out.println("Shooting");
       // this.feeder.setRPM(this.feederRPM);
-    // if(Timer.getFPGATimestamp() - startTime > 0.2) {
+    if(Timer.getFPGATimestamp() - startTime > 0.5) {
       this.feeder.setPercent(0.7);
-    // }
+    }
     //   this.hasShot = true;
     //   this.shotTime = Timer.getFPGATimestamp();
     // } else {

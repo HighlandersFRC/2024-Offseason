@@ -18,7 +18,7 @@ public class ReverseFeeder extends Command {
     this.intake = intake;
     this.feeder = feeder;
     this.shooter = shooter;
-    addRequirements(this.intake, this.feeder, this.shooter);
+    addRequirements(this.intake, this.feeder);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 

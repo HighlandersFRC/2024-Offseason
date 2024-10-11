@@ -15,7 +15,7 @@ import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
-public class PresetShoot extends Command {
+public class DipShot extends Command {
   Intake intake;
   Shooter shooter;
   Feeder feeder;
@@ -29,7 +29,7 @@ public class PresetShoot extends Command {
   boolean shot = false;
   Drive drive;
   /** Creates a new RunShooter. */
-  public PresetShoot(Drive drive, Intake intake, Shooter shooter, Feeder feeder, double left, double right, double angle /* input in RPM */  /* degrees, resting position is -70 */) {
+  public DipShot(Drive drive, Intake intake, Shooter shooter, Feeder feeder, double left, double right, double angle /* input in RPM */  /* degrees, resting position is -70 */) {
     this.intake = intake;
     this.shooter = shooter;
     this.feeder = feeder;
@@ -44,7 +44,7 @@ public class PresetShoot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.setPercent(0.7);
+    intake.setPercent(1);
     startTime = Timer.getFPGATimestamp();
     shot = false;
     shooter.alignedPreset = true;
@@ -67,8 +67,8 @@ public class PresetShoot extends Command {
     //   feeder.setPercent(0.5);
     //   intake.setPercent(0.4);
     // }
-    if((Math.abs(shooter.getLeftShooterRPM() - left)/left < 0.1 && Math.abs(shooter.getShooterAngle()-angle) < 1 && Math.abs(shooter.getRightShooterRPM() + right)/right < 0.1/*   && shooter.alignedPreset */) || Timer.getFPGATimestamp() - startTime > 2) {
-      feeder.setPercent(0.7);
+    if((Math.abs(shooter.getLeftShooterRPM() - left)/left < 0.1 && Math.abs(shooter.getShooterAngle()-angle) < 4 && Math.abs(shooter.getRightShooterRPM() + right)/right < 0.1/*   && shooter.alignedPreset */) || Timer.getFPGATimestamp() - startTime > 2) {
+      feeder.setPercent(1);
       shootTime = Timer.getFPGATimestamp();
       shot = true;
     }
