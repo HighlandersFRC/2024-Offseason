@@ -328,9 +328,11 @@ public class Drive extends SubsystemBase {
 
     // changing odometry if on red side, don't need to change y because it will be the same for autos on either side
     if(this.fieldSide == "blue") {
+      System.out.println("blue side init");
       firstPointX = Constants.Physical.FIELD_LENGTH - firstPointX;
       firstPointAngle = Math.PI - firstPointAngle;
     }
+    System.out.println("auto init ");
         
     peripherals.setPigeonAngle(Math.toDegrees(firstPointAngle));
     SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
