@@ -126,6 +126,9 @@ public class Robot extends LoggedRobot {
     drive.init(fieldSide);
     feeder.init();
     shooter.init();
+    
+    drive.setFieldSide(fieldSide);
+    peripherals.setFieldSide(fieldSide);
 
     PortForwarder.add(5800, "limelight.local", 5800);
     PortForwarder.add(5801, "limelight.local", 5801);
@@ -219,8 +222,6 @@ public class Robot extends LoggedRobot {
     // drive.periodic(); // remove for competition
     peripherals.periodic();
     fieldSide = fieldSideChooser.getSelected();
-    drive.setFieldSide(fieldSide);
-    peripherals.setFieldSide(fieldSide);
     // System.out.println("0-1: " + (t1 - t0));
 
     // SmartDashboard.putNumber("Carriage Rotation", climber.getCarriageRotationDegrees());
