@@ -241,7 +241,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    if (fieldSide == "blue") {
+    if (fieldSide.equals("blue")) {
       System.out.println("ON BLUE SIDE");
       fieldSide = "blue";
     } else {
