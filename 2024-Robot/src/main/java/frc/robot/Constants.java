@@ -930,10 +930,10 @@ public final class Constants {
   }
 
   public static double shooterMotorAngleToActualAngle(double degrees){
-    return -(degrees * (27.0 / 70.0));
+    return -(degrees / (27.0 / 70.0));
   }
 
   public static double actualShooterAngleToShooterMotorAngle(double degrees){
-    return -(degrees / (27.0 / 70.0));
+    return -(degrees * (27.0 / 70.0));
   }
 }

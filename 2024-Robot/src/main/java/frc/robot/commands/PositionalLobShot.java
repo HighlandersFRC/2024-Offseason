@@ -159,7 +159,7 @@ public class PositionalLobShot extends Command {
     // System.out.println("y: " + y);
     // System.out.println("angle: " + angleToSpeakerDegrees);
     // System.out.println("angle offset" + angleOffset);
-    // System.out.println("deg" + shooterDegrees);
+    System.out.println("deg" + shooterDegrees);
     // System.out.println("rpm" + shooterRPM);
 
     if (drive.getFieldSide() == "red"){
