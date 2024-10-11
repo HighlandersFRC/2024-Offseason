@@ -38,6 +38,7 @@ import frc.robot.commands.DriveThetaAligned;
 import frc.robot.commands.IntakeSecondNote;
 import frc.robot.commands.MoveToPiece;
 import frc.robot.commands.PolarAutoFollower;
+import frc.robot.commands.PositionalLobShot;
 import frc.robot.commands.PresetShoot;
 import frc.robot.commands.ReverseFeeder;
 import frc.robot.commands.RunIntake;
@@ -218,6 +219,8 @@ public class Robot extends LoggedRobot {
     // drive.periodic(); // remove for competition
     peripherals.periodic();
     fieldSide = fieldSideChooser.getSelected();
+    drive.setFieldSide(fieldSide);
+    peripherals.setFieldSide(fieldSide);
     // System.out.println("0-1: " + (t1 - t0));
 
     // SmartDashboard.putNumber("Carriage Rotation", climber.getCarriageRotationDegrees());
@@ -269,11 +272,11 @@ public class Robot extends LoggedRobot {
       m_autonomousCommand.cancel();
     }
 
-    if (OI.isBlueSide()) {
-      fieldSide = "blue";
-    } else {
-      fieldSide = "red";
-    }
+    // if (OI.isBlueSide()) {
+    //   fieldSide = "blue";
+    // } else {
+    //   fieldSide = "red";
+    // }
 
     if (this.fieldSide == "red"){
       this.drive.setPigeonAfterAuto();
@@ -295,6 +298,7 @@ public class Robot extends LoggedRobot {
     OI.driverLT.whileTrue(new ReverseFeeder(intake, feeder, shooter));
     OI.driverPOVDown.whileTrue(new DipShot(drive, intake, shooter, feeder, 3500, 1750, -70));
     OI.driverPOVRight.whileTrue(new PresetShoot(drive, intake, shooter, feeder, 5000, 2500, -30));
+    OI.driverPOVUp.whileTrue(new PositionalLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 5)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad
   }
 
   @Override
