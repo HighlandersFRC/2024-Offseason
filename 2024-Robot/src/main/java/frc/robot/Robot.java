@@ -17,6 +17,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -97,12 +98,15 @@ public class Robot extends LoggedRobot {
   Command[] autos;
   JSONObject[] autoJSONs;
   JSONArray[] autoPoints;
+  SendableChooser<String> fieldSideChooser = new SendableChooser<String>();
 
-  String fieldSide = "blue";
+  String fieldSide = "red";
 
   @Override
   public void robotInit() {
-    
+    fieldSideChooser.setDefaultOption("red", "red");
+    fieldSideChooser.addOption("blue", "blue");
+    SmartDashboard.putData("Field Side", fieldSideChooser);;
     SmartDashboard.putNumber("Shooter Angle Degrees (tuning)", 0);
     SmartDashboard.putNumber("Shooter RPM (input)", 0);
     // System.out.println("Starting");
@@ -113,7 +117,7 @@ public class Robot extends LoggedRobot {
     // Logger.disableDeterministicTimestamps(); // See "Deterministic Timestamps" in the "Understanding Data Flow" page
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
     // System.out.println("Started Logger");
-    this.fieldSide = "blue";
+    this.fieldSide = "red";
 
 
     lights.init(fieldSide);
@@ -169,6 +173,7 @@ public class Robot extends LoggedRobot {
       }
     }
     System.out.println("end robot init");
+
   }
  
   @Override
@@ -212,7 +217,7 @@ public class Robot extends LoggedRobot {
 
     // drive.periodic(); // remove for competition
     peripherals.periodic();
-    
+    fieldSide = fieldSideChooser.getSelected();
     // System.out.println("0-1: " + (t1 - t0));
 
     // SmartDashboard.putNumber("Carriage Rotation", climber.getCarriageRotationDegrees());
@@ -232,7 +237,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    if (OI.isBlueSide()) {
+    if (fieldSide == "blue") {
       System.out.println("ON BLUE SIDE");
       fieldSide = "blue";
     } else {

@@ -74,7 +74,7 @@ public class OI {
         for (String auto : Constants.paths){
             autoSendableChooser.addOption(auto, auto);
         }
-        SmartDashboard.putData(autoSendableChooser);
+        SmartDashboard.putData("Selected Auto", autoSendableChooser);
     }
 
     public static void printAutoChooserInputs(){
