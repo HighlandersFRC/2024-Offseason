@@ -43,8 +43,11 @@ import frc.robot.commands.PresetShoot;
 import frc.robot.commands.ReverseFeeder;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.RunShooter;
+import frc.robot.commands.SetClimberDown;
+import frc.robot.commands.SetClimberUp;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.sensors.Proximity;
+import frc.robot.subsystems.Climber;
 // import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
@@ -67,6 +70,7 @@ public class Robot extends LoggedRobot {
   private Intake intake = new Intake();
   private Feeder feeder = new Feeder();
   private Shooter shooter = new Shooter();
+  private Climber climber = new Climber();
   HashMap<String, Supplier<Command>> commandMap = new HashMap<String, Supplier<Command>>() {
     {
       put("Instant", () -> new InstantCommand());
@@ -297,6 +301,8 @@ public class Robot extends LoggedRobot {
     OI.driverA.whileTrue(new AutoPositionalShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
     OI.driverB.whileTrue(new Amp(shooter, drive, peripherals));
     OI.driverLT.whileTrue(new ReverseFeeder(intake, feeder, shooter));
+    OI.driverRB.onTrue(new SetClimberUp(climber));
+    OI.driverLB.onTrue(new SetClimberDown(climber));
     OI.driverPOVDown.whileTrue(new DipShot(drive, intake, shooter, feeder, 3500, 1750, -70));
     OI.driverPOVRight.whileTrue(new PresetShoot(drive, intake, shooter, feeder, 5000, 2500, -30));
     OI.driverPOVUp.whileTrue(new PositionalLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 5)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad

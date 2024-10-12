@@ -159,8 +159,10 @@ public class PositionalLobShot extends Command {
     // System.out.println("y: " + y);
     // System.out.println("angle: " + angleToSpeakerDegrees);
     // System.out.println("angle offset" + angleOffset);
-    System.out.println("deg" + shooterDegrees);
+    System.out.println("deg" + shooterDegrees + " setpiotn: " + this.shooter.getShooterAngle());
     // System.out.println("rpm" + shooterRPM);
+    System.out.println(Math.abs(-this.shooter.getRightShooterRPM() - this.shooterRPM/4) <= this.shooterRPMAllowedError);
+    System.out.println(Math.abs(this.shooter.getLeftShooterRPM() - this.shooterRPM) <= this.shooterRPMAllowedError);
 
     if (drive.getFieldSide() == "red"){
       targetAngle = angleToSpeakerDegrees + 180 - angleOffset;
