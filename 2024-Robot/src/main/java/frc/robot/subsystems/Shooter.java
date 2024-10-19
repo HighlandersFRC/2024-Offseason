@@ -47,6 +47,11 @@ public class Shooter extends SubsystemBase {
     this.flywheelConfiguration.Slot0.kS = 0;
     this.flywheelConfiguration.Slot0.kV = 0.2;
     
+    // this.flywheelConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+    // this.flywheelConfiguration.CurrentLimits.SupplyCurrentThreshold = 100;
+    // this.flywheelConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    // this.flywheelConfiguration.CurrentLimits.StatorCurrentLimit = 100;
+    
     // this.angleConfiguration.Feedback.SensorToMechanismRatio = Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO;
     this.angleConfiguration.Slot0.kP = 1.7;
     this.angleConfiguration.Slot0.kI = 0.00;

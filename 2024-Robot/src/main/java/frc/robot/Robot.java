@@ -36,8 +36,10 @@ import frc.robot.commands.DoNothing;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.DriveThetaAligned;
 import frc.robot.commands.IntakeSecondNote;
+import frc.robot.commands.LobShot;
 import frc.robot.commands.MoveToPiece;
 import frc.robot.commands.PolarAutoFollower;
+import frc.robot.commands.PositionalFeederLobShot;
 import frc.robot.commands.PositionalLobShot;
 import frc.robot.commands.PresetShoot;
 import frc.robot.commands.ReverseFeeder;
@@ -227,7 +229,7 @@ public class Robot extends LoggedRobot {
     peripherals.periodic();
     fieldSide = fieldSideChooser.getSelected();
     // System.out.println("0-1: " + (t1 - t0));
-
+    Logger.recordOutput("FieldSide In Code", drive.getFieldSide());
     // SmartDashboard.putNumber("Carriage Rotation", climber.getCarriageRotationDegrees());
   }
 
@@ -276,6 +278,9 @@ public class Robot extends LoggedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    
+    // climber.setDownServoAngle(10.0);
+    // climber.setUpServoAngle(65.0);
 
     // if (OI.isBlueSide()) {
     //   fieldSide = "blue";
@@ -296,16 +301,19 @@ public class Robot extends LoggedRobot {
     // OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverRT.whileTrue(new RunIntake(intake, feeder, 0.6));
     // OI.driverA.whileTrue(new PresetShoot(drive, intake, shooter, feeder, shooterRPMTuning, shooterRPMTuning/2, shooterAngleDegreesTuning));
-    // OI.driverA.whileTrue(new AlignedPresetShoot(shooter, feeder, drive, peripherals,
-    // Constants.SetPoints.SHOOTER_PODIUM_PRESET));
+    OI.driverB.whileTrue(new AlignedPresetShoot(intake, shooter, feeder, drive, peripherals, Constants.SetPoints.SHOOTER_PODIUM_PRESET));
+    OI.driverY.whileTrue(new PositionalFeederLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 5));
     OI.driverA.whileTrue(new AutoPositionalShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
-    OI.driverB.whileTrue(new Amp(shooter, drive, peripherals));
+    OI.driverX.whileTrue(new Amp(shooter, drive, peripherals));
     OI.driverLT.whileTrue(new ReverseFeeder(intake, feeder, shooter));
-    OI.driverRB.onTrue(new SetClimberUp(climber));
-    OI.driverLB.onTrue(new SetClimberDown(climber));
+    OI.driverRB.whileTrue(new SetClimberUp(climber));
+    OI.driverLB.whileTrue(new SetClimberDown(climber));
     OI.driverPOVDown.whileTrue(new DipShot(drive, intake, shooter, feeder, 3500, 1750, -70));
     OI.driverPOVRight.whileTrue(new PresetShoot(drive, intake, shooter, feeder, 5000, 2500, -30));
-    OI.driverPOVUp.whileTrue(new PositionalLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 5)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad
+    // OI.driverPOVLeft.whileTrue(new PositionalLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 5));
+    OI.driverMenuButton.whileTrue(new AngleShooter(shooter, Constants.SetPoints.SHOOTER_AMP_ANGLE_PRESET_DEG));
+    // OI.driverPOVLeft.whileTrue(new PresetShoot(drive, intake, shooter, feeder, 3700, 3700, -30));
+    OI.driverPOVUp.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, -30, 3700, 1200, 0, 210, 150, 5));
   }
 
   @Override

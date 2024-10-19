@@ -1525,6 +1525,7 @@ public class Drive extends SubsystemBase {
     double finalX = xVelNoFF + feedForwardX;
     double finalY = yVelNoFF + feedForwardY;
     double finalTheta = thetaVelNoFF + feedForwardTheta;
+    System.out.println("Pure Persuit :" + fieldSide);
     if (fieldSide == "blue") {
       finalX = -finalX;
       finalTheta = -finalTheta;

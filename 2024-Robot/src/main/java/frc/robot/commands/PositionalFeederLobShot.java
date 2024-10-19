@@ -154,7 +154,8 @@ public class PositionalFeederLobShot extends Command {
     this.shooterDegrees = this.shooterValues[0];
     this.shooterDegrees = Constants.actualShooterAngleToShooterMotorAngle(shooterDegrees);
     this.shooterRPM = this.shooterValues[1];
-    this.angleOffset = Constants.SetPoints.getRobotAngleOffset(shooterRPM);
+    // this.angleOffset = Constants.SetPoints.getRobotAngleOffset(shooterRPM);
+    this.angleOffset = 0.0;
     
     // System.out.println("dist: " + distToSpeakerMeters);
     // System.out.println("y: " + y);
@@ -188,14 +189,14 @@ public class PositionalFeederLobShot extends Command {
       this.numTimesHitSetPoint = 0;
     }
 
-    if (this.numTimesHitSetPoint >= 2 && Math.abs(this.shooter.getLeftShooterRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(-this.shooter.getRightShooterRPM() - this.shooterRPM/4) <= this.shooterRPMAllowedError){
+    if (this.numTimesHitSetPoint >= 2 && Math.abs(this.shooter.getLeftShooterRPM() - (this.shooterRPM/2)) <= this.shooterRPMAllowedError && Math.abs(-this.shooter.getRightShooterRPM() - (this.shooterRPM/2)) <= this.shooterRPMAllowedError){
       this.hasReachedSetPoint = true;
       this.reachedSetPointTime = Timer.getFPGATimestamp();
       turnResult = 0;
     }
 
     this.drive.driveAutoAligned(turnResult);
-    this.shooter.setShooterRPM(this.shooterRPM, this.shooterRPM/4);
+    this.shooter.setShooterRPM(this.shooterRPM/2, this.shooterRPM/2);
     this.shooter.setShooterAngle(this.shooterDegrees);
     
     if (this.hasReachedSetPoint == true){
