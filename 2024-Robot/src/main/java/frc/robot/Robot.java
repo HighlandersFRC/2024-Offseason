@@ -36,8 +36,10 @@ import frc.robot.commands.DoNothing;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.DriveThetaAligned;
 import frc.robot.commands.IntakeSecondNote;
+import frc.robot.commands.LobShot;
 import frc.robot.commands.MoveToPiece;
 import frc.robot.commands.PolarAutoFollower;
+import frc.robot.commands.PositionalFeederLobShot;
 import frc.robot.commands.PositionalLobShot;
 import frc.robot.commands.PresetShoot;
 import frc.robot.commands.ReverseFeeder;
@@ -227,7 +229,7 @@ public class Robot extends LoggedRobot {
     peripherals.periodic();
     fieldSide = fieldSideChooser.getSelected();
     // System.out.println("0-1: " + (t1 - t0));
-
+    Logger.recordOutput("FieldSide In Code", drive.getFieldSide());
     // SmartDashboard.putNumber("Carriage Rotation", climber.getCarriageRotationDegrees());
   }
 
@@ -277,6 +279,9 @@ public class Robot extends LoggedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    
+    // climber.setDownServoAngle(10.0);
+    // climber.setUpServoAngle(65.0);
 
     // if (OI.isBlueSide()) {
     //   fieldSide = "blue";

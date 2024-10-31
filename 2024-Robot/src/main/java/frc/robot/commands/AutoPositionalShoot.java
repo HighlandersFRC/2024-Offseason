@@ -138,12 +138,12 @@ public class AutoPositionalShoot extends Command {
     this.targetPigeonAngleDegrees = this.peripherals.getPigeonAngle() - this.peripherals.getFrontCamTargetTx();
 
     if (drive.getFieldSide() == "red"){
-      // System.out.println("-----------red------");
+      System.out.println("-----------red------");
       x = Constants.Physical.FIELD_LENGTH;
       angleX = x - (Constants.Physical.SPEAKER_DEPTH / 2);
       angleY = Constants.Physical.SPEAKER_Y;
     } else {
-      // System.out.println("-----------blue------");
+      System.out.println("-----------blue------");
       x = Constants.Physical.SPEAKER_X;
       angleX = x + (Constants.Physical.SPEAKER_DEPTH / 2);
       angleY = Constants.Physical.SPEAKER_Y;
@@ -229,7 +229,7 @@ public class AutoPositionalShoot extends Command {
       lights.setCandleRGB(0, 255, 0);
       // System.out.println("Shooting");
       // this.feeder.setRPM(this.feederRPM);
-      this.feeder.setPercent(0.7);
+      this.feeder.setPercent(1.0);
       this.intake.setPercent(0.7);
       this.hasShot = true;
       this.shotTime = Timer.getFPGATimestamp();

@@ -6,12 +6,15 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.defaults.ClimberDefault;
 
 public class Climber extends SubsystemBase {
-  Servo upServo = new Servo(0);
-  Servo downServo = new Servo(1);
+  Servo upServo = new Servo(2);
+  Servo downServo = new Servo(3);
   /** Creates a new Climber. */
-  public Climber() {}
+  public Climber() {
+    setDefaultCommand(new ClimberDefault(this));
+  }
 
   public double getUpServoAngle(){
     return upServo.getAngle();
@@ -31,8 +34,6 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // System.out.println("1: " + getUpServoAngle());
-    // System.out.println("2: " + getDownServoAngle());
     // This method will be called once per scheduler run
   }
 }

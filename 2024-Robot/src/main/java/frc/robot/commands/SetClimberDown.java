@@ -23,7 +23,7 @@ public class SetClimberDown extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climber.setDownServoAngle(90);
+    climber.setDownServoAngle(30);
   }
 
   // Called once the command ends or is interrupted.
@@ -33,6 +33,7 @@ public class SetClimberDown extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+  
     return false;
   }
 }

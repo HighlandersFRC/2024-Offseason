@@ -2,17 +2,17 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.defaults;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Climber;
 
-public class SetClimberUp extends Command {
-  Climber climber;
-  /** Creates a new SetClimberUp. */
-  public SetClimberUp(Climber climber) {
+public class ClimberDefault extends Command {
+  /** Creates a new ClimberDefault. */
+Climber climber;
+public ClimberDefault(Climber climber) {
     this.climber = climber;
-    addRequirements(climber);
+    addRequirements(this.climber);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -23,7 +23,8 @@ public class SetClimberUp extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climber.setUpServoAngle(103);
+    climber.setDownServoAngle(10.0);
+    climber.setUpServoAngle(65.0);
   }
 
   // Called once the command ends or is interrupted.
