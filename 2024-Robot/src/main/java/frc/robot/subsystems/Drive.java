@@ -198,6 +198,7 @@ public class Drive extends SubsystemBase {
 
   private Boolean useCameraInOdometry = true;
   private double timeSinceLastCameraMeasurement = 0;
+  private double autoStartTime = 0;
   
   /**
    * Creates a new instance of the Swerve Drive subsystem.
@@ -319,6 +320,7 @@ public class Drive extends SubsystemBase {
    * @param pathPoints The array of path points representing the trajectory for the autonomous routine.
   */
   public void autoInit(JSONArray pathPoints){
+    autoStartTime = Timer.getFPGATimestamp();
     // runs at start of autonomous
     // System.out.println("Auto init");
     JSONObject firstPoint = pathPoints.getJSONObject(0);
@@ -355,6 +357,10 @@ public class Drive extends SubsystemBase {
     initTime = Timer.getFPGATimestamp();
 
     updateOdometryFusedArray();
+  }
+
+  public void teleopInit(){
+    autoStartTime = -5.0;
   }
 
   /**
@@ -424,7 +430,7 @@ public class Drive extends SubsystemBase {
     JSONArray cameraCoordinatesRight = peripherals.getRightCamBasedPosition();
 
     double cameraBasedX = 0;
-    double cameraBasedY = 0;
+    double cameraBasedY   = 0;
 
     SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
     swerveModulePositions[0] = new SwerveModulePosition(frontLeft.getModuleDistance(), new Rotation2d(frontLeft.getCanCoderPositionRadians()));
@@ -461,8 +467,9 @@ public class Drive extends SubsystemBase {
     // LimelightHelpers.PoseEstimate mt2Left = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-left");
     // LimelightHelpers.SetRobotOrientation("limelight-right", robotAngle, 0, 0, 0, 0, 0);
     // LimelightHelpers.PoseEstimate mt2Right = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-right");
-    if(Math.abs(peripherals.getPigeonAngularVelocity()) < 40) {
+    if(Math.abs(peripherals.getPigeonAngularVelocity()) < 40 && Timer.getFPGATimestamp() - autoStartTime > 0.1) {
       if (mt2Front.tagCount != 0 && isPoseInField(mt2Front.pose)){
+        Logger.recordOutput("Limelight Pose", mt2Front.pose);
         mt2Odometry.addVisionMeasurement(
         mt2Front.pose,
         mt2Front.timestampSeconds);

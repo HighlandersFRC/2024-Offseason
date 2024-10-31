@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.OI;
 // import frc.robot.sensors.TOF;
+import frc.robot.commands.defaults.LightsDefault;
 
 public class Lights extends SubsystemBase {
   /** Creates a new Lights. */
@@ -71,37 +72,38 @@ public class Lights extends SubsystemBase {
    * @param b The blue component value (0-255).
   */
   public void setCandleRGB(int r, int g, int b) { // sets the RGB values of the lights
-    candle.setLEDs(r, g, b);
+    // candle.setLEDs(r, g, b);
+    candle.setLEDs(r, g, b, 0, 0, 100);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if(!commandRunning) { // only makes lights red/blue if a command is not trying to change light colors
-      if(!OI.autoChooserConnected()) {
-        fieldSide = "none";
-      } else if (OI.isBlueSide()) {
-        fieldSide = "blue";
-      } else {
-        fieldSide = "red";
-      }
+    // if(!commandRunning) { // only makes lights red/blue if a command is not trying to change light colors
+    //   if(!OI.autoChooserConnected()) {
+    //     fieldSide = "none";
+    //   } else if (OI.isBlueSide()) {
+    //     fieldSide = "blue";
+    //   } else {
+    //     fieldSide = "red";
+    //   }
 
-      if (fieldSide == "red") { // sets lights to color of alliance
-        candle.setLEDs(255, 0, 0);
-      } else if (fieldSide == "blue") {
-        candle.setLEDs(0, 0, 255);
-      } else if(fieldSide == "none") {
-        candle.setLEDs(255, 255, 0);
-      } else {
-        candle.setLEDs(255, 255, 255);
-      }
-    } else if (timedFlashes) { // allows lights to flash for a certain period of time before returning to default colors
-      if(Timer.getFPGATimestamp() - time > timeout) {
-        timedFlashes = false;
-        candle.clearAnimation(0);
-        setCommandRunning(false);
-      }
-    }
+    //   if (fieldSide == "red") { // sets lights to color of alliance
+    //     candle.setLEDs(255, 0, 0);
+    //   } else if (fieldSide == "blue") {
+    //     candle.setLEDs(0, 0, 255);
+    //   } else if(fieldSide == "none") {
+    //     candle.setLEDs(255, 255, 0);
+    //   } else {
+    //     candle.setLEDs(255, 255, 255);
+    //   }
+    // } else if (timedFlashes) { // allows lights to flash for a certain period of time before returning to default colors
+    //   if(Timer.getFPGATimestamp() - time > timeout) {
+    //     timedFlashes = false;
+    //     candle.clearAnimation(0);
+    //     setCommandRunning(false);
+    //   }
+    // }
   }
   /**
    * Sets the flag indicating whether timed flashes are enabled or disabled.
@@ -171,5 +173,6 @@ public class Lights extends SubsystemBase {
   public void init(String fieldSide){
     this.fieldSide = fieldSide;
     candle.clearAnimation(0);
+    setDefaultCommand(new LightsDefault(this));
   }
 }

@@ -1,7 +1,9 @@
 package frc.robot.commands.defaults;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.OI;
 import frc.robot.subsystems.Drive;
+import frc.robot.tools.math.Vector;
 
 public class DriveDefault extends Command {
   Drive drive;
@@ -15,7 +17,15 @@ public class DriveDefault extends Command {
 
   @Override
   public void execute() {
-    drive.teleopDrive();
+    if (OI.getDriverRTPercent() > 0.3 && OI.getDriverLTPercent() > 0.3 ){
+      drive.teleopDrive();
+    } else {
+      Vector velocityVector = new Vector();
+    velocityVector.setI(0);
+    velocityVector.setJ(0);
+    double desiredThetaChange = 0.0;
+    drive.autoDrive(velocityVector, desiredThetaChange);
+    }
   }
 
   @Override
