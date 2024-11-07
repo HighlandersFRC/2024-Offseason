@@ -300,18 +300,25 @@ public class Robot extends LoggedRobot {
     //Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     // // OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
-    // OI.driverRT.whileTrue(new RunIntake(intake, feeder, 0.6));
-    // // OI.driverA.whileTrue(new PresetShoot(drive, intake, shooter, feeder, shooterRPMTuning, shooterRPMTuning/2, shooterAngleDegreesTuning));
+    OI.driverRT.whileTrue(new RunIntake(intake, feeder, 0.6));
+    OI.driverA.whileTrue(new PresetShoot(drive, intake, shooter, feeder, 5000, 2500, -70));
+    OI.driverX.whileTrue(new PresetShoot(drive, intake, shooter, feeder, 4500, 2250, -60));
+    OI.driverY.whileTrue(new PresetShoot(drive, intake, shooter, feeder, 5000, 2500, -45));
     // // OI.driverA.whileTrue(new AlignedPresetShoot(shooter, feeder, drive, peripherals,
     // // Constants.SetPoints.SHOOTER_PODIUM_PRESET));
     // OI.driverA.whileTrue(new AutoPositionalShoot(intake, drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
-    // OI.driverB.whileTrue(new Amp(shooter, drive, peripherals));
-    // OI.driverLT.whileTrue(new ReverseFeeder(intake, feeder, shooter));
+    OI.driverB.whileTrue(new Amp(shooter, drive, peripherals));
+    OI.driverLT.whileTrue(new ReverseFeeder(intake, feeder, shooter));
     // OI.driverRB.onTrue(new SetClimberUp(climber));
     // OI.driverLB.onTrue(new SetClimberDown(climber));
     // OI.driverPOVDown.whileTrue(new DipShot(drive, intake, shooter, feeder, 3500, 1750, -70));
     // OI.driverPOVRight.whileTrue(new PresetShoot(drive, intake, shooter, feeder, 5000, 2500, -30));
     // OI.driverPOVUp.whileTrue(new PositionalLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 5)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad
+  
+    OI.driverPOVRight.whileTrue(new PresetShoot(drive, intake, shooter, feeder, 5000, 2500, -30));
+    OI.driverPOVDown.whileTrue(new PresetShoot(drive, intake, shooter, feeder, 5000, 2500, -20));
+    OI.driverPOVLeft.whileTrue(new PresetShoot(drive, intake, shooter, feeder, 5500, 2750, 90));
+    OI.driverPOVUp.whileTrue(new PresetShoot(drive, intake, shooter, feeder, 5000, 2500, 45));
   }
 
   @Override

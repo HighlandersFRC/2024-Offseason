@@ -17,15 +17,7 @@ public class DriveDefault extends Command {
 
   @Override
   public void execute() {
-    if (OI.getDriverRTPercent() > 0.3 && OI.getDriverLTPercent() > 0.3 ){
       drive.teleopDrive();
-    } else {
-      Vector velocityVector = new Vector();
-    velocityVector.setI(0);
-    velocityVector.setJ(0);
-    double desiredThetaChange = 0.0;
-    drive.autoDrive(velocityVector, desiredThetaChange);
-    }
   }
 
   @Override
