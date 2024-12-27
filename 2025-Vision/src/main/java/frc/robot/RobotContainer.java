@@ -4,51 +4,119 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.ExampleSubsystem;
+import java.io.File;
+import java.io.FileReader;
+import java.util.HashMap;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.DoNothing;
+import frc.robot.commands.PolarAutoFollower;
+import frc.robot.commands.SetRobotState;
+import frc.robot.commands.ZeroAngleMidMatch;
+import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Lights;
+import frc.robot.subsystems.Peripherals;
+import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Superstructure.SuperState;
+
+// import edu.wpi.first.wpilibj2.command.Command;
+// import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+// import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  // Subsystems
+  Peripherals peripherals = new Peripherals();
+  Drive drive = new Drive(peripherals);
+  Lights lights = new Lights();
+  Superstructure superstructure = new Superstructure(drive, peripherals);
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  HashMap<String, Supplier<Command>> commandMap = new HashMap<String, Supplier<Command>>() {
+    {
+      put("Instant", () -> new InstantCommand());
+    }
+  };
+
+  File[] autoFiles = new File[Constants.Autonomous.paths.length];
+  Command[] autos = new Command[Constants.Autonomous.paths.length];
+  JSONObject[] autoJSONs = new JSONObject[Constants.Autonomous.paths.length];
+  JSONArray[] autoPoints = new JSONArray[Constants.Autonomous.paths.length];
+
+  HashMap<String, BooleanSupplier> conditionMap = new HashMap<String, BooleanSupplier>() {
+    {
+    }
+  };
+
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+    // Load the Path Files
+    for (int i = 0; i < Constants.Autonomous.paths.length; i++) {
+      try {
+        autoFiles[i] = new File(Filesystem.getDeployDirectory().getPath() + "/" + Constants.Autonomous.paths[i]);
+        FileReader scanner = new FileReader(autoFiles[i]);
+        autoJSONs[i] = new JSONObject(new JSONTokener(scanner));
+        autoPoints[i] = (JSONArray) autoJSONs[i].getJSONArray("paths").getJSONObject(0).getJSONArray("sampled_points");
+        autos[i] = new PolarAutoFollower(autoJSONs[i], drive, lights, peripherals, commandMap, conditionMap);
+      } catch (Exception e) {
+        System.out.println("ERROR LOADING PATH " + Constants.Autonomous.paths[i] + ":" + e);
+      }
+    }
   }
 
   /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
+   * Use this method to define your trigger->command mappings. Triggers can be
+   * created via the
+   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
+   * an arbitrary
    * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
+   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
+   * {@link
+   * CommandXboxController
+   * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
+   * PS4} controllers or
+   * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
+    // new Trigger(m_exampleSubsystem::exampleCondition)
+    // .onTrue(new ExampleCommand(m_exampleSubsystem));
 
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
+    // Schedule `exampleMethodCommand` when the Xbox controller's B button is
+    // pressed,
     // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    // m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+
+    // COMPETITION CONTROLS
+    // Driver
+
+    OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
   }
 
   /**
@@ -57,7 +125,14 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    final int selectedPath = Constants.Autonomous.getSelectedPathIndex();
+    if (selectedPath == -1) {
+      System.out.println("Do Nothing");
+      return new DoNothing();
+    } else {
+      this.drive.autoInit(autoPoints[selectedPath]);
+      System.out.println(Constants.Autonomous.paths[selectedPath]);
+      return this.autos[selectedPath];
+    }
   }
 }
