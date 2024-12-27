@@ -163,12 +163,22 @@ public class Peripherals extends SubsystemBase {
     return pitch;
   }
 
-  public Pose2d getRobotPoseViaTrig(PhotonTrackedTarget trackedTarget) {
-    double pitch = trackedTarget.getPitch();
-    double yaw = trackedTarget.getYaw();
-    int id = trackedTarget.getFiducialId();
-    double cameraPitch = 0;
-    double cameraHeight = Constants.inchesToMeters(30.68);
+  public Pose2d getRobotPoseViaTrig() {
+    // double pitch = trackedTarget.getPitch();
+    // double yaw = trackedTarget.getYaw();
+    // int id = trackedTarget.getFiducialId();
+
+    int id = 3;
+    double robotYaw = 180;
+    double cameraYaw = 0.0;
+    double cameraYOffset = -0.239;
+    double cameraPitch = 21.1;
+    double cameraHeight = 0.671;
+    double pitch = getFrontCamTargetTy();
+    double yaw = getFrontCamTargetTx();
+    Logger.recordOutput("yaw to tag", yaw);
+    Logger.recordOutput("pitch to tag", pitch);
+    // double cameraHeight = Constants.inchesToMeters(30.68);
     double[] tagPose = Constants.Vision.TAG_POSES[id - 1];
     double tagHeight = tagPose[2];
     double tagX = tagPose[0];
@@ -184,7 +194,7 @@ public class Peripherals extends SubsystemBase {
     Logger.recordOutput("y to Tag", yFromTag);
 
     double fieldPoseX = -xFromTag + tagX;
-    double fieldPoseY = yFromTag + tagY;
+    double fieldPoseY = yFromTag + tagY - cameraYOffset;
     Pose2d pose = new Pose2d(fieldPoseX, fieldPoseY, new Rotation2d(getPigeonAngle()));
     return pose;
   }
@@ -205,7 +215,7 @@ public class Peripherals extends SubsystemBase {
   /**
    * Retrieves the Y-Axis Rotation of the robot based on the front camera
    * 
-   * @return Y-Axis rotation in radians
+   * @return Y-Axis rotation in degrees
    */
   public double getFrontCamTargetTy() {
     return frontCamTy.getDouble(100);
@@ -214,7 +224,7 @@ public class Peripherals extends SubsystemBase {
   /**
    * Retrieves the X-Axis Rotation of the robot based on the front camera
    * 
-   * @return X-Axis rotation in radians
+   * @return X-Axis rotation in degrees
    */
   public double getFrontCamTargetTx() {
     return frontCamTx.getDouble(100);
@@ -728,11 +738,11 @@ public class Peripherals extends SubsystemBase {
   @Override
   public void periodic() {
     // Logger.recordOutput("MultiTag", getEstimatedGlobalPose());
-    var result = photonCamera.getLatestResult();
-    if (result.hasTargets()) {
-      PhotonTrackedTarget target = result.getBestTarget();
-      Pose2d robotPose = getRobotPoseViaTrig(target);
-      Logger.recordOutput("Trig Localiazation", robotPose);
-    }
+    // var result = photonCamera.getLatestResult();
+    // if (result.hasTargets()) {
+    // PhotonTrackedTarget target = result.getBestTarget();
+    Pose2d robotPose = getRobotPoseViaTrig();
+    Logger.recordOutput("Trig Localiazation", robotPose);
+    // }
   }
 }
