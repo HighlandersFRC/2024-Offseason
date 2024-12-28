@@ -59,6 +59,22 @@ public class PolarPathFollower extends ParallelCommandGroup {
     }
   }
 
+  /**
+   * This function processes a JSON object representing a command and returns a
+   * corresponding {@link Command} object.
+   * The function supports various command types such as single commands, branched
+   * commands, parallel command groups,
+   * parallel deadline groups, parallel race groups, and sequential command
+   * groups.
+   *
+   * @param command      The JSON object representing the command.
+   * @param commandMap   A map of command names to their corresponding
+   *                     {@link Supplier} objects.
+   * @param conditionMap A map of condition names to their corresponding
+   *                     {@link BooleanSupplier} objects.
+   * @return A {@link Command} object representing the processed command.
+   * @throws IllegalArgumentException If the command JSON is invalid.
+   */
   private Command addCommandsFromJSON(JSONObject command, HashMap<String, Supplier<Command>> commandMap,
       HashMap<String, BooleanSupplier> conditionMap) {
     if (command.has("command")) {
@@ -129,10 +145,26 @@ public class PolarPathFollower extends ParallelCommandGroup {
     }
   }
 
+  /**
+   * This function processes a single command from a JSON object and returns a
+   * corresponding {@link Command} object.
+   * It handles the creation of various command types such as single commands,
+   * with custom start and end times.
+   * If the command is a {@link PolarTakeDrive} instance, it sets up runnables to
+   * cancel and re-initialize the follower
+   * at the specified start and end times.
+   *
+   * @param command    The JSON object representing the command. It should contain
+   *                   the command name and start/end times.
+   * @param commandMap A map of command names to their corresponding
+   *                   {@link Supplier} objects.
+   * @return A {@link Command} object representing the processed command.
+   */
   private Command singleCommandFromJSON(JSONObject command, HashMap<String, Supplier<Command>> commandMap) {
     Command runner = commandMap.get(command.getJSONObject("command").getString("name")).get();
     BooleanSupplier startSupplier = () -> command.getDouble("start") < getPathTime();
     BooleanSupplier endSupplier = () -> command.getDouble("end") <= getPathTime();
+
     if (runner instanceof PolarTakeDrive) {
       Runnable cancelPathFollower = new Runnable() {
         public void run() {
@@ -144,6 +176,7 @@ public class PolarPathFollower extends ParallelCommandGroup {
         }
       };
       runner.beforeStarting(cancelPathFollower);
+
       Runnable cancelRunner = new Runnable() {
         public void run() {
           int runFrom = getPointIndexFromTime(command.getDouble("end"));
@@ -155,10 +188,20 @@ public class PolarPathFollower extends ParallelCommandGroup {
       };
       runner.andThen(cancelRunner);
     }
-    return new TriggerCommand(startSupplier, runner,
-        endSupplier);
+
+    return new TriggerCommand(startSupplier, runner, endSupplier);
   }
 
+  /**
+   * This function calculates and returns the current time along the path based on
+   * the {@link PolarTakeDrive} follower's state.
+   * If the follower is finished or not scheduled, it calculates the time based on
+   * the elapsed time since the end of the path.
+   * If the follower is still running, it calculates the time based on the time of
+   * the current path point.
+   *
+   * @return The current time along the path in seconds.
+   */
   double getPathTime() {
     double retval;
     if (follower.isFinished() || !follower.isScheduled()) {
@@ -181,6 +224,20 @@ public class PolarPathFollower extends ParallelCommandGroup {
     return retval;
   }
 
+  /**
+   * This function calculates and returns the index of the path point that
+   * corresponds to the given time.
+   * It iterates through the path points, comparing the given time with the time
+   * of each point.
+   * If the given time is greater than or equal to the time of a point, the
+   * function returns the index of that point.
+   * If the given time is greater than the time of all points, the function
+   * returns the index of the last point.
+   *
+   * @param time The time along the path for which the corresponding path point
+   *             index needs to be found.
+   * @return The index of the path point that corresponds to the given time.
+   */
   private int getPointIndexFromTime(double time) {
     JSONArray points = pathJSON.getJSONArray("sampled_points");
     for (int i = 0; i < points.length(); i++) {
@@ -191,4 +248,5 @@ public class PolarPathFollower extends ParallelCommandGroup {
     }
     return points.length() - 1;
   }
+
 }
