@@ -187,14 +187,12 @@ public class Drive extends SubsystemBase {
   private double angleSetpoint = 0;
 
   public enum DriveState {
-    SHOOT,
-    AMP,
-    FEED,
     DEFAULT,
+    IDLE,
   }
 
-  private DriveState wantedState = DriveState.DEFAULT;
-  private DriveState systemState = DriveState.DEFAULT;
+  private DriveState wantedState = DriveState.IDLE;
+  private DriveState systemState = DriveState.IDLE;
 
   /**
    * Creates a new instance of the Swerve Drive subsystem.
@@ -226,8 +224,6 @@ public class Drive extends SubsystemBase {
     if (getFieldSide().equals("red")) {
       currentAngle -= 180;
     }
-    // System.out.println("currentAngle: " + currentAngle + " setpoint: " +
-    // angleSetpoint);
     return (Math.abs(Constants.standardizeAngleDegrees(currentAngle)
         - Constants.standardizeAngleDegrees(angleSetpoint)) < 2);
   }
@@ -458,13 +454,6 @@ public class Drive extends SubsystemBase {
   public void updateOdometryFusedArray() {
     double navxOffset = Math.toRadians(peripherals.getPigeonAngle());
 
-    // JSONArray cameraCoordinatesFront = peripherals.getFrontCamBasedPosition();
-    // JSONArray cameraCoordinatesLeft = peripherals.getLeftCamBasedPosition();
-    // JSONArray cameraCoordinatesRight = peripherals.getRightCamBasedPosition();
-
-    // double cameraBasedX = 0;
-    // double cameraBasedY = 0;
-
     SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
     swerveModulePositions[0] = new SwerveModulePosition(frontLeft.getModuleDistance(),
         new Rotation2d(frontLeft.getCanCoderPositionRadians()));
@@ -482,91 +471,18 @@ public class Drive extends SubsystemBase {
     m_currentX = getOdometryX();
     m_currentY = getOdometryY();
     m_currentTheta = navxOffset;
-
-    double robotAngle = peripherals.getPigeonAngle();
-    if (this.m_fieldSide == "red" && !DriverStation.isAutonomousEnabled()) {
-      robotAngle += 180;
-    }
-
     Pose2d defaultPose = new Pose2d(0.0, 0.0, new Rotation2d(0.0));
 
     Pose2d frontCamTrigPose = peripherals.getFrontCamTrigPose();
     if (isPoseInField(frontCamTrigPose) && !frontCamTrigPose.equals(defaultPose)) {
-      // mt2Odometry.addVisionMeasurement(frontCamTrigPose,
-      // peripherals.getFrontCamLatency());
+      mt2Odometry.addVisionMeasurement(frontCamTrigPose,
+          peripherals.getFrontCamLatency());
     }
 
     Pose2d frontCamPnPPose = peripherals.getFrontCamPnPPose().toPose2d();
     if (isPoseInField(frontCamPnPPose) && !frontCamPnPPose.equals(defaultPose)) {
-      // loggingOdometry.addVisionMeasurement(frontCamPnPPose,
-      // peripherals.getFrontCamLatency());
       mt2Odometry.addVisionMeasurement(frontCamPnPPose, peripherals.getFrontCamLatency());
     }
-
-    // Limelight Megatag 1/2 Localization below
-
-    // LimelightHelpers.SetRobotOrientation("limelight-front", robotAngle, 0, 0, 0,
-    // 0, 0);
-    // LimelightHelpers.PoseEstimate mt2Front =
-    // LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-front");
-    // LimelightHelpers.SetRobotOrientation("limelight-left", robotAngle, 0, 0, 0,
-    // 0, 0);
-    // LimelightHelpers.PoseEstimate mt2Left =
-    // LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-left");
-    // LimelightHelpers.SetRobotOrientation("limelight-right", robotAngle, 0, 0, 0,
-    // 0, 0);
-    // LimelightHelpers.PoseEstimate mt2Right =
-    // LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-right");
-    // if (Math.abs(peripherals.getPigeonAngularVelocity()) < 25) {
-    // if (mt2Front.tagCount != 0 && isPoseInField(mt2Front.pose) &&
-    // mt2Front.avgTagDist < 6) {
-    // mt2Odometry.addVisionMeasurement(
-    // mt2Front.pose,
-    // mt2Front.timestampSeconds);
-    // }
-    // if (mt2Left.tagCount != 0 && isPoseInField(mt2Left.pose) &&
-    // mt2Left.avgTagDist < 6) {
-    // mt2Odometry.addVisionMeasurement(
-    // mt2Left.pose,
-    // mt2Left.timestampSeconds);
-    // }
-    // if (mt2Right.tagCount != 0 && isPoseInField(mt2Right.pose) &&
-    // mt2Right.avgTagDist < 6) {
-    // mt2Odometry.addVisionMeasurement(
-    // mt2Right.pose,
-    // mt2Right.timestampSeconds);
-    // }
-    // }
-
-    // if (m_useCameraInOdometry && cameraCoordinatesFront.getDouble(0) != 0) {
-    // cameraBasedX = cameraCoordinatesFront.getDouble(0);
-    // cameraBasedY = cameraCoordinatesFront.getDouble(1);
-    // Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX,
-    // cameraBasedY),
-    // new Rotation2d(navxOffset));
-    // loggingOdometry.addVisionMeasurement(cameraBasedPosition,
-    // Timer.getFPGATimestamp() - (peripherals.getFrontCameraLatency() / 1000));
-    // }
-
-    // if (m_useCameraInOdometry && cameraCoordinatesLeft.getDouble(0) != 0) {
-    // cameraBasedX = cameraCoordinatesLeft.getDouble(0);
-    // cameraBasedY = cameraCoordinatesLeft.getDouble(1);
-    // Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX,
-    // cameraBasedY),
-    // new Rotation2d(navxOffset));
-    // loggingOdometry.addVisionMeasurement(cameraBasedPosition,
-    // Timer.getFPGATimestamp() - (peripherals.getLeftCameraLatency() / 1000));
-    // }
-
-    // if (m_useCameraInOdometry && cameraCoordinatesRight.getDouble(0) != 0) {
-    // cameraBasedX = cameraCoordinatesRight.getDouble(0);
-    // cameraBasedY = cameraCoordinatesRight.getDouble(1);
-    // Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX,
-    // cameraBasedY),
-    // new Rotation2d(navxOffset));
-    // loggingOdometry.addVisionMeasurement(cameraBasedPosition,
-    // Timer.getFPGATimestamp() - (peripherals.getRightCameraLatency() / 1000));
-    // }
 
     m_currentTime = Timer.getFPGATimestamp() - m_initTime;
 
@@ -1204,51 +1120,34 @@ public class Drive extends SubsystemBase {
 
   private DriveState handleStateTransition() {
     switch (wantedState) {
-      case SHOOT:
-        return DriveState.SHOOT;
-      case FEED:
-        return DriveState.FEED;
-      case AMP:
-        return DriveState.AMP;
       case DEFAULT:
-      default:
         return DriveState.DEFAULT;
+      case IDLE:
+        return DriveState.IDLE;
+      default:
+        return DriveState.IDLE;
     }
   }
 
   @Override
   public void periodic() {
     updateOdometryFusedArray();
-    // System.out.println("drive angle setpoint: " + angleSetpoint);
     // process inputs
     DriveState newState = handleStateTransition();
     if (newState != systemState) {
       systemState = newState;
     }
-
+    Logger.recordOutput("Drive State", systemState);
     // Stop moving when disabled
     if (DriverStation.isDisabled()) {
       systemState = DriveState.DEFAULT;
     }
     switch (systemState) {
-      case SHOOT:
-        calculateAngleChange(angleSetpoint);
-        break;
-      case FEED:
-
-        break;
-      case AMP:
-
-        break;
       case DEFAULT:
         teleopDrive();
         break;
       default:
-        teleopDrive();
     }
-    // SmartDashboard.putNumber("dist",
-    // Constants.getDistance(Constants.Physical.SPEAKER_X,
-    // Constants.Physical.SPEAKER_Y, getMT2OdometryX(), getMT2OdometryY()));
   }
 
   /**

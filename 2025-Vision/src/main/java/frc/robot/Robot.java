@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.Superstructure.SuperState;
 
 public class Robot extends LoggedRobot {
   private RobotContainer m_robotContainer = new RobotContainer();
@@ -146,6 +147,7 @@ public class Robot extends LoggedRobot {
   public void teleopInit() {
     m_robotContainer.lights.setCommandRunning(false);
     m_robotContainer.lights.clearAnimations();
+    m_robotContainer.superstructure.setWantedState(SuperState.CYCLING);
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

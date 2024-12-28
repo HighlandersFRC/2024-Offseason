@@ -19,6 +19,7 @@ public class Superstructure extends SubsystemBase {
 
   public enum SuperState {
     CYCLING,
+    IDLE,
   }
 
   private SuperState wantedSuperState = SuperState.CYCLING;
@@ -41,15 +42,29 @@ public class Superstructure extends SubsystemBase {
   private void applyStates() {
     switch (currentSuperState) {
       case CYCLING:
-        handleCyclingState();
+        handleCYCLINGState();
         // Cycling state
         break;
+      case IDLE:
+        // Idle state
+        handleIDLEState();
+        break;
       default:
-        handleCyclingState();
+        handleIDLEState();
         break;
     }
   }
 
+  /**
+   * This function handles the state transitions of the Superstructure subsystem.
+   * It updates the current state based on the wanted state and performs necessary actions.
+   *
+   * @return SuperState - The current state of the Superstructure subsystem after handling the state transitions.
+   *
+   * @param wantedSuperState The desired state of the Superstructure subsystem.
+   *
+   * @see SuperState
+   */
   private SuperState handleStateTransitions() {
     previousSuperState = currentSuperState;
     switch (wantedSuperState) {
@@ -57,14 +72,34 @@ public class Superstructure extends SubsystemBase {
         // Cycling state
         currentSuperState = SuperState.CYCLING;
         break;
+      case IDLE:
+        // Idle state
+        currentSuperState = SuperState.IDLE;
       default:
-        currentSuperState = SuperState.CYCLING;
+        currentSuperState = SuperState.IDLE;
         break;
     }
     return currentSuperState;
   }
 
-  public void handleCyclingState() {
+
+  /**
+   * This function handles the CYCLING state of the Superstructure subsystem.
+   * In the CYCLING state, the drive subsystem is set to its default state.
+   *
+   * @return void - This function does not return any value.
+   */
+  public void handleCYCLINGState() {
+    drive.setWantedState(DriveState.DEFAULT);
+  }
+
+  /**
+   * This function handles the IDLE state of the Superstructure subsystem.
+   * In the IDLE state, the drive subsystem is set to its default state.
+   *
+   * @return void - This function does not return any value.
+   */
+  public void handleIDLEState() {
     drive.setWantedState(DriveState.DEFAULT);
   }
 
