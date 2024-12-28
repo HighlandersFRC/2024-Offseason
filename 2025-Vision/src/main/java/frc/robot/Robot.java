@@ -80,18 +80,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotPeriodic() {
-    // checks CAN and limelights, blinks green if good and blinks yellow if bad
-    if (!m_checkedCAN) {
-      if (Timer.getFPGATimestamp() - m_startTime > 30 || m_robotContainer.peripherals.limelightsConnected()) {
-        m_checkedCAN = true;
-        m_robotContainer.lights.clearAnimations();
-        m_robotContainer.lights.setCommandRunning(false);
-        m_robotContainer.lights.clearAnimations();
-        m_robotContainer.lights.setCommandRunning(true);
-        m_robotContainer.lights.setStrobeYellow();
-      }
-    }
-
     // shooterAngleDegreesTuning = SmartDashboard.getNumber("Shooter Angle Degrees
     // (tuning)", 0);
     // shooterRPMTuning = SmartDashboard.getNumber("Shooter RPM (input)", 0);

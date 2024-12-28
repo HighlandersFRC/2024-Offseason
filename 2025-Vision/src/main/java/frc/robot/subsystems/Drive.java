@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
 import org.json.JSONArray;
@@ -232,8 +228,8 @@ public class Drive extends SubsystemBase {
     }
     // System.out.println("currentAngle: " + currentAngle + " setpoint: " +
     // angleSetpoint);
-    return (Math.abs(Constants.SetPoints.standardizeAngleDegrees(currentAngle)
-        - Constants.SetPoints.standardizeAngleDegrees(angleSetpoint)) < 2);
+    return (Math.abs(Constants.standardizeAngleDegrees(currentAngle)
+        - Constants.standardizeAngleDegrees(angleSetpoint)) < 2);
   }
 
   public void setWantedState(DriveState wantedState) {
@@ -462,12 +458,12 @@ public class Drive extends SubsystemBase {
   public void updateOdometryFusedArray() {
     double navxOffset = Math.toRadians(peripherals.getPigeonAngle());
 
-    JSONArray cameraCoordinatesFront = peripherals.getFrontCamBasedPosition();
-    JSONArray cameraCoordinatesLeft = peripherals.getLeftCamBasedPosition();
-    JSONArray cameraCoordinatesRight = peripherals.getRightCamBasedPosition();
+    // JSONArray cameraCoordinatesFront = peripherals.getFrontCamBasedPosition();
+    // JSONArray cameraCoordinatesLeft = peripherals.getLeftCamBasedPosition();
+    // JSONArray cameraCoordinatesRight = peripherals.getRightCamBasedPosition();
 
-    double cameraBasedX = 0;
-    double cameraBasedY = 0;
+    // double cameraBasedX = 0;
+    // double cameraBasedY = 0;
 
     SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
     swerveModulePositions[0] = new SwerveModulePosition(frontLeft.getModuleDistance(),
@@ -486,10 +482,29 @@ public class Drive extends SubsystemBase {
     m_currentX = getOdometryX();
     m_currentY = getOdometryY();
     m_currentTheta = navxOffset;
+
     double robotAngle = peripherals.getPigeonAngle();
     if (this.m_fieldSide == "red" && !DriverStation.isAutonomousEnabled()) {
       robotAngle += 180;
     }
+
+    Pose2d defaultPose = new Pose2d(0.0, 0.0, new Rotation2d(0.0));
+
+    Pose2d frontCamTrigPose = peripherals.getFrontCamTrigPose();
+    if (isPoseInField(frontCamTrigPose) && !frontCamTrigPose.equals(defaultPose)) {
+      // mt2Odometry.addVisionMeasurement(frontCamTrigPose,
+      // peripherals.getFrontCamLatency());
+    }
+
+    Pose2d frontCamPnPPose = peripherals.getFrontCamPnPPose().toPose2d();
+    if (isPoseInField(frontCamPnPPose) && !frontCamPnPPose.equals(defaultPose)) {
+      // loggingOdometry.addVisionMeasurement(frontCamPnPPose,
+      // peripherals.getFrontCamLatency());
+      mt2Odometry.addVisionMeasurement(frontCamPnPPose, peripherals.getFrontCamLatency());
+    }
+
+    // Limelight Megatag 1/2 Localization below
+
     // LimelightHelpers.SetRobotOrientation("limelight-front", robotAngle, 0, 0, 0,
     // 0, 0);
     // LimelightHelpers.PoseEstimate mt2Front =
@@ -523,32 +538,35 @@ public class Drive extends SubsystemBase {
     // }
     // }
 
-    if (m_useCameraInOdometry && cameraCoordinatesFront.getDouble(0) != 0) {
-      cameraBasedX = cameraCoordinatesFront.getDouble(0);
-      cameraBasedY = cameraCoordinatesFront.getDouble(1);
-      Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY),
-          new Rotation2d(navxOffset));
-      loggingOdometry.addVisionMeasurement(cameraBasedPosition,
-          Timer.getFPGATimestamp() - (peripherals.getFrontCameraLatency() / 1000));
-    }
+    // if (m_useCameraInOdometry && cameraCoordinatesFront.getDouble(0) != 0) {
+    // cameraBasedX = cameraCoordinatesFront.getDouble(0);
+    // cameraBasedY = cameraCoordinatesFront.getDouble(1);
+    // Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX,
+    // cameraBasedY),
+    // new Rotation2d(navxOffset));
+    // loggingOdometry.addVisionMeasurement(cameraBasedPosition,
+    // Timer.getFPGATimestamp() - (peripherals.getFrontCameraLatency() / 1000));
+    // }
 
-    if (m_useCameraInOdometry && cameraCoordinatesLeft.getDouble(0) != 0) {
-      cameraBasedX = cameraCoordinatesLeft.getDouble(0);
-      cameraBasedY = cameraCoordinatesLeft.getDouble(1);
-      Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY),
-          new Rotation2d(navxOffset));
-      loggingOdometry.addVisionMeasurement(cameraBasedPosition,
-          Timer.getFPGATimestamp() - (peripherals.getLeftCameraLatency() / 1000));
-    }
+    // if (m_useCameraInOdometry && cameraCoordinatesLeft.getDouble(0) != 0) {
+    // cameraBasedX = cameraCoordinatesLeft.getDouble(0);
+    // cameraBasedY = cameraCoordinatesLeft.getDouble(1);
+    // Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX,
+    // cameraBasedY),
+    // new Rotation2d(navxOffset));
+    // loggingOdometry.addVisionMeasurement(cameraBasedPosition,
+    // Timer.getFPGATimestamp() - (peripherals.getLeftCameraLatency() / 1000));
+    // }
 
-    if (m_useCameraInOdometry && cameraCoordinatesRight.getDouble(0) != 0) {
-      cameraBasedX = cameraCoordinatesRight.getDouble(0);
-      cameraBasedY = cameraCoordinatesRight.getDouble(1);
-      Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY),
-          new Rotation2d(navxOffset));
-      loggingOdometry.addVisionMeasurement(cameraBasedPosition,
-          Timer.getFPGATimestamp() - (peripherals.getRightCameraLatency() / 1000));
-    }
+    // if (m_useCameraInOdometry && cameraCoordinatesRight.getDouble(0) != 0) {
+    // cameraBasedX = cameraCoordinatesRight.getDouble(0);
+    // cameraBasedY = cameraCoordinatesRight.getDouble(1);
+    // Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX,
+    // cameraBasedY),
+    // new Rotation2d(navxOffset));
+    // loggingOdometry.addVisionMeasurement(cameraBasedPosition,
+    // Timer.getFPGATimestamp() - (peripherals.getRightCameraLatency() / 1000));
+    // }
 
     m_currentTime = Timer.getFPGATimestamp() - m_initTime;
 
@@ -1028,38 +1046,6 @@ public class Drive extends SubsystemBase {
 
       // System.out.println("current time: " + currentPointTime);
 
-      if (pickupNote) {
-        double angleToNote = Math.toRadians(peripherals.getBackCamTargetTx());
-        double tyToNote = Math.toRadians(peripherals.getBackCamTargetTy());
-        System.out.println("tx: " + angleToNote);
-        System.out.println("ty: " + tyToNote);
-        if (tyToNote < 0.3 && angleToNote != 0.0) {
-          double differenceX = Math.abs(targetX - currentPointX);
-          double differenceY = Math.abs(targetY - currentPointY);
-          double r = (Math.sqrt((differenceX * differenceX) + (differenceY * differenceY)));
-          double adjustedX = r * (Math.cos((currentPointTheta) - angleToNote));
-          double adjustedY = r * (Math.sin((currentPointTheta) - angleToNote));
-          double newX = currentPointX + adjustedX;
-          double newY = currentPointY + adjustedY;
-          // double newYWithScalar = currentPointY + (3 * adjustedY);
-          double newTheta = currentPointTheta - angleToNote;
-          // System.out.println("adjusting point");
-          System.out.println("old x: " + targetX);
-          System.out.println("old y: " + targetY);
-          System.out.println("old theta: " + targetTheta);
-          // System.out.println("current theta: " + currentPointTheta);
-          System.out.println("adjustedX: " + adjustedX);
-          System.out.println("adjustedY: " + adjustedY);
-          System.out.println("new x: " + newX);
-          System.out.println("new Y: " + newY);
-          // System.out.println("new Y with scalar: " + newYWithScalar);
-          System.out.println("new theta: " + newTheta);
-          targetX = currentPointX + adjustedX;
-          targetY = currentPointY + adjustedY;
-          targetTheta = currentPointTheta - angleToNote;
-        }
-      }
-
       double feedForwardX = (targetX - currentPointX) / (targetTime - currentPointTime);
       double feedForwardY = (targetY - currentPointY) / (targetTime - currentPointTime);
       // double feedForwardTheta = -(targetTheta - currentPointTheta)/(targetTime -
@@ -1209,8 +1195,8 @@ public class Drive extends SubsystemBase {
     if (DriverStation.isAutonomousEnabled() && getFieldSide() == "red") {
       pigeonAngleDegrees = 180 + pigeonAngleDegrees;
     }
-    this.turningPID.setSetPoint(Constants.SetPoints.standardizeAngleDegrees(targetAngle));
-    this.turningPID.updatePID(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
+    this.turningPID.setSetPoint(Constants.standardizeAngleDegrees(targetAngle));
+    this.turningPID.updatePID(Constants.standardizeAngleDegrees(pigeonAngleDegrees));
     double turnResult = -turningPID.getResult();
 
     this.driveAutoAligned(turnResult);

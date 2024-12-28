@@ -83,9 +83,6 @@ public class PurePursuitFollower extends PolarTakeDrive {
 
   @Override
   public void execute() {
-    if (pickupNote && peripherals.getBackCamTrack()) {
-      lights.setStrobeGreen();
-    }
     drive.updateOdometryFusedArray();
     odometryFusedX = drive.getMT2OdometryX();
     odometryFusedY = drive.getMT2OdometryY();
