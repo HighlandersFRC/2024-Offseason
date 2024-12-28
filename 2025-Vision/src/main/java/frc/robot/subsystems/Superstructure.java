@@ -1,16 +1,8 @@
 package frc.robot.subsystems;
 
-import java.util.ArrayList;
-
-import org.littletonrobotics.junction.Logger;
-
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.tools.controlloops.PID;
 import frc.robot.subsystems.Drive.DriveState;
 
 public class Superstructure extends SubsystemBase {
@@ -57,9 +49,11 @@ public class Superstructure extends SubsystemBase {
 
   /**
    * This function handles the state transitions of the Superstructure subsystem.
-   * It updates the current state based on the wanted state and performs necessary actions.
+   * It updates the current state based on the wanted state and performs necessary
+   * actions.
    *
-   * @return SuperState - The current state of the Superstructure subsystem after handling the state transitions.
+   * @return SuperState - The current state of the Superstructure subsystem after
+   *         handling the state transitions.
    *
    * @param wantedSuperState The desired state of the Superstructure subsystem.
    *
@@ -81,7 +75,6 @@ public class Superstructure extends SubsystemBase {
     }
     return currentSuperState;
   }
-
 
   /**
    * This function handles the CYCLING state of the Superstructure subsystem.
