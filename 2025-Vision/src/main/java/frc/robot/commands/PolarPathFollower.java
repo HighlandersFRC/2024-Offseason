@@ -39,7 +39,7 @@ public class PolarPathFollower extends ParallelCommandGroup {
 
   public PolarPathFollower(Drive drive, Lights lights, Peripherals peripherals, JSONObject pathJSON,
       HashMap<String, Supplier<Command>> commandMap, HashMap<String, BooleanSupplier> conditionMap) {
-    defaultFollower = new PurePursuitFollower(drive, lights, peripherals, pathJSON.getJSONArray("sampled_points"),
+    defaultFollower = new PurePursuitFollower(drive, lights, pathJSON.getJSONArray("sampled_points"),
         false);
     startTime = pathJSON.getJSONArray("sampled_points").getJSONObject(0).getDouble("time");
     follower = defaultFollower;
