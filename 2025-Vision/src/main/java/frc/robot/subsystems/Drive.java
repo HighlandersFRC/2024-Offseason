@@ -169,6 +169,7 @@ public class Drive extends SubsystemBase {
   private double kThetaI = 0.0;
   private double kThetaD = 2.0;
 
+  // teleop targeting PID values
   private double kTurningP = 0.04;
   private double kTurningI = 0;
   private double kTurningD = 0.06;
