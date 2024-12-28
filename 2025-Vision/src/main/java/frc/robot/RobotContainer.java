@@ -37,7 +37,7 @@ public class RobotContainer {
   Peripherals peripherals = new Peripherals();
   Drive drive = new Drive(peripherals);
   Lights lights = new Lights();
-  Superstructure superstructure = new Superstructure(drive, peripherals);
+  Superstructure superstructure = new Superstructure(drive);
 
   HashMap<String, Supplier<Command>> commandMap = new HashMap<String, Supplier<Command>>() {
     {

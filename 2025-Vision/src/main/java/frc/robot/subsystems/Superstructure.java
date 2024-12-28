@@ -7,7 +7,6 @@ import frc.robot.subsystems.Drive.DriveState;
 
 public class Superstructure extends SubsystemBase {
   private Drive drive;
-  private Peripherals peripherals;
 
   public enum SuperState {
     CYCLING,
@@ -16,11 +15,9 @@ public class Superstructure extends SubsystemBase {
 
   private SuperState wantedSuperState = SuperState.CYCLING;
   private SuperState currentSuperState = SuperState.CYCLING;
-  private SuperState previousSuperState;
 
-  public Superstructure(Drive drive, Peripherals peripherals) {
+  public Superstructure(Drive drive) {
     this.drive = drive;
-    this.peripherals = peripherals;
   }
 
   public void setWantedState(SuperState wantedState) {
@@ -60,7 +57,6 @@ public class Superstructure extends SubsystemBase {
    * @see SuperState
    */
   private SuperState handleStateTransitions() {
-    previousSuperState = currentSuperState;
     switch (wantedSuperState) {
       case CYCLING:
         // Cycling state
