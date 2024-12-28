@@ -22,6 +22,7 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -75,21 +76,32 @@ public class Peripherals extends SubsystemBase {
   Transform3d robotToCam = new Transform3d(new Translation3d(0.0, 0.0, 0.5), new Rotation3d(0, 0, 0));
 
   PhotonPoseEstimator photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout,
-      PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCam);
+      PoseStrategy.AVERAGE_BEST_TARGETS, robotToCam);
 
   public Peripherals() {
   }
 
-  // public double[] getEstimatedGlobalPose() {
-  // Optional<MultiTargetPNPResult> multiTagResult = new
-  // Optional<MultiTargetPNPResult>();
-  // var result = photonCamera.getLatestResult();
-  // if (result.getMultiTagResult().isPresent()) {
-  // ret = result.getMultiTagResult().;
-  // }
-  // double[] pose = { ret.getX(), ret.getY(), getPigeonAngle() };
-  // return pose;
-  // }
+  public Pose3d getEstimatedGlobalPose() {
+    var result = photonCamera.getLatestResult();
+    boolean running = false;
+    Optional<EstimatedRobotPose> multiTagResult = photonPoseEstimator.update(result);
+    if (multiTagResult.isPresent()) {
+      running = true;
+      Logger.recordOutput("running", running);
+
+      Pose3d robotPose = multiTagResult.get().estimatedPose;
+      Logger.recordOutput("multitag result", robotPose);
+      // double[] pose = { robotPose.getX(), robotPose.getY(),
+      // robotPose.getRotation().getAngle() };
+
+      return robotPose;
+    } else {
+      running = false;
+      Logger.recordOutput("running", running);
+      Pose3d robotPose = new Pose3d();
+      return robotPose;
+    }
+  }
 
   /**
    * Checks the connectivity of Limelight devices.
@@ -163,22 +175,15 @@ public class Peripherals extends SubsystemBase {
     return pitch;
   }
 
-  public Pose2d getRobotPoseViaTrig() {
-    // double pitch = trackedTarget.getPitch();
-    // double yaw = trackedTarget.getYaw();
-    // int id = trackedTarget.getFiducialId();
-
-    int id = 3;
+  public Pose2d getRobotPoseViaTrig(PhotonTrackedTarget trackedTarget) {
+    double pitch = trackedTarget.getPitch();
+    double yaw = trackedTarget.getYaw();
+    int id = trackedTarget.getFiducialId();
     double robotYaw = 180;
     double cameraYaw = 0.0;
-    double cameraYOffset = -0.239;
-    double cameraPitch = 21.1;
-    double cameraHeight = 0.671;
-    double pitch = getFrontCamTargetTy();
-    double yaw = getFrontCamTargetTx();
-    Logger.recordOutput("yaw to tag", yaw);
-    Logger.recordOutput("pitch to tag", pitch);
-    // double cameraHeight = Constants.inchesToMeters(30.68);
+    double cameraYOffset = 0.0;
+    double cameraPitch = 0.0;
+    double cameraHeight = Constants.inchesToMeters(30.68);
     double[] tagPose = Constants.Vision.TAG_POSES[id - 1];
     double tagHeight = tagPose[2];
     double tagX = tagPose[0];
@@ -737,12 +742,12 @@ public class Peripherals extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Logger.recordOutput("MultiTag", getEstimatedGlobalPose());
-    // var result = photonCamera.getLatestResult();
-    // if (result.hasTargets()) {
-    // PhotonTrackedTarget target = result.getBestTarget();
-    Pose2d robotPose = getRobotPoseViaTrig();
-    Logger.recordOutput("Trig Localiazation", robotPose);
-    // }
+    getEstimatedGlobalPose();
+    var result = photonCamera.getLatestResult();
+    if (result.hasTargets()) {
+      PhotonTrackedTarget target = result.getBestTarget();
+      Pose2d robotPose = getRobotPoseViaTrig(target);
+      Logger.recordOutput("Trig Localiazation", robotPose);
+    }
   }
 }
