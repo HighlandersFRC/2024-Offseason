@@ -183,8 +183,6 @@ public class Drive extends SubsystemBase {
 
   private int kLookAheadDistance = 5;
 
-  private Boolean m_useCameraInOdometry = true;
-
   private double angleSetpoint = 0;
 
   public enum DriveState {
@@ -261,16 +259,6 @@ public class Drive extends SubsystemBase {
     backRight.init();
     backLeft.init();
 
-    frontRightAngleMotor.setInverted(true);
-    frontLeftAngleMotor.setInverted(true);
-    backRightAngleMotor.setInverted(true);
-    backLeftAngleMotor.setInverted(true);
-
-    frontRightDriveMotor.setInverted(false);
-    frontLeftDriveMotor.setInverted(false);
-    backRightDriveMotor.setInverted(false);
-    backLeftDriveMotor.setInverted(false);
-
     xPID.setMinOutput(-4.9);
     xPID.setMaxOutput(4.9);
 
@@ -282,12 +270,6 @@ public class Drive extends SubsystemBase {
 
     turningPID.setMinOutput(-3);
     turningPID.setMaxOutput(3);
-
-    // setDefaultCommand(new DriveDefault(this));
-  }
-
-  public void useCameraInOdometry() {
-    m_useCameraInOdometry = true;
   }
 
   /**

@@ -10,6 +10,7 @@ import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -93,14 +94,6 @@ public class SwerveModule extends SubsystemBase {
     TalonFXConfiguration angleMotorConfig = new TalonFXConfiguration();
     TalonFXConfiguration driveMotorConfig = new TalonFXConfiguration();
 
-    // angleMotorConfig.Slot0.kP = 300.0;
-    // angleMotorConfig.Slot0.kI = 0.0;
-    // angleMotorConfig.Slot0.kD = 7.5;
-
-    // angleMotorConfig.Slot1.kP = 3.0;
-    // angleMotorConfig.Slot1.kI = 0.0;
-    // angleMotorConfig.Slot1.kD = 0.0;
-
     angleMotorConfig.Slot0.kP = 350.0;
     angleMotorConfig.Slot0.kI = 0.0;
     angleMotorConfig.Slot0.kD = 15;
@@ -115,6 +108,8 @@ public class SwerveModule extends SubsystemBase {
     angleMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     angleMotorConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.1;
+
+    angleMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     angleMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     angleMotorConfig.Feedback.FeedbackRemoteSensorID = canCoder.getDeviceID();
@@ -132,6 +127,8 @@ public class SwerveModule extends SubsystemBase {
     driveMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     driveMotorConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.1;
+
+    driveMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     double absolutePosition = canCoder.getAbsolutePosition().getValueAsDouble();
     angleMotor.setPosition(absolutePosition);
