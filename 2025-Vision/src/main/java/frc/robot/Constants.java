@@ -6,8 +6,6 @@ package frc.robot;
 
 import org.littletonrobotics.junction.Logger;
 
-import frc.robot.tools.math.Vector;
-
 public final class Constants {
   public static final class Autonomous {
     // how far forward to look when the linear radius and the angular radius equal
