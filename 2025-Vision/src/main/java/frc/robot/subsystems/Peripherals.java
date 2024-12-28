@@ -133,7 +133,7 @@ public class Peripherals {
 
   public Pose2d getFrontCamTrigPose() {
     var result = frontCam.getLatestResult();
-    if (result.hasTargets()) {
+    if (result.hasTargets() && result.getBestTarget().getPoseAmbiguity() < 0.3) {
       PhotonTrackedTarget target = result.getBestTarget();
       Pose2d robotPose = getRobotPoseViaTrig(target, Constants.Vision.FRONT_CAMERA_POSE, getPigeonAngle());
       Logger.recordOutput("Trig Localiazation", robotPose);
@@ -150,9 +150,6 @@ public class Peripherals {
     if (multiTagResult.isPresent()) {
       Pose3d robotPose = multiTagResult.get().estimatedPose;
       Logger.recordOutput("multitag result", robotPose);
-      // double[] pose = { robotPose.getX(), robotPose.getY(),
-      // robotPose.getRotation().getAngle() };
-
       return robotPose;
     } else {
       Pose3d robotPose = new Pose3d();
@@ -162,10 +159,6 @@ public class Peripherals {
 
   public double getFrontCamLatency() {
     return frontCam.getLatestResult().getTimestampSeconds();
-  }
-
-  public double getFrontCamAmbiguity() {
-    return frontCam.getLatestResult().getBestTarget().poseAmbiguity;
   }
 
   /**
