@@ -87,7 +87,6 @@ public class Peripherals {
     double cameraXOffset = cameraPositionOnRobot[0];
     double cameraYOffset = cameraPositionOnRobot[1];
     double cameraZOffset = cameraPositionOnRobot[2];
-    double cameraRXOffset = cameraPositionOnRobot[3];
     double cameraRYOffset = cameraPositionOnRobot[4];
     double cameraRZOffset = cameraPositionOnRobot[5];
 
@@ -100,12 +99,12 @@ public class Peripherals {
     Logger.recordOutput("Distance to Tag", distToTag);
     Logger.recordOutput("yaw to Tag", yaw);
     // double txProjOntoGroundPlane = Math.atan((Math.tan(yaw)) / Math.cos(pitch));
-    double xFromTag = distToTag * Math.cos(Math.toRadians(yaw));
-    double yFromTag = distToTag * Math.sin(Math.toRadians(yaw));
+    double xFromTag = distToTag * Math.cos(Math.toRadians(yaw + robotAngle + cameraRZOffset));
+    double yFromTag = distToTag * Math.sin(Math.toRadians(yaw + robotAngle + cameraRZOffset));
     Logger.recordOutput("x to Tag", xFromTag);
     Logger.recordOutput("y to Tag", yFromTag);
 
-    double fieldPoseX = -xFromTag + tagX;
+    double fieldPoseX = xFromTag + tagX - cameraXOffset;
     double fieldPoseY = yFromTag + tagY - cameraYOffset;
     Pose2d pose = new Pose2d(fieldPoseX, fieldPoseY, new Rotation2d(getPigeonAngle()));
     return pose;
