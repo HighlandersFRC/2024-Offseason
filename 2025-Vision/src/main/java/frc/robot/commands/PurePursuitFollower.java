@@ -17,12 +17,10 @@ import frc.robot.tools.wrappers.PolarTakeDrive;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Lights;
-import frc.robot.subsystems.Peripherals;
 
 public class PurePursuitFollower extends PolarTakeDrive {
   private Drive drive;
   private Lights lights;
-  private Peripherals peripherals;
 
   private JSONArray path;
 
@@ -53,14 +51,13 @@ public class PurePursuitFollower extends PolarTakeDrive {
     return currentPathPointIndex;
   }
 
-  public PurePursuitFollower(Drive drive, Lights lights, Peripherals peripherals, JSONArray pathPoints,
+  public PurePursuitFollower(Drive drive, Lights lights, JSONArray pathPoints,
       boolean record) {
     this.drive = drive;
     this.lights = lights;
     this.path = pathPoints;
     this.record = record;
     pathStartTime = pathPoints.getJSONObject(0).getDouble("time");
-    this.peripherals = peripherals;
     addRequirements(drive);
   }
 
