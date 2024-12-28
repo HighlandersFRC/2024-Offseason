@@ -1,19 +1,12 @@
 package frc.robot.subsystems;
 
-import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.targeting.MultiTargetPNPResult;
-import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
@@ -26,13 +19,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.tools.math.Vector;
 
@@ -75,7 +62,6 @@ public class Peripherals {
     var result = frontCam.getLatestResult();
     Logger.recordOutput("has target", result.hasTargets());
     if (result.hasTargets()) {
-      List<PhotonTrackedTarget> targets = result.getTargets();
       PhotonTrackedTarget target = result.getBestTarget();
       yaw = target.getYaw();
     }
@@ -86,8 +72,6 @@ public class Peripherals {
     double pitch = 0.0;
     var result = frontCam.getLatestResult();
     if (result.hasTargets()) {
-
-      List<PhotonTrackedTarget> targets = result.getTargets();
       PhotonTrackedTarget target = result.getBestTarget();
       pitch = target.getPitch();
     }
@@ -100,10 +84,6 @@ public class Peripherals {
     double pitch = trackedTarget.getPitch();
     double yaw = trackedTarget.getYaw();
     int id = trackedTarget.getFiducialId();
-    // double cameraYaw = 0.0;
-    // double cameraYOffset = 0.0;
-    // double cameraPitch = 0.0;
-    // double cameraHeight = Constants.inchesToMeters(30.68);
     double cameraXOffset = cameraPositionOnRobot[0];
     double cameraYOffset = cameraPositionOnRobot[1];
     double cameraZOffset = cameraPositionOnRobot[2];
