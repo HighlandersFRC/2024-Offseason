@@ -17,10 +17,6 @@ public class Robot extends LoggedRobot {
   private RobotContainer m_robotContainer = new RobotContainer();
   private Command m_autonomousCommand;
 
-  // private Logger logger = Logger.getInstance();
-
-  // private double shooterAngleDegreesTuning = 0;
-  // private double shooterRPMTuning = 0;
   private double m_startTime = Timer.getFPGATimestamp();
   private boolean m_checkedCAN = false;
 
@@ -31,8 +27,8 @@ public class Robot extends LoggedRobot {
     System.out.println("Robot Init");
     Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-    Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
-                    // be added.
+    Logger.start();
+
     this.m_fieldSide = "blue";
     SmartDashboard.putNumber("Shooter Angle Degrees (tuning)", 0);
     SmartDashboard.putNumber("Shooter RPM (input)", 0);
@@ -40,35 +36,8 @@ public class Robot extends LoggedRobot {
     m_robotContainer.peripherals.init();
     m_robotContainer.drive.init(m_fieldSide);
 
-    PortForwarder.add(5800, "limelight.local", 5800);
-    PortForwarder.add(5801, "limelight.local", 5801);
-
-    PortForwarder.add(5800, "limelight-front.local", 5800);
-    PortForwarder.add(5801, "limelight-front.local", 5801);
-
-    PortForwarder.add(5800, "limelight-back.local", 5800);
-    PortForwarder.add(5801, "limelight-back.local", 5801);
-
-    PortForwarder.add(5800, "limelight-left.local", 5800);
-    PortForwarder.add(5801, "limelight-left.local", 5801);
-
-    PortForwarder.add(5800, "limelight-right.local", 5800);
-    PortForwarder.add(5801, "limelight-right.local", 5801);
-
     PortForwarder.add(5800, "orangepi1.local", 5800);
     PortForwarder.add(5801, "orangepi1.local", 5801);
-
-    PortForwarder.add(5800, "10.44.99.41", 5800);
-    PortForwarder.add(5801, "10.44.99.41", 5801);
-
-    PortForwarder.add(5800, "10.44.99.42", 5800);
-    PortForwarder.add(5801, "10.44.99.42", 5801);
-
-    PortForwarder.add(5800, "10.44.99.43", 5800);
-    PortForwarder.add(5801, "10.44.99.43", 5801);
-
-    PortForwarder.add(5800, "10.44.99.44", 5800);
-    PortForwarder.add(5801, "10.44.99.44", 5801);
 
     PortForwarder.add(5800, "10.44.99.34", 5800);
     PortForwarder.add(5801, "10.44.99.34", 5801);
@@ -76,14 +45,10 @@ public class Robot extends LoggedRobot {
     m_robotContainer.lights.clearAnimations();
     m_robotContainer.lights.setCommandRunning(true);
     m_robotContainer.lights.setRGBFade();
-    System.out.println("end robot init");
   }
 
   @Override
   public void robotPeriodic() {
-    // shooterAngleDegreesTuning = SmartDashboard.getNumber("Shooter Angle Degrees
-    // (tuning)", 0);
-    // shooterRPMTuning = SmartDashboard.getNumber("Shooter RPM (input)", 0);
     CommandScheduler.getInstance().run();
 
     try {
@@ -167,10 +132,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopPeriodic() {
-    // SmartDashboard.putBoolean("Feeder TOF", this.tof.getFeederDistMillimeters() <
-    // Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM);
-    // SmartDashboard.putNumber("Feeder TOF Dist",
-    // this.tof.getFeederDistMillimeters());
   }
 
   @Override
