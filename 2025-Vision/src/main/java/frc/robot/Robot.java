@@ -95,9 +95,8 @@ public class Robot extends LoggedRobot {
       m_fieldSide = "red";
     }
     this.m_robotContainer.drive.setFieldSide(m_fieldSide);
-
+    this.m_autonomousCommand = this.m_robotContainer.getAutonomousCommand();
     System.out.print("Selected Auto: ");
-
   }
 
   @Override
