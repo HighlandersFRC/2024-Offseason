@@ -16,8 +16,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DoNothing;
 import frc.robot.commands.PolarAutoFollower;
+import frc.robot.commands.SetElevatorPercent;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
 import frc.robot.subsystems.Superstructure;
@@ -36,6 +38,7 @@ public class RobotContainer {
   // Subsystems
   Peripherals peripherals = new Peripherals();
   Drive drive = new Drive(peripherals);
+  Elevator elevator = new Elevator();
   Lights lights = new Lights();
   Superstructure superstructure = new Superstructure(drive);
 
@@ -94,6 +97,8 @@ public class RobotContainer {
     // Driver
 
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
+    OI.driverA.whileTrue(new SetElevatorPercent(elevator, 0.3));
+    OI.driverY.whileTrue(new SetElevatorPercent(elevator, -0.3));
   }
 
   /**

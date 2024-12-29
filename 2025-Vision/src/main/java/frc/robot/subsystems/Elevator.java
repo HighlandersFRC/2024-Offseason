@@ -11,14 +11,12 @@ import frc.robot.Constants;
 public class Elevator extends SubsystemBase {
   private final TalonFX elevatorMotor1 = new TalonFX(9, new CANBus(Constants.CANInfo.CANBUS_NAME));
   private final TalonFX elevatorMotor2 = new TalonFX(10, new CANBus(Constants.CANInfo.CANBUS_NAME));
-  private double percentSetpoint = 0.0;
 
   public enum ElevatorState {
     IDLE,
     UP,
     MID,
     DOWN,
-    TEST
   }
 
   private ElevatorState wantedState = ElevatorState.IDLE;
@@ -40,15 +38,6 @@ public class Elevator extends SubsystemBase {
     this.wantedState = wantedState;
   }
 
-  public void setWantedState(ElevatorState wantedState, double percent) {
-    this.wantedState = wantedState;
-    setSetpointPercent(percent);
-  }
-
-  public void setSetpointPercent(double percent) {
-    this.percentSetpoint = percent;
-  }
-
   private ElevatorState handleStateTransition() {
     switch (wantedState) {
       case IDLE:
@@ -59,8 +48,6 @@ public class Elevator extends SubsystemBase {
         return ElevatorState.MID;
       case DOWN:
         return ElevatorState.DOWN;
-      case TEST:
-        return ElevatorState.TEST;
       default:
         return ElevatorState.IDLE;
     }
@@ -82,9 +69,6 @@ public class Elevator extends SubsystemBase {
         break;
       case DOWN:
         moveElevatorToPosition(Constants.SetPoints.ElevatorPosition.kDOWN);
-        break;
-      case TEST:
-        moveWithPercent(percentSetpoint);
         break;
       case IDLE:
         moveWithPercent(0.0);
