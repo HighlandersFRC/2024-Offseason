@@ -91,7 +91,23 @@ public final class Constants {
 
   // Subsystem setpoint constants
   public static final class SetPoints {
+    public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;
+    public static final double ELEVATOR_MID_POSITION_M = 0.22;
+    public static final double ELEVATOR_TOP_POSITION_M = 0.43;
 
+    public enum ElevatorPosition {
+      kDOWN(ELEVATOR_BOTTOM_POSITION_M, Ratios.elevatorMetersToRotations(ELEVATOR_BOTTOM_POSITION_M)),
+      kMID(ELEVATOR_MID_POSITION_M, Ratios.elevatorMetersToRotations(ELEVATOR_MID_POSITION_M)),
+      kUP(ELEVATOR_TOP_POSITION_M, Ratios.elevatorMetersToRotations(ELEVATOR_TOP_POSITION_M));
+
+      public final double meters;
+      public final double rotations;
+
+      private ElevatorPosition(double meters, double rotations) {
+        this.meters = meters;
+        this.rotations = rotations;
+      }
+    }
   }
 
   // Vision constants (e.g. camera offsets)
@@ -217,6 +233,18 @@ public final class Constants {
     // drive
     public static final double DRIVE_GEAR_RATIO = 5.9;
     public static final double STEER_GEAR_RATIO = 21.43;
+
+    // elevator
+    public static final double ELEVATOR_GEAR_RATIO = 23.52;
+    public static final double ELEVATOR_MOTOR_ROTATIONS_PER_METER = 219.254;
+
+    public static double elevatorRotationsToMeters(double rotations) {
+      return rotations / ELEVATOR_MOTOR_ROTATIONS_PER_METER;
+    }
+
+    public static double elevatorMetersToRotations(double meters) {
+      return meters * ELEVATOR_MOTOR_ROTATIONS_PER_METER;
+    }
   }
 
   // Can info such as IDs

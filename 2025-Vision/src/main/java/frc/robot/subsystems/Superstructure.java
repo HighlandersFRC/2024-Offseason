@@ -11,6 +11,7 @@ public class Superstructure extends SubsystemBase {
   public enum SuperState {
     CYCLING,
     IDLE,
+    TEST
   }
 
   private SuperState wantedSuperState = SuperState.CYCLING;
