@@ -15,15 +15,7 @@ public final class Constants {
     public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1.0;
     public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
     public static final String[] paths = new String[] {
-        "4 Far.polarauto",
-        "4 Far 123.polarauto",
-        "4 Far 231.polarauto",
-        "5 piece.polarauto",
-        "3 amp.polarauto",
-        "3 amp 231.polarauto",
-        "1 Exit.polarauto",
-        "Middle Note.polarauto",
-        "Far 321.polarauto"
+        "Test.polarauto",
     };
 
     public static int getSelectedPathIndex() {
@@ -56,10 +48,12 @@ public final class Constants {
         if (OI.autoChooser.getRawButton(4)) {
           return 8;
         }
+        if (OI.autoChooser.getRawButton(5)) {
+          return 9;
+        }
       }
       return -1;
     }
-
   }
 
   public static void periodic() {
