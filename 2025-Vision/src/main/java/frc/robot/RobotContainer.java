@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DoNothing;
+import frc.robot.commands.MoveToPiece;
 import frc.robot.commands.PolarAutoFollower;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.subsystems.Drive;
@@ -94,6 +95,7 @@ public class RobotContainer {
     // Driver
 
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
+    OI.driverA.whileTrue(new MoveToPiece(drive, peripherals));
   }
 
   /**

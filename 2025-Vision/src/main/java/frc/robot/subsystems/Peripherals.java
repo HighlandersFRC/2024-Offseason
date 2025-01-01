@@ -7,6 +7,7 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
@@ -25,6 +26,7 @@ import frc.robot.tools.math.Vector;
 
 public class Peripherals {
   private PhotonCamera frontCam = new PhotonCamera("9281_Front");
+  private PhotonCamera backCam = new PhotonCamera("Lifecam_Back");
 
   AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
 
@@ -76,6 +78,28 @@ public class Peripherals {
       pitch = target.getPitch();
     }
 
+    return pitch;
+  }
+
+  public double getBackCamYaw() {
+    double yaw = 0.0;
+    var results = backCam.getAllUnreadResults();
+    PhotonPipelineResult result = results.get(0);
+    if (result.hasTargets()) {
+      PhotonTrackedTarget target = result.getBestTarget();
+      yaw = target.getYaw();
+    }
+    return yaw;
+  }
+
+  public double getBackCamPitch() {
+    double pitch = 0.0;
+    var results = backCam.getAllUnreadResults();
+    PhotonPipelineResult result = results.get(0);
+    if (result.hasTargets()) {
+      PhotonTrackedTarget target = result.getBestTarget();
+      pitch = target.getPitch();
+    }
     return pitch;
   }
 
