@@ -9,8 +9,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Elevator extends SubsystemBase {
-  private final TalonFX elevatorMotor1 = new TalonFX(9, new CANBus(Constants.CANInfo.CANBUS_NAME));
-  private final TalonFX elevatorMotor2 = new TalonFX(10, new CANBus(Constants.CANInfo.CANBUS_NAME));
+  private final TalonFX elevatorMotor1 = new TalonFX(Constants.CANInfo.LEFT_ELEVATOR_MOTOR_ID,
+      new CANBus(Constants.CANInfo.CANBUS_NAME));
+  private final TalonFX elevatorMotor2 = new TalonFX(Constants.CANInfo.RIGHT_ELEVATOR_MOTOR_ID,
+      new CANBus(Constants.CANInfo.CANBUS_NAME));
 
   public enum ElevatorState {
     IDLE,

@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -146,6 +148,8 @@ public class SwerveModule extends SubsystemBase {
    */
   public void setWheelPID(double angle, double velocity) {
     // method used to move wheel
+    Logger.recordOutput("Setpoint Angle", angle);
+    Logger.recordOutput("Setpoint Vel", velocity);
     angleMotor.setControl(positionTorqueFOCRequest.withPosition(degreesToRotations(Math.toDegrees(angle))));
     driveMotor.setControl(velocityTorqueFOCRequest.withVelocity(wheelToDriveMotorRotations(velocity)));
   }

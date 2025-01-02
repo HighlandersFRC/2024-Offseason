@@ -46,9 +46,9 @@ public class Peripherals {
    */
   public void init() {
     // Set the mount pose configuration for the IMU
-    pigeonConfig.MountPose.MountPosePitch = -85.28813934326172;
-    pigeonConfig.MountPose.MountPoseRoll = 32.49883270263672;
-    pigeonConfig.MountPose.MountPoseYaw = 0.1901332437992096;
+    pigeonConfig.MountPose.MountPosePitch = 0.3561480641365051;
+    pigeonConfig.MountPose.MountPoseRoll = -0.10366992652416229;
+    pigeonConfig.MountPose.MountPoseYaw = -0.24523599445819855;
 
     // Apply the IMU configuration
     pigeon.getConfigurator().apply(pigeonConfig);

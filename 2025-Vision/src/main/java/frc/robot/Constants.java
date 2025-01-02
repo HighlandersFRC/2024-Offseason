@@ -267,6 +267,10 @@ public final class Constants {
 
     // Lights
     public static final int CANDLE_ID = 0;
+
+    // Elevator
+    public static final int LEFT_ELEVATOR_MOTOR_ID = 9;
+    public static final int RIGHT_ELEVATOR_MOTOR_ID = 10;
   }
 
   // Misc. controller values
