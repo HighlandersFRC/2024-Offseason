@@ -98,7 +98,7 @@ public class SwerveModule extends SubsystemBase {
 
     angleMotorConfig.Slot0.kP = 350.0;
     angleMotorConfig.Slot0.kI = 0.0;
-    angleMotorConfig.Slot0.kD = 15;
+    angleMotorConfig.Slot0.kD = 30;
 
     angleMotorConfig.Slot1.kP = 3.0;
     angleMotorConfig.Slot1.kI = 0.0;
@@ -111,7 +111,7 @@ public class SwerveModule extends SubsystemBase {
 
     angleMotorConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.1;
 
-    angleMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    angleMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     angleMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     angleMotorConfig.Feedback.FeedbackRemoteSensorID = canCoder.getDeviceID();
@@ -130,7 +130,7 @@ public class SwerveModule extends SubsystemBase {
 
     driveMotorConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.1;
 
-    driveMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    driveMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     double absolutePosition = canCoder.getAbsolutePosition().getValueAsDouble();
     angleMotor.setPosition(absolutePosition);
