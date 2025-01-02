@@ -8,37 +8,36 @@ import org.littletonrobotics.junction.Logger;
 
 public final class Constants {
   public static final class Autonomous {
-    // how far forward to look when the linear radius and the angular radius equal
+    // lookahead distance is a function:
+    // LOOKAHEAD = AUTONOMOUS_LOOKAHEAD_DISTANCE * velocity + MIN_LOOKAHEAD_DISTANCE
     // their constants
-    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.48;
+    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.10; // Lookahead at 1m/s scaled by wanted velocity
+    public static final double MIN_LOOKAHEAD_DISTANCE = 0.01; // Lookahead distance at 0m/s
+    // Path follower will end if within this radius of the final point
     public static final double AUTONOMOUS_END_ACCURACY = 0.25;
+    // When calculating the point distance, will divide x and y by this constant
     public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1.0;
+    // When calculating the point distance, will divide theta by this constant
     public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
+    // Feed Forward Multiplier
+    public static final double FEED_FORWARD_MULTIPLIER = 0.5;
     public static final String[] paths = new String[] {
-        "4 Far.polarauto",
-        "4 Far 123.polarauto",
-        "4 Far 231.polarauto",
-        "5 piece.polarauto",
-        "3 amp.polarauto",
-        "3 amp 231.polarauto",
-        "1 Exit.polarauto",
-        "Middle Note.polarauto",
-        "Far 321.polarauto"
+        "Test.polarauto",
     };
 
     public static int getSelectedPathIndex() {
       if (!OI.autoChooser.getRawButton(7)) {
         if (OI.autoChooser.getRawButton(1)) {
-          return 3;
-        }
-        if (OI.autoChooser.getRawButton(2)) {
-          return 2;
-        }
-        if (OI.autoChooser.getRawButton(3)) {
           return 0;
         }
-        if (OI.autoChooser.getRawButton(4)) {
+        if (OI.autoChooser.getRawButton(2)) {
           return 1;
+        }
+        if (OI.autoChooser.getRawButton(3)) {
+          return 2;
+        }
+        if (OI.autoChooser.getRawButton(4)) {
+          return 3;
         }
         if (OI.autoChooser.getRawButton(5)) {
           return 4;
@@ -55,6 +54,9 @@ public final class Constants {
         }
         if (OI.autoChooser.getRawButton(4)) {
           return 8;
+        }
+        if (OI.autoChooser.getRawButton(5)) {
+          return 9;
         }
       }
       return -1;
@@ -75,16 +77,17 @@ public final class Constants {
   public static final class Physical {
     public static final double FIELD_WIDTH = 8.2;
     public static final double FIELD_LENGTH = 16.63;
-    public static final double ROBOT_RADIUS = inchesToMeters(15.429);
     public static final double WHEEL_DIAMETER = inchesToMeters(4);
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
     public static final double WHEEL_ROTATION_PER_METER = 1 / WHEEL_CIRCUMFERENCE;
-
+    public static final double WHEEL_TO_FRAME_DISTANCE = inchesToMeters(2.5);
     public static final double TOP_SPEED = feetToMeters(25);
 
-    public static final double ROBOT_LENGTH = inchesToMeters(25);
-    public static final double ROBOT_WIDTH = inchesToMeters(28.5);
+    public static final double ROBOT_LENGTH = inchesToMeters(29);
+    public static final double ROBOT_WIDTH = inchesToMeters(29);
     public static final double MODULE_OFFSET = inchesToMeters(2.5);
+    public static final double ROBOT_RADIUS = Math.hypot(ROBOT_LENGTH / 2 - WHEEL_TO_FRAME_DISTANCE,
+        ROBOT_WIDTH / 2 - WHEEL_TO_FRAME_DISTANCE);
 
     public static final double GRAVITY_ACCEL_MS2 = 9.806;
   }
@@ -231,7 +234,7 @@ public final class Constants {
   // Gear ratios and conversions
   public static final class Ratios {
     // drive
-    public static final double DRIVE_GEAR_RATIO = 5.9;
+    public static final double DRIVE_GEAR_RATIO = 6.5;
     public static final double STEER_GEAR_RATIO = 21.43;
 
     // elevator

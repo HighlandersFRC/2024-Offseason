@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -1000,7 +1001,8 @@ public class Drive extends SubsystemBase {
     for (int i = currentIndex; i < pathPoints.length(); i++) {
       JSONObject point = pathPoints.getJSONObject(i);
       double targetX = point.getDouble("x"), targetY = point.getDouble("y"),
-          targetTheta = point.getDouble("angle");
+          targetTheta = point.getDouble("angle"), targetXvel = point.getDouble("x_velocity"),
+          targetYvel = point.getDouble("y_velocity"), targetThetavel = point.getDouble("angular_velocity");
       while (Math.abs(targetTheta - currentTheta) > Math.PI) {
         if (targetTheta - currentTheta > Math.PI) {
           targetTheta -= 2 * Math.PI;
@@ -1008,10 +1010,17 @@ public class Drive extends SubsystemBase {
           targetTheta += 2 * Math.PI;
         }
       }
-      if (!insideRadius((currentX - targetX) / Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
-          (currentY - targetY) / Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
-          (currentTheta - targetTheta) / Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS,
-          Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_DISTANCE)) {
+      double linearVelMag = Math.hypot(targetYvel / Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
+          targetXvel / Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS);
+      double targetVelMag = Math.hypot(linearVelMag,
+          targetThetavel / Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS);
+      double lookaheadRadius = Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_DISTANCE * targetVelMag
+          + Constants.Autonomous.MIN_LOOKAHEAD_DISTANCE;
+      double deltaX = (currentX - targetX), deltaY = (currentY - targetY), deltaTheta = (currentTheta - targetTheta);
+      if (!insideRadius(deltaX / Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
+          deltaY / Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
+          deltaTheta / Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS,
+          lookaheadRadius)) {
         targetIndex = i;
         targetPoint = pathPoints.getJSONObject(i);
         break;
@@ -1043,9 +1052,9 @@ public class Drive extends SubsystemBase {
     double yVelNoFF = yPID.getResult();
     double thetaVelNoFF = -thetaPID.getResult();
 
-    double feedForwardX = targetPoint.getDouble("x_velocity") / 2;
-    double feedForwardY = targetPoint.getDouble("y_velocity") / 2;
-    double feedForwardTheta = -targetPoint.getDouble("angular_velocity") / 2;
+    double feedForwardX = targetPoint.getDouble("x_velocity") * Constants.Autonomous.FEED_FORWARD_MULTIPLIER;
+    double feedForwardY = targetPoint.getDouble("y_velocity") * Constants.Autonomous.FEED_FORWARD_MULTIPLIER;
+    double feedForwardTheta = -targetPoint.getDouble("angular_velocity") * Constants.Autonomous.FEED_FORWARD_MULTIPLIER;
 
     double finalX = xVelNoFF + feedForwardX;
     double finalY = yVelNoFF + feedForwardY;
@@ -1121,6 +1130,7 @@ public class Drive extends SubsystemBase {
       systemState = newState;
     }
     Logger.recordOutput("Drive State", systemState);
+    Logger.recordOutput("Drive 1 position", frontRightDriveMotor.getPosition().getValue().in(Units.Rotations));
     Logger.recordOutput("Angle 1 position", frontRight.getWheelPosition());
     Logger.recordOutput("Cancoder 1 position", frontRight.getCanCoderPosition());
     // Stop moving when disabled

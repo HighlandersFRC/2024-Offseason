@@ -12,6 +12,7 @@ import org.json.JSONTokener;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DoNothing;
@@ -45,6 +46,8 @@ public class RobotContainer {
   HashMap<String, Supplier<Command>> commandMap = new HashMap<String, Supplier<Command>>() {
     {
       put("Instant", () -> new InstantCommand());
+      put("Wait", () -> new DoNothing());
+      put("Print", () -> new PrintCommand("10s"));
     }
   };
 
@@ -72,6 +75,7 @@ public class RobotContainer {
         autoJSONs[i] = new JSONObject(new JSONTokener(scanner));
         autoPoints[i] = (JSONArray) autoJSONs[i].getJSONArray("paths").getJSONObject(0).getJSONArray("sampled_points");
         autos[i] = new PolarAutoFollower(autoJSONs[i], drive, lights, peripherals, commandMap, conditionMap);
+        System.out.println("Loaded Path: " + Constants.Autonomous.paths[i]);
       } catch (Exception e) {
         System.out.println("ERROR LOADING PATH " + Constants.Autonomous.paths[i] + ":" + e);
       }
@@ -97,8 +101,8 @@ public class RobotContainer {
     // Driver
 
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverA.whileTrue(new SetElevatorPercent(elevator, 0.3));
-    OI.driverY.whileTrue(new SetElevatorPercent(elevator, -0.3));
+    OI.driverA.whileTrue(new SetElevatorPercent(elevator, 0.7));
+    OI.driverY.whileTrue(new SetElevatorPercent(elevator, -0.7));
   }
 
   /**
@@ -107,13 +111,16 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    final int selectedPath = Constants.Autonomous.getSelectedPathIndex();
+    int selectedPath = Constants.Autonomous.getSelectedPathIndex();
+    if (selectedPath >= Constants.Autonomous.paths.length) {
+      selectedPath = -1;
+    }
     if (selectedPath == -1) {
-      System.out.println("Do Nothing");
+      System.out.println("Selected Path: None");
       return new DoNothing();
     } else {
       this.drive.autoInit(autoPoints[selectedPath]);
-      System.out.println(Constants.Autonomous.paths[selectedPath]);
+      System.out.println("Selected Path: " + Constants.Autonomous.paths[selectedPath]);
       return this.autos[selectedPath];
     }
   }
