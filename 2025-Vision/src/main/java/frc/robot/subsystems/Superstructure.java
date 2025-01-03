@@ -4,21 +4,25 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Drive.DriveState;
+import frc.robot.subsystems.Elevator.ElevatorState;
 
 public class Superstructure extends SubsystemBase {
   private Drive drive;
+  private Elevator elevator;
 
   public enum SuperState {
     CYCLING,
     IDLE,
-    TEST
+    ELEVATOR_UP,
+    ELEVATOR_MID,
   }
 
   private SuperState wantedSuperState = SuperState.CYCLING;
   private SuperState currentSuperState = SuperState.CYCLING;
 
-  public Superstructure(Drive drive) {
+  public Superstructure(Drive drive, Elevator elevator) {
     this.drive = drive;
+    this.elevator = elevator;
   }
 
   public void setWantedState(SuperState wantedState) {
@@ -38,6 +42,14 @@ public class Superstructure extends SubsystemBase {
       case IDLE:
         // Idle state
         handleIDLEState();
+        break;
+      case ELEVATOR_UP:
+        // Idle state
+        handleElevatorUPState();
+        break;
+      case ELEVATOR_MID:
+        // Idle state
+        handleElevatorMIDState();
         break;
       default:
         handleIDLEState();
@@ -66,6 +78,14 @@ public class Superstructure extends SubsystemBase {
       case IDLE:
         // Idle state
         currentSuperState = SuperState.IDLE;
+      case ELEVATOR_MID:
+        // Mid state
+        currentSuperState = SuperState.ELEVATOR_MID;
+        break;
+      case ELEVATOR_UP:
+        // Up state
+        currentSuperState = SuperState.ELEVATOR_UP;
+        break;
       default:
         currentSuperState = SuperState.IDLE;
         break;
@@ -91,6 +111,14 @@ public class Superstructure extends SubsystemBase {
    */
   public void handleIDLEState() {
     drive.setWantedState(DriveState.DEFAULT);
+  }
+
+  public void handleElevatorMIDState() {
+    elevator.setWantedState(ElevatorState.MID);
+  }
+
+  public void handleElevatorUPState() {
+    elevator.setWantedState(ElevatorState.UP);
   }
 
   @Override

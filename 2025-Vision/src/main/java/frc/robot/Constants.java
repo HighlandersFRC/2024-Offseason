@@ -96,8 +96,8 @@ public final class Constants {
   // Subsystem setpoint constants
   public static final class SetPoints {
     public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;
-    public static final double ELEVATOR_MID_POSITION_M = 0.22;
-    public static final double ELEVATOR_TOP_POSITION_M = 0.43;
+    public static final double ELEVATOR_MID_POSITION_M = inchesToMeters(52.25 / 2.0);
+    public static final double ELEVATOR_TOP_POSITION_M = inchesToMeters(52.25);
 
     public enum ElevatorPosition {
       kDOWN(ELEVATOR_BOTTOM_POSITION_M, Ratios.elevatorMetersToRotations(ELEVATOR_BOTTOM_POSITION_M)),
@@ -239,8 +239,10 @@ public final class Constants {
     public static final double STEER_GEAR_RATIO = 21.43;
 
     // elevator
-    public static final double ELEVATOR_GEAR_RATIO = 23.52;
-    public static final double ELEVATOR_MOTOR_ROTATIONS_PER_METER = 219.254;
+    public static final double ELEVATOR_FIRST_STAGE = Constants.inchesToMeters(23.25);
+    public static final double ELEVATOR_MOTOR_ROTATIONS_FOR_FIRST_STAGE = 19.595703;
+    public static final double ELEVATOR_MOTOR_ROTATIONS_PER_METER = ELEVATOR_MOTOR_ROTATIONS_FOR_FIRST_STAGE
+        * (1 / ELEVATOR_FIRST_STAGE);
 
     public static double elevatorRotationsToMeters(double rotations) {
       return rotations / ELEVATOR_MOTOR_ROTATIONS_PER_METER;
@@ -273,8 +275,8 @@ public final class Constants {
     public static final int CANDLE_ID = 0;
 
     // Elevator
-    public static final int LEFT_ELEVATOR_MOTOR_ID = 9;
-    public static final int RIGHT_ELEVATOR_MOTOR_ID = 10;
+    public static final int MASTER_ELEVATOR_MOTOR_ID = 9;
+    public static final int FOLLOWER_ELEVATOR_MOTOR_ID = 10;
   }
 
   // Misc. controller values

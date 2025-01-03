@@ -3,16 +3,24 @@ package frc.robot.subsystems;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Elevator extends SubsystemBase {
-  private final TalonFX elevatorMotor1 = new TalonFX(Constants.CANInfo.LEFT_ELEVATOR_MOTOR_ID,
+  private final TalonFX elevatorMotorMaster = new TalonFX(Constants.CANInfo.MASTER_ELEVATOR_MOTOR_ID,
       new CANBus(Constants.CANInfo.CANBUS_NAME));
-  private final TalonFX elevatorMotor2 = new TalonFX(Constants.CANInfo.RIGHT_ELEVATOR_MOTOR_ID,
+  private final TalonFX elevatorMotorFollower = new TalonFX(Constants.CANInfo.FOLLOWER_ELEVATOR_MOTOR_ID,
       new CANBus(Constants.CANInfo.CANBUS_NAME));
+
+  private final PositionTorqueCurrentFOC positionTorqueFOCRequest = new PositionTorqueCurrentFOC(0);
 
   public enum ElevatorState {
     IDLE,
@@ -27,13 +35,38 @@ public class Elevator extends SubsystemBase {
   public Elevator() {
   }
 
+  public void init() {
+    TalonFXConfiguration elevatorConfig = new TalonFXConfiguration();
+    elevatorConfig.Slot0.kP = 1.0;
+    elevatorConfig.Slot0.kI = 0.0;
+    elevatorConfig.Slot0.kD = 0.0;
+    elevatorConfig.Slot0.kG = 0.0;
+    elevatorConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
+
+    elevatorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    elevatorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    elevatorConfig.CurrentLimits.StatorCurrentLimit = 60;
+    elevatorConfig.CurrentLimits.SupplyCurrentLimit = 60;
+
+    elevatorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+    elevatorMotorMaster.getConfigurator().apply(elevatorConfig);
+    elevatorMotorFollower.getConfigurator().apply(elevatorConfig);
+    elevatorMotorMaster.setNeutralMode(NeutralModeValue.Brake);
+    elevatorMotorFollower.setNeutralMode(NeutralModeValue.Brake);
+    elevatorMotorMaster.setPosition(0.0);
+    elevatorMotorFollower.setPosition(0.0);
+  }
+
   public void moveWithPercent(double percent) {
-    elevatorMotor1.set(percent);
-    elevatorMotor2.set(-percent);
+    elevatorMotorMaster.set(percent);
+    elevatorMotorFollower.set(-percent);
   }
 
   public void moveElevatorToPosition(Constants.SetPoints.ElevatorPosition position) {
-
+    elevatorMotorMaster
+        .setControl(positionTorqueFOCRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(position.meters)));
+    elevatorMotorFollower.setControl(new Follower(Constants.CANInfo.MASTER_ELEVATOR_MOTOR_ID, true));
   }
 
   public void setWantedState(ElevatorState wantedState) {
