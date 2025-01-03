@@ -1130,9 +1130,6 @@ public class Drive extends SubsystemBase {
       systemState = newState;
     }
     Logger.recordOutput("Drive State", systemState);
-    Logger.recordOutput("Drive 1 position", frontRightDriveMotor.getPosition().getValue().in(Units.Rotations));
-    Logger.recordOutput("Angle 1 position", frontRight.getWheelPosition());
-    Logger.recordOutput("Cancoder 1 position", frontRight.getCanCoderPosition());
     // Stop moving when disabled
     if (DriverStation.isDisabled()) {
       systemState = DriveState.DEFAULT;

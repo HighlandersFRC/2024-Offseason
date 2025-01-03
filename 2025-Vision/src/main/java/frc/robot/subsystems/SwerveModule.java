@@ -98,7 +98,7 @@ public class SwerveModule extends SubsystemBase {
 
     angleMotorConfig.Slot0.kP = 350.0;
     angleMotorConfig.Slot0.kI = 0.0;
-    angleMotorConfig.Slot0.kD = 30;
+    angleMotorConfig.Slot0.kD = 15;
 
     angleMotorConfig.Slot1.kP = 3.0;
     angleMotorConfig.Slot1.kI = 0.0;
@@ -138,6 +138,8 @@ public class SwerveModule extends SubsystemBase {
 
     angleMotor.getConfigurator().apply(angleMotorConfig);
     driveMotor.getConfigurator().apply(driveMotorConfig);
+
+    velocityTorqueFOCRequestAngleMotor.Slot = 1;
   }
 
   /**
@@ -148,8 +150,6 @@ public class SwerveModule extends SubsystemBase {
    */
   public void setWheelPID(double angle, double velocity) {
     // method used to move wheel
-    Logger.recordOutput("Setpoint Angle", angle);
-    Logger.recordOutput("Setpoint Vel", velocity);
     angleMotor.setControl(positionTorqueFOCRequest.withPosition(degreesToRotations(Math.toDegrees(angle))));
     driveMotor.setControl(velocityTorqueFOCRequest.withVelocity(wheelToDriveMotorRotations(velocity)));
   }
