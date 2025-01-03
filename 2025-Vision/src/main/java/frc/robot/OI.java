@@ -26,7 +26,7 @@ public class OI {
     public static TriggerButton driverPOVRight = new TriggerButton(povRight);
     public static TriggerButton driverPOVDown = new TriggerButton(povDown);
     public static TriggerButton driverPOVLeft = new TriggerButton(povLeft);
-    
+
     public static TriggerButton driverRT = new TriggerButton(driveRTSupplier);
     public static TriggerButton driverLT = new TriggerButton(driverLTSupplier);
 
@@ -45,17 +45,15 @@ public class OI {
     public static JoystickButton operatorY = new JoystickButton(operatorController, 4);
     public static JoystickButton operatorA = new JoystickButton(operatorController, 1);
 
-    
-
     public static BooleanSupplier operatorRTSupplier = () -> getOperatorRTPercent() > Constants.OperatorConstants.RIGHT_TRIGGER_DEADZONE;
     public static BooleanSupplier operatorLTSupplier = () -> getOperatorLTPercent() > Constants.OperatorConstants.LEFT_TRIGGER_DEADZONE;
 
     public static TriggerButton operatorRT = new TriggerButton(operatorRTSupplier);
     public static TriggerButton operatorLT = new TriggerButton(operatorLTSupplier);
-    
+
     public static JoystickButton operatorRB = new JoystickButton(operatorController, 6);
     public static JoystickButton operatorLB = new JoystickButton(operatorController, 5);
-    
+
     public static JoystickButton operatorLJ = new JoystickButton(operatorController, 9);
     public static JoystickButton operatorRJ = new JoystickButton(operatorController, 10);
 
@@ -70,31 +68,47 @@ public class OI {
 
     public static JoystickButton autoChooserIsBlue = new JoystickButton(autoChooser, 8);
 
-    public static void printAutoChooserInputs(){
+    public static void printAutoChooserInputs() {
         System.out.println("Driver Controller Connected: " + driverController.isConnected());
         System.out.println("Operator Controller Connected: " + operatorController.isConnected());
         System.out.println("Auto Chooser Connected: " + autoChooser.isConnected());
         System.out.println("Auto Chooser Num Buttons: " + autoChooser.getButtonCount());
         System.out.println("Is Blue: " + autoChooserIsBlue.getAsBoolean());
-        for (int i = 1; i <= 16;  i ++){
+        for (int i = 1; i <= 16; i++) {
             System.out.println("Auto Chooser Button " + i + " : " + autoChooser.getRawButton(i));
         }
     }
 
     public static double getDriverLeftX() {
-        return -driverController.getLeftX();
+        double leftX = -driverController.getLeftX(), leftY = driverController.getLeftY();
+        if (Math.hypot(leftX, leftY) < Constants.OperatorConstants.LEFT_STICK_DEADZONE) {
+            leftX = 0;
+        }
+        return leftX;
     }
 
     public static double getDriverLeftY() {
-        return driverController.getLeftY();
+        double leftX = -driverController.getLeftX(), leftY = driverController.getLeftY();
+        if (Math.hypot(leftX, leftY) < Constants.OperatorConstants.LEFT_STICK_DEADZONE) {
+            leftY = 0;
+        }
+        return leftY;
     }
 
     public static double getDriverRightX() {
-        return driverController.getRightX();
+        double rightX = -driverController.getRightX(), rightY = driverController.getRightY();
+        if (Math.hypot(rightX, rightY) < Constants.OperatorConstants.LEFT_STICK_DEADZONE) {
+            rightX = 0;
+        }
+        return rightX;
     }
 
     public static double getDriverRightY() {
-        return driverController.getRightY();
+        double rightX = -driverController.getRightX(), rightY = driverController.getRightY();
+        if (Math.hypot(rightX, rightY) < Constants.OperatorConstants.LEFT_STICK_DEADZONE) {
+            rightY = 0;
+        }
+        return rightY;
     }
 
     public static double getDriverRTPercent() {
@@ -109,11 +123,11 @@ public class OI {
         return driverController.getAButton();
     }
 
-    public static boolean getDriverRB(){
+    public static boolean getDriverRB() {
         return driverController.getRightBumper();
     }
 
-    public static boolean getDriverLB(){
+    public static boolean getDriverLB() {
         return driverController.getLeftBumper();
     }
 
@@ -125,7 +139,7 @@ public class OI {
         return operatorController.getLeftTriggerAxis();
     }
 
-    public static boolean getOperatorLB(){
+    public static boolean getOperatorLB() {
         return operatorController.getLeftBumper();
     }
 
@@ -134,7 +148,7 @@ public class OI {
     }
 
     public static boolean getPOVUp() {
-        if (getPOV() == 0){
+        if (getPOV() == 0) {
             return true;
         } else {
             return false;
@@ -145,7 +159,7 @@ public class OI {
         return autoChooser.getRawButton(6);
     }
 
-    public static boolean isNothingAuto(){
+    public static boolean isNothingAuto() {
         return autoChooser.getRawButton(7);
     }
 
@@ -157,7 +171,7 @@ public class OI {
         return autoChooser.getRawButton(8);
     }
 
-    public static boolean is4PieceFarBottom231Auto(){
+    public static boolean is4PieceFarBottom231Auto() {
         return autoChooser.getRawButton(2);
     }
 
@@ -177,7 +191,7 @@ public class OI {
         return autoChooser.getRawButton(4);
     }
 
-    public static boolean getDriverRightJoystickPressed(){
+    public static boolean getDriverRightJoystickPressed() {
         return driverController.getRightStickButton();
     }
 }

@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-public abstract class PolarTakeDrive extends Command {
+public abstract class AutoFollower extends Command {
   /** Creates a new PolarTakeDrive. */
   public abstract int getPathPointIndex();
 

@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DoNothing;
+import frc.robot.commands.FullSendFollower;
 import frc.robot.commands.PolarAutoFollower;
 import frc.robot.commands.SetElevatorPercent;
 import frc.robot.commands.ZeroAngleMidMatch;
@@ -48,6 +49,7 @@ public class RobotContainer {
       put("Instant", () -> new InstantCommand());
       put("Wait", () -> new DoNothing());
       put("Print", () -> new PrintCommand("10s"));
+      put("Full Send", () -> new FullSendFollower(drive, null, false));
     }
   };
 

@@ -13,14 +13,12 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.tools.math.Vector;
-import frc.robot.tools.wrappers.PolarTakeDrive;
+import frc.robot.tools.wrappers.AutoFollower;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Lights;
 
-public class PurePursuitFollower extends PolarTakeDrive {
+public class VariableSpeedFollower extends AutoFollower {
   private Drive drive;
-  private Lights lights;
 
   private JSONArray path;
 
@@ -39,22 +37,20 @@ public class PurePursuitFollower extends PolarTakeDrive {
   private ArrayList<double[]> recordedOdometry = new ArrayList<double[]>();
   public double pathStartTime;
 
-  private boolean pickupNote;
-
   private int currentPathPointIndex = 0;
   private int returnPathPointIndex = 0;
   private int timesStagnated = 0;
   private final int STAGNATE_THRESHOLD = 3;
   private boolean reset = true;
+  private int endIndex = 0;
 
   public int getPathPointIndex() {
     return currentPathPointIndex;
   }
 
-  public PurePursuitFollower(Drive drive, Lights lights, JSONArray pathPoints,
+  public VariableSpeedFollower(Drive drive, JSONArray pathPoints,
       boolean record) {
     this.drive = drive;
-    this.lights = lights;
     this.path = pathPoints;
     this.record = record;
     pathStartTime = pathPoints.getJSONObject(0).getDouble("time");
@@ -63,23 +59,24 @@ public class PurePursuitFollower extends PolarTakeDrive {
 
   @Override
   public void initialize() {
+    pathStartTime = path.getJSONObject(0).getDouble("time");
     initTime = Timer.getFPGATimestamp();
     if (reset) {
+      this.endIndex = path.length() - 1;
       currentPathPointIndex = 0;
     } else {
       reset = true;
     }
+    if (endIndex > path.length() - 1) {
+      endIndex = path.length() - 1;
+    }
     returnPathPointIndex = currentPathPointIndex;
     timesStagnated = 0;
-    if (pickupNote) {
-      lights.clearAnimations();
-      lights.setCommandRunning(true);
-      lights.setStrobePurple();
-    }
   }
 
   @Override
   public void execute() {
+    System.out.println("Variable Speed");
     drive.updateOdometryFusedArray();
     odometryFusedX = drive.getMT2OdometryX();
     odometryFusedY = drive.getMT2OdometryY();
@@ -88,7 +85,7 @@ public class PurePursuitFollower extends PolarTakeDrive {
     // call PIDController function
     currentPathPointIndex = returnPathPointIndex;
     desiredVelocityArray = drive.purePursuitController(odometryFusedX, odometryFusedY, odometryFusedTheta,
-        currentPathPointIndex, path);
+        currentPathPointIndex, path, false);
 
     returnPathPointIndex = desiredVelocityArray[3].intValue();
     if (returnPathPointIndex == currentPathPointIndex && returnPathPointIndex != path.length() - 1) {
@@ -123,10 +120,6 @@ public class PurePursuitFollower extends PolarTakeDrive {
 
   @Override
   public void end(boolean interrupted) {
-    if (pickupNote) {
-      lights.clearAnimations();
-      lights.setCommandRunning(false);
-    }
     Vector velocityVector = new Vector();
     velocityVector.setI(0);
     velocityVector.setJ(0);
@@ -171,8 +164,8 @@ public class PurePursuitFollower extends PolarTakeDrive {
   public void from(int pointIndex, JSONObject pathJSON, int to) {
     this.currentPathPointIndex = pointIndex;
     path = pathJSON.getJSONArray("sampled_points");
+    endIndex = to;
     reset = false;
-    this.schedule();
   }
 
   @Override

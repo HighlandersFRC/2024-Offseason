@@ -12,6 +12,7 @@ public final class Constants {
     // LOOKAHEAD = AUTONOMOUS_LOOKAHEAD_DISTANCE * velocity + MIN_LOOKAHEAD_DISTANCE
     // their constants
     public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.10; // Lookahead at 1m/s scaled by wanted velocity
+    public static final double FULL_SEND_LOOKAHEAD = 0.48;
     public static final double MIN_LOOKAHEAD_DISTANCE = 0.01; // Lookahead distance at 0m/s
     // Path follower will end if within this radius of the final point
     public static final double AUTONOMOUS_END_ACCURACY = 0.25;
@@ -280,6 +281,8 @@ public final class Constants {
   public static final class OperatorConstants {
     public static final double RIGHT_TRIGGER_DEADZONE = 0.1;
     public static final double LEFT_TRIGGER_DEADZONE = 0.1;
+    public static final double LEFT_STICK_DEADZONE = 0.1;
+    public static final double RIGHT_STICK_DEADZONE = 0.2;
   }
 
   /**

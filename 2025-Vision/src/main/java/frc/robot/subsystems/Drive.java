@@ -182,8 +182,6 @@ public class Drive extends SubsystemBase {
 
   private String m_fieldSide = "blue";
 
-  private int kLookAheadDistance = 5;
-
   private double angleSetpoint = 0;
 
   public enum DriveState {
@@ -874,124 +872,8 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  /**
-   * Performs autonomous control using PID controllers to navigate the robot along
-   * a predefined path.
-   * Adjusts robot velocity based on positional error and lookahead points.
-   *
-   * @param currentX     Current x-coordinate of the robot.
-   * @param currentY     Current y-coordinate of the robot.
-   * @param currentTheta Current orientation angle of the robot.
-   * @param time         Current time in the autonomous period.
-   * @param pathPoints   Array containing path points with timestamp, x, y, and
-   *                     theta values.
-   * @param pickupNote   Indicates whether the robot is picking up a note.
-   * @return An array containing the calculated velocities: [x velocity, y
-   *         velocity, angular velocity].
-   */
-  public double[] pidController(double currentX, double currentY, double currentTheta, double time,
-      JSONArray pathPoints, boolean pickupNote, double noteTrackingEndTime) {
-    if (time < pathPoints.getJSONArray(pathPoints.length() - 1).getDouble(0)) {
-      JSONArray currentPoint = pathPoints.getJSONArray(0);
-      JSONArray targetPoint = pathPoints.getJSONArray(0);
-      for (int i = 0; i < pathPoints.length(); i++) {
-        if (i == pathPoints.length() - kLookAheadDistance) {
-          currentPoint = pathPoints.getJSONArray(i + 1);
-          targetPoint = pathPoints.getJSONArray((i + (kLookAheadDistance - 1)));
-          break;
-        }
-
-        currentPoint = pathPoints.getJSONArray(i + 1);
-        JSONArray previousPoint = pathPoints.getJSONArray(i);
-
-        double currentPointTime = currentPoint.getDouble(0);
-        double previousPointTime = previousPoint.getDouble(0);
-
-        if (time >= previousPointTime && time < currentPointTime) {
-          targetPoint = pathPoints.getJSONArray(i + (kLookAheadDistance - 1));
-          break;
-        }
-      }
-
-      double targetTime = targetPoint.getDouble(0);
-      double targetX = targetPoint.getDouble(1);
-      double targetY = targetPoint.getDouble(2);
-      double targetTheta = targetPoint.getDouble(3);
-
-      if (this.m_fieldSide == "blue") {
-        targetX = Constants.Physical.FIELD_LENGTH - targetX;
-        targetTheta = Math.PI - targetTheta;
-      }
-
-      if (targetTheta - currentTheta > Math.PI) {
-        targetTheta -= 2 * Math.PI;
-      } else if (targetTheta - currentTheta < -Math.PI) {
-        targetTheta += 2 * Math.PI;
-      }
-
-      double currentPointTime = currentPoint.getDouble(0);
-      double currentPointX = currentPoint.getDouble(1);
-      double currentPointY = currentPoint.getDouble(2);
-      double currentPointTheta = currentPoint.getDouble(3);
-
-      if (this.m_fieldSide == "blue") {
-        currentPointX = Constants.Physical.FIELD_LENGTH - currentPointX;
-        currentPointTheta = Math.PI - currentPointTheta;
-      }
-
-      if (currentPointTime > noteTrackingEndTime) {
-        pickupNote = false;
-        // System.out.println("timeout");
-      }
-
-      // System.out.println("current time: " + currentPointTime);
-
-      double feedForwardX = (targetX - currentPointX) / (targetTime - currentPointTime);
-      double feedForwardY = (targetY - currentPointY) / (targetTime - currentPointTime);
-      // double feedForwardTheta = -(targetTheta - currentPointTheta)/(targetTime -
-      // currentPointTime);
-      double feedForwardTheta = 0;
-
-      xPID.setSetPoint(targetX);
-      yPID.setSetPoint(targetY);
-      thetaPID.setSetPoint(targetTheta);
-
-      xPID.updatePID(currentX);
-      yPID.updatePID(currentY);
-      thetaPID.updatePID(currentTheta);
-
-      double xVelNoFF = xPID.getResult();
-      double yVelNoFF = yPID.getResult();
-      double thetaVelNoFF = -thetaPID.getResult();
-
-      double xVel = feedForwardX + xVelNoFF;
-      double yVel = feedForwardY + yVelNoFF;
-      double thetaVel = feedForwardTheta + thetaVelNoFF;
-
-      double[] velocityArray = new double[3];
-
-      velocityArray[0] = xVel;
-      velocityArray[1] = -yVel;
-      velocityArray[2] = thetaVel;
-
-      // System.out.println("Targ - X: " + targetX + " Y: " + targetY + " Theta: " +
-      // targetTheta);
-      // System.out.println("PID side: " + this.fieldSide);
-
-      return velocityArray;
-    } else {
-      double[] velocityArray = new double[3];
-
-      velocityArray[0] = 0;
-      velocityArray[1] = 0;
-      velocityArray[2] = 0;
-
-      return velocityArray;
-    }
-  }
-
   public Number[] purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
-      JSONArray pathPoints) {
+      JSONArray pathPoints, boolean fullSend) {
     JSONObject targetPoint = pathPoints.getJSONObject(pathPoints.length() - 1);
     int targetIndex = pathPoints.length() - 1;
     if (this.m_fieldSide == "blue") {
@@ -1014,8 +896,9 @@ public class Drive extends SubsystemBase {
           targetXvel / Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS);
       double targetVelMag = Math.hypot(linearVelMag,
           targetThetavel / Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS);
-      double lookaheadRadius = Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_DISTANCE * targetVelMag
-          + Constants.Autonomous.MIN_LOOKAHEAD_DISTANCE;
+      double lookaheadRadius = fullSend ? Constants.Autonomous.FULL_SEND_LOOKAHEAD
+          : Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_DISTANCE * targetVelMag
+              + Constants.Autonomous.MIN_LOOKAHEAD_DISTANCE;// If full send mode is enabled, use the full send lookahead
       double deltaX = (currentX - targetX), deltaY = (currentY - targetY), deltaTheta = (currentTheta - targetTheta);
       if (!insideRadius(deltaX / Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
           deltaY / Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
@@ -1036,10 +919,6 @@ public class Drive extends SubsystemBase {
         targetTheta += 2 * Math.PI;
       }
     }
-    // if (this.fieldSide == "blue") {
-    // currentX = Constants.Physical.FIELD_LENGTH - currentX;
-    // currentTheta = Math.PI - currentTheta;
-    // }
     xPID.setSetPoint(targetX);
     yPID.setSetPoint(targetY);
     thetaPID.setSetPoint(targetTheta);
