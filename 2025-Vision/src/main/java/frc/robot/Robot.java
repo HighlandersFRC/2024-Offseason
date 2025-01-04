@@ -87,6 +87,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
+    m_robotContainer.superstructure.setWantedState(SuperState.IDLE);
     if (OI.isBlueSide()) {
       System.out.println("ON BLUE SIDE");
       m_fieldSide = "blue";
@@ -108,6 +109,7 @@ public class Robot extends LoggedRobot {
     m_robotContainer.lights.setCommandRunning(false);
     m_robotContainer.lights.clearAnimations();
     m_robotContainer.superstructure.setWantedState(SuperState.CYCLING);
+    m_robotContainer.drive.teleopInit();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

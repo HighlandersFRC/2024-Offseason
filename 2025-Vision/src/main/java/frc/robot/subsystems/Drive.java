@@ -270,6 +270,14 @@ public class Drive extends SubsystemBase {
     turningPID.setMaxOutput(3);
   }
 
+  public void teleopInit() {
+    angleSetpoint = peripherals.getPigeonAngle();
+    if (getFieldSide() == "red") {
+      angleSetpoint += 180;
+    }
+    turningPID.setSetPoint(angleSetpoint);
+  }
+
   /**
    * Zeros the IMU (Inertial Measurement Unit) mid-match and resets the odometry
    * with a zeroed angle.
@@ -277,6 +285,8 @@ public class Drive extends SubsystemBase {
    * odometry with this new zeroed angle.
    */
   public void zeroIMU() {
+    angleSetpoint = 0;
+    turningPID.setSetPoint(angleSetpoint);
     peripherals.zeroPigeon();
     SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
     swerveModulePositions[0] = new SwerveModulePosition(frontLeft.getModuleDistance(),
@@ -727,7 +737,6 @@ public class Drive extends SubsystemBase {
     // joystick
     double originalX = -(Math.copySign(OI.getDriverLeftY() * OI.getDriverLeftY(), OI.getDriverLeftY()));
     double originalY = -(Math.copySign(OI.getDriverLeftX() * OI.getDriverLeftX(), OI.getDriverLeftX()));
-
     if (Math.abs(originalX) < 0.075) {
       originalX = 0;
     }
@@ -745,19 +754,39 @@ public class Drive extends SubsystemBase {
       turn = 0.0;
     }
 
-    double pigeonAngle = Math.toRadians(peripherals.getPigeonAngle());
-    double xPower = getAdjustedX(originalX, originalY);
-    double yPower = getAdjustedY(originalX, originalY);
+    if (turn == 0.0) {
+      turningPID.setSetPoint(angleSetpoint);
+      double yaw = peripherals.getPigeonAngle();
+      while (Math.abs(angleSetpoint - yaw) > 180) {
+        if (angleSetpoint - yaw > Math.PI) {
+          yaw += 360;
+        } else {
+          yaw -= 360;
+        }
+      }
 
-    double xSpeed = xPower * Constants.Physical.TOP_SPEED;
-    double ySpeed = yPower * Constants.Physical.TOP_SPEED;
+      double result = -2 * turningPID.updatePID(yaw);
+      Logger.recordOutput("result", result);
+      driveAutoAligned(result);
+    } else {
+      angleSetpoint = peripherals.getPigeonAngle();
+      double compensation = peripherals.getPigeonAngularVelocityW() * 0.050;
+      angleSetpoint += compensation;
+      Logger.recordOutput("setpoint", angleSetpoint);
+      turningPID.setSetPoint(angleSetpoint);
+      double pigeonAngle = Math.toRadians(peripherals.getPigeonAngle());
+      double xPower = getAdjustedX(originalX, originalY);
+      double yPower = getAdjustedY(originalX, originalY);
 
-    Vector controllerVector = new Vector(xSpeed, ySpeed);
+      double xSpeed = xPower * Constants.Physical.TOP_SPEED;
+      double ySpeed = yPower * Constants.Physical.TOP_SPEED;
 
-    frontLeft.drive(controllerVector, turn, pigeonAngle);
-    frontRight.drive(controllerVector, turn, pigeonAngle);
-    backLeft.drive(controllerVector, turn, pigeonAngle);
-    backRight.drive(controllerVector, turn, pigeonAngle);
+      Vector controllerVector = new Vector(xSpeed, ySpeed);
+      frontLeft.drive(controllerVector, turn, pigeonAngle);
+      frontRight.drive(controllerVector, turn, pigeonAngle);
+      backLeft.drive(controllerVector, turn, pigeonAngle);
+      backRight.drive(controllerVector, turn, pigeonAngle);
+    }
   }
 
   /**

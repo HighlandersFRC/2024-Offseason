@@ -85,12 +85,12 @@ public class Superstructure extends SubsystemBase {
 
   /**
    * This function handles the IDLE state of the Superstructure subsystem.
-   * In the IDLE state, the drive subsystem is set to its default state.
+   * In the IDLE state, the drive subsystem is set to its IDLE state.
    *
    * @return void - This function does not return any value.
    */
   public void handleIDLEState() {
-    drive.setWantedState(DriveState.DEFAULT);
+    drive.setWantedState(DriveState.IDLE);
   }
 
   @Override

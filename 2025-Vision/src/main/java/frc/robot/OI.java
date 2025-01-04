@@ -96,7 +96,7 @@ public class OI {
     }
 
     public static double getDriverRightX() {
-        double rightX = -driverController.getRightX(), rightY = driverController.getRightY();
+        double rightX = driverController.getRightX(), rightY = driverController.getRightY();
         if (Math.hypot(rightX, rightY) < Constants.OperatorConstants.LEFT_STICK_DEADZONE) {
             rightX = 0;
         }
@@ -104,7 +104,7 @@ public class OI {
     }
 
     public static double getDriverRightY() {
-        double rightX = -driverController.getRightX(), rightY = driverController.getRightY();
+        double rightX = driverController.getRightX(), rightY = driverController.getRightY();
         if (Math.hypot(rightX, rightY) < Constants.OperatorConstants.LEFT_STICK_DEADZONE) {
             rightY = 0;
         }

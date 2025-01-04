@@ -171,7 +171,7 @@ public class Peripherals {
    *
    * @return The absolute angular velocity of the IMU's Z-axis in device
    *         coordinates.
-   *         The value is in radians per second.
+   *         The value is in degrees per second.
    */
   public double getPigeonAngularVelocity() {
     return Math.abs(pigeon.getAngularVelocityZDevice().getValueAsDouble());

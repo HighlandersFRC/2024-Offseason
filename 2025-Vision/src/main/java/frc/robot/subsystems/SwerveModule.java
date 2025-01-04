@@ -124,7 +124,7 @@ public class SwerveModule extends SubsystemBase {
     driveMotorConfig.TorqueCurrent.PeakForwardTorqueCurrent = 120;
     driveMotorConfig.TorqueCurrent.PeakReverseTorqueCurrent = -120;
 
-    driveMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    driveMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     driveMotorConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.1;
 
@@ -379,6 +379,7 @@ public class SwerveModule extends SubsystemBase {
    * @param navxAngle The current orientation angle from the IMU sensor.
    */
   public void drive(Vector vector, double turnValue, double navxAngle) {
+    // turnValue = -turnValue;
     if (Math.abs(vector.getI()) < 0.001 && Math.abs(vector.getJ()) < 0.001 && Math.abs(turnValue) < 0.01) {
       // stops motors when joysticks are at 0
       driveMotor.setControl(velocityTorqueFOCRequest.withVelocity(0.0));
