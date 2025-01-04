@@ -10,16 +10,24 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.MoveTestMotor;
+import frc.robot.subsystems.MotorTest;
 import frc.robot.subsystems.Superstructure.SuperState;
 
 public class Robot extends LoggedRobot {
   private RobotContainer m_robotContainer = new RobotContainer();
   private Command m_autonomousCommand;
 
+  private MotorTest motortest = new MotorTest();
   String m_fieldSide = "blue";
 
   @Override
   public void robotInit() {
+
+    OI.driverA.whileTrue(new MoveTestMotor(motortest, "motor1", -0.2));
+    OI.driverY.whileTrue(new MoveTestMotor(motortest, "motor1", 0.2));
+
+
     System.out.println("Robot Init");
     Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
@@ -32,6 +40,7 @@ public class Robot extends LoggedRobot {
     m_robotContainer.peripherals.init();
     m_robotContainer.drive.init(m_fieldSide);
     m_robotContainer.elevator.init();
+    motortest.init();
 
     PortForwarder.add(5800, "orangepi1.local", 5800);
     PortForwarder.add(5801, "orangepi1.local", 5801);
