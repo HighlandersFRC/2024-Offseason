@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,8 +19,8 @@ public class Superstructure extends SubsystemBase {
     ELEVATOR_MID,
   }
 
-  private SuperState wantedSuperState = SuperState.CYCLING;
-  private SuperState currentSuperState = SuperState.CYCLING;
+  private SuperState wantedSuperState = SuperState.IDLE;
+  private SuperState currentSuperState = SuperState.IDLE;
 
   public Superstructure(Drive drive, Elevator elevator) {
     this.drive = drive;
@@ -78,6 +80,7 @@ public class Superstructure extends SubsystemBase {
       case IDLE:
         // Idle state
         currentSuperState = SuperState.IDLE;
+        break;
       case ELEVATOR_MID:
         // Mid state
         currentSuperState = SuperState.ELEVATOR_MID;
@@ -111,6 +114,7 @@ public class Superstructure extends SubsystemBase {
    */
   public void handleIDLEState() {
     drive.setWantedState(DriveState.IDLE);
+    elevator.setWantedState(ElevatorState.IDLE);
   }
 
   public void handleElevatorMIDState() {
@@ -124,6 +128,7 @@ public class Superstructure extends SubsystemBase {
   @Override
   public void periodic() {
     currentSuperState = handleStateTransitions();
+    Logger.recordOutput("Super State", currentSuperState);
     applyStates();
   }
 }

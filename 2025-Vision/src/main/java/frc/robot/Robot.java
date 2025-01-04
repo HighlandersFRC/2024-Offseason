@@ -103,6 +103,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    m_robotContainer.superstructure.setWantedState(SuperState.IDLE);
   }
 
   @Override
