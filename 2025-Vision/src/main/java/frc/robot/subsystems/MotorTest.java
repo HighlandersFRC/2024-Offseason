@@ -6,11 +6,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class MotorTest extends SubsystemBase {
 
-  private final int id1 = 30;
+  private final int id1 = 20;
   // private final int id2 = 100;
   // private final int id3 = 100;
   // private final int id4 = 100;
-  private final String canbus1 = "Canivore";
+  private final String canbus1 = "rio";
 
   private final TalonFX motor1 = new TalonFX(id1, canbus1);
   // private final TalonFX motor2 = new TalonFX(id2, canbus1);
@@ -24,8 +24,10 @@ public class MotorTest extends SubsystemBase {
   }
 
   public void setMotorPercent(String motorName, double percent) {
+    System.out.println("setting percent");
     switch (motorName) {
       case "motor1": 
+      System.out.println(percent);
       motor1.set(percent);
       break;
       // case "motor2": 
@@ -38,6 +40,8 @@ public class MotorTest extends SubsystemBase {
       // motor4.set(percent);
       // break;
       case "all": 
+      System.out.println("all");
+
       motor1.set(percent);
       // motor2.set(percent);
       // motor3.set(percent);

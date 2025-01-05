@@ -17,12 +17,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DoNothing;
 import frc.robot.commands.FullSendFollower;
+import frc.robot.commands.MoveTestMotor;
 import frc.robot.commands.PolarAutoFollower;
 import frc.robot.commands.SetElevatorPercent;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Lights;
+import frc.robot.subsystems.MotorTest;
 import frc.robot.subsystems.Peripherals;
 import frc.robot.subsystems.Superstructure;
 
@@ -41,6 +43,7 @@ public class RobotContainer {
   Peripherals peripherals = new Peripherals();
   Drive drive = new Drive(peripherals);
   Elevator elevator = new Elevator();
+  MotorTest motorTest = new MotorTest();
   Lights lights = new Lights();
   Superstructure superstructure = new Superstructure(drive, elevator);
 
@@ -105,6 +108,8 @@ public class RobotContainer {
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     OI.driverA.whileTrue(new SetElevatorPercent(elevator, 0.7));
     OI.driverY.whileTrue(new SetElevatorPercent(elevator, -0.7));
+    OI.driverRT.whileTrue(new MoveTestMotor(motorTest, "motor1", 0.5));
+    OI.driverLT.whileTrue(new MoveTestMotor(motorTest, "motor1", -0.5));
   }
 
   /**
