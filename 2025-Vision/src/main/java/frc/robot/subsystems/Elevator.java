@@ -5,11 +5,13 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -20,6 +22,7 @@ public class Elevator extends SubsystemBase {
       new CANBus(Constants.CANInfo.CANBUS_NAME));
 
   private final PositionTorqueCurrentFOC positionTorqueFOCRequest = new PositionTorqueCurrentFOC(0);
+  private final TorqueCurrentFOC torqueCurrentFOCRequest = new TorqueCurrentFOC(0.0).withMaxAbsDutyCycle(0.0);
 
   public enum ElevatorState {
     IDLE,
@@ -28,10 +31,18 @@ public class Elevator extends SubsystemBase {
     DOWN,
   }
 
+  private double idleTime;
+  private boolean firstTimeIdle = true;
   private ElevatorState wantedState = ElevatorState.IDLE;
   private ElevatorState systemState = ElevatorState.IDLE;
 
+  
+
   public Elevator() {
+  }
+
+  public void teleopInit() {
+    firstTimeIdle = true;
   }
 
   public void init() {
@@ -63,11 +74,25 @@ public class Elevator extends SubsystemBase {
     elevatorMotorFollower.set(-percent);
   }
 
+  public void moveWithTorque(double current, double maxPercent) {
+    elevatorMotorMaster.setControl(torqueCurrentFOCRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
+    elevatorMotorFollower.setControl(torqueCurrentFOCRequest.withOutput(-current).withMaxAbsDutyCycle(maxPercent));
+  }
+
   public void moveElevatorToPosition(Constants.SetPoints.ElevatorPosition position) {
     elevatorMotorMaster
         .setControl(positionTorqueFOCRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(position.meters)));
     elevatorMotorFollower
         .setControl(positionTorqueFOCRequest.withPosition(-Constants.Ratios.elevatorMetersToRotations(position.meters)));
+  }
+
+  public double getElevatorPosition() {
+    return Constants.Ratios.elevatorRotationsToMeters(elevatorMotorMaster.getPosition().getValueAsDouble());
+  }
+
+  public void setElevatorEncoderPosition(double position) {
+    elevatorMotorMaster.setPosition(position);
+    elevatorMotorFollower.setPosition(position);
   }
 
   public void setWantedState(ElevatorState wantedState) {
@@ -100,18 +125,34 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("2 position", elevatorMotorFollower.getPosition().getValueAsDouble());
     switch (systemState) {
       case UP:
+      firstTimeIdle = true;
         moveElevatorToPosition(Constants.SetPoints.ElevatorPosition.kUP);
         break;
       case MID:
+      firstTimeIdle = true;
         moveElevatorToPosition(Constants.SetPoints.ElevatorPosition.kMID);
         break;
       case DOWN:
+      firstTimeIdle = true;
         moveElevatorToPosition(Constants.SetPoints.ElevatorPosition.kDOWN);
         break;
       case IDLE:
-        moveWithPercent(0.0);
+        
+        if(firstTimeIdle) {
+          idleTime = Timer.getFPGATimestamp();
+          firstTimeIdle = false;
+        }
+        if(Math.abs(Constants.Ratios.elevatorRotationsToMeters(elevatorMotorMaster.getVelocity().getValueAsDouble())) < 0.1 && Timer.getFPGATimestamp() - idleTime > 0.1) {
+          moveWithPercent(0.0);
+          setElevatorEncoderPosition(0.0);
+        } else {
+          moveWithTorque(-25, 0.6);
+        }
+        Logger.recordOutput("Elevator Current", elevatorMotorMaster.getStatorCurrent().getValueAsDouble());
+        Logger.recordOutput("Elevator MPS", Constants.Ratios.elevatorRotationsToMeters(elevatorMotorMaster.getVelocity().getValueAsDouble()));
         break;
       default:
+      firstTimeIdle = true;
         moveWithPercent(0.0);
     }
   }

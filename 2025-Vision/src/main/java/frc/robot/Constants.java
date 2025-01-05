@@ -24,6 +24,7 @@ public final class Constants {
     public static final double FEED_FORWARD_MULTIPLIER = 0.5;
     public static final String[] paths = new String[] {
         "Test.polarauto",
+        "4piece.polarauto"
     };
 
     public static int getSelectedPathIndex() {
