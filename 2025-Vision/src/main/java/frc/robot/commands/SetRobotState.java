@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.SuperState;
@@ -34,7 +35,11 @@ public class SetRobotState extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    superstructure.setWantedState(SuperState.CYCLING);
+    if (DriverStation.isAutonomousEnabled()){
+      superstructure.setWantedState(SuperState.IDLE);
+    } else {
+      superstructure.setWantedState(SuperState.CYCLING);
+    }
   }
 
   // Returns true when the command should end.
