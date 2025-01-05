@@ -76,8 +76,8 @@ public final class Constants {
 
   // Physical constants (e.g. field and robot dimensions)
   public static final class Physical {
-    public static final double FIELD_WIDTH = 8.2;
-    public static final double FIELD_LENGTH = 16.63;
+    public static final double FIELD_WIDTH = 8.052;
+    public static final double FIELD_LENGTH = 17.548;
     public static final double WHEEL_DIAMETER = inchesToMeters(4);
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
     public static final double WHEEL_ROTATION_PER_METER = 1 / WHEEL_CIRCUMFERENCE;
