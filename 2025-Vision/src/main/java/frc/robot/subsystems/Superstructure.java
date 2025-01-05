@@ -104,6 +104,7 @@ public class Superstructure extends SubsystemBase {
    */
   public void handleCYCLINGState() {
     drive.setWantedState(DriveState.DEFAULT);
+    elevator.setWantedState(ElevatorState.IDLE);
   }
 
   /**

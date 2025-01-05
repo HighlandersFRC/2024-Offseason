@@ -20,6 +20,7 @@ import frc.robot.commands.FullSendFollower;
 import frc.robot.commands.MoveTestMotor;
 import frc.robot.commands.PolarAutoFollower;
 import frc.robot.commands.SetElevatorPercent;
+import frc.robot.commands.SetRobotState;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator;
@@ -27,6 +28,7 @@ import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.MotorTest;
 import frc.robot.subsystems.Peripherals;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Superstructure.SuperState;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -106,10 +108,12 @@ public class RobotContainer {
     // Driver
 
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverA.whileTrue(new SetElevatorPercent(elevator, 0.7));
-    OI.driverY.whileTrue(new SetElevatorPercent(elevator, -0.7));
-    OI.driverRT.whileTrue(new MoveTestMotor(motorTest, "motor1", 0.5));
-    OI.driverLT.whileTrue(new MoveTestMotor(motorTest, "motor1", -0.5));
+    OI.driverA.whileTrue(new SetElevatorPercent(elevator, 0.3));
+    OI.driverY.whileTrue(new SetElevatorPercent(elevator, -0.3));
+    OI.driverLT.whileTrue(new MoveTestMotor(motorTest, "motor1", 0.3));
+    OI.driverRT.whileTrue(new MoveTestMotor(motorTest, "motor1", -0.3));
+    OI.driverX.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_MID));
+    OI.driverB.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_UP));
   }
 
   /**

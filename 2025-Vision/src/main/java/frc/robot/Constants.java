@@ -67,7 +67,7 @@ public final class Constants {
 
   public static void periodic() {
     int index = Autonomous.getSelectedPathIndex();
-    if (index == -1) {
+    if (index == -1 || index>Constants.Autonomous.paths.length) {
       Logger.recordOutput("Selected Auto", "Do Nothing");
     } else {
       Logger.recordOutput("Selected Auto", Autonomous.paths[index]);
@@ -97,7 +97,7 @@ public final class Constants {
   public static final class SetPoints {
     public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;
     public static final double ELEVATOR_MID_POSITION_M = inchesToMeters(52.25 / 2.0);
-    public static final double ELEVATOR_TOP_POSITION_M = inchesToMeters(52.25);
+    public static final double ELEVATOR_TOP_POSITION_M = inchesToMeters(43.0);
 
     public enum ElevatorPosition {
       kDOWN(ELEVATOR_BOTTOM_POSITION_M, Ratios.elevatorMetersToRotations(ELEVATOR_BOTTOM_POSITION_M)),

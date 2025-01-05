@@ -120,7 +120,6 @@ public class Robot extends LoggedRobot {
     m_robotContainer.lights.setCommandRunning(false);
     m_robotContainer.lights.clearAnimations();
     m_robotContainer.superstructure.setWantedState(SuperState.CYCLING);
-    m_robotContainer.drive.teleopInit();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
@@ -129,13 +128,13 @@ public class Robot extends LoggedRobot {
     } else {
       m_fieldSide = "red";
     }
-
     if (this.m_fieldSide == "red") {
       this.m_robotContainer.drive.setPigeonAfterAuto();
     }
     System.out.println("field side" + m_fieldSide);
 
     this.m_robotContainer.drive.setFieldSide(m_fieldSide);
+    this.m_robotContainer.drive.teleopInit();
   }
 
   @Override

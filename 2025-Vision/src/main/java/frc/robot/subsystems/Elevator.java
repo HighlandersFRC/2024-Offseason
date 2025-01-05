@@ -4,7 +4,6 @@ import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -37,16 +36,17 @@ public class Elevator extends SubsystemBase {
 
   public void init() {
     TalonFXConfiguration elevatorConfig = new TalonFXConfiguration();
-    elevatorConfig.Slot0.kP = 1.0;
+    elevatorConfig.Slot0.kP = 3.5;
     elevatorConfig.Slot0.kI = 0.0;
-    elevatorConfig.Slot0.kD = 0.0;
-    elevatorConfig.Slot0.kG = 0.0;
+    elevatorConfig.Slot0.kD = 0.4;
+    elevatorConfig.Slot0.kG = 0.5;
     elevatorConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
 
     elevatorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     elevatorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     elevatorConfig.CurrentLimits.StatorCurrentLimit = 60;
     elevatorConfig.CurrentLimits.SupplyCurrentLimit = 60;
+    // elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 
 
     elevatorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
@@ -66,7 +66,8 @@ public class Elevator extends SubsystemBase {
   public void moveElevatorToPosition(Constants.SetPoints.ElevatorPosition position) {
     elevatorMotorMaster
         .setControl(positionTorqueFOCRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(position.meters)));
-    elevatorMotorFollower.setControl(new Follower(Constants.CANInfo.MASTER_ELEVATOR_MOTOR_ID, true));
+    elevatorMotorFollower
+        .setControl(positionTorqueFOCRequest.withPosition(-Constants.Ratios.elevatorMetersToRotations(position.meters)));
   }
 
   public void setWantedState(ElevatorState wantedState) {
@@ -95,6 +96,8 @@ public class Elevator extends SubsystemBase {
       systemState = newState;
     }
     Logger.recordOutput("Elevator State", systemState);
+    Logger.recordOutput("1 position", elevatorMotorMaster.getPosition().getValueAsDouble());
+    Logger.recordOutput("2 position", elevatorMotorFollower.getPosition().getValueAsDouble());
     switch (systemState) {
       case UP:
         moveElevatorToPosition(Constants.SetPoints.ElevatorPosition.kUP);

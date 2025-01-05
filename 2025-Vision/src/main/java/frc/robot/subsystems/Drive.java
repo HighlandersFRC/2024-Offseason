@@ -272,8 +272,8 @@ public class Drive extends SubsystemBase {
 
   public void teleopInit() {
     angleSetpoint = peripherals.getPigeonAngle();
-    if (getFieldSide() == "red") {
-      angleSetpoint += 180;
+    if(getFieldSide() == "red"){
+      angleSetpoint -=180;
     }
     turningPID.setSetPoint(angleSetpoint);
   }
@@ -758,13 +758,12 @@ public class Drive extends SubsystemBase {
       turningPID.setSetPoint(angleSetpoint);
       double yaw = peripherals.getPigeonAngle();
       while (Math.abs(angleSetpoint - yaw) > 180) {
-        if (angleSetpoint - yaw > Math.PI) {
+        if (angleSetpoint - yaw > 180) {
           yaw += 360;
         } else {
           yaw -= 360;
         }
       }
-
       double result = -2 * turningPID.updatePID(yaw);
       Logger.recordOutput("result", result);
       driveAutoAligned(result);
