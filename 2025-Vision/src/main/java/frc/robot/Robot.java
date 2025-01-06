@@ -24,9 +24,6 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit() {
 
-    OI.driverA.whileTrue(new MoveTestMotor(motortest, "motor1", -0.2));
-    OI.driverY.whileTrue(new MoveTestMotor(motortest, "motor1", 0.2));
-
 
     System.out.println("Robot Init");
     Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")

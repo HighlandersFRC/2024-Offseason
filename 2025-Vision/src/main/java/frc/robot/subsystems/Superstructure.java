@@ -17,6 +17,7 @@ public class Superstructure extends SubsystemBase {
     IDLE,
     ELEVATOR_UP,
     ELEVATOR_MID,
+    ELEVATOR_OFF,
   }
 
   private SuperState wantedSuperState = SuperState.IDLE;
@@ -53,6 +54,9 @@ public class Superstructure extends SubsystemBase {
         // Idle state
         handleElevatorMIDState();
         break;
+      case ELEVATOR_OFF:
+      handleElevatorOFFState();
+      break;
       default:
         handleIDLEState();
         break;
@@ -89,6 +93,9 @@ public class Superstructure extends SubsystemBase {
         // Up state
         currentSuperState = SuperState.ELEVATOR_UP;
         break;
+      case ELEVATOR_OFF:
+        currentSuperState = SuperState.ELEVATOR_OFF;
+      break;
       default:
         currentSuperState = SuperState.IDLE;
         break;
@@ -116,6 +123,10 @@ public class Superstructure extends SubsystemBase {
   public void handleIDLEState() {
     drive.setWantedState(DriveState.IDLE);
     elevator.setWantedState(ElevatorState.IDLE);
+  }
+
+  public void handleElevatorOFFState() {
+    elevator.setWantedState(ElevatorState.OFF);
   }
 
   public void handleElevatorMIDState() {

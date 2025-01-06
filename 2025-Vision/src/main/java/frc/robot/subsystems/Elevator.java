@@ -29,6 +29,7 @@ public class Elevator extends SubsystemBase {
     UP,
     MID,
     DOWN,
+    OFF,
   }
 
   private double idleTime;
@@ -110,7 +111,7 @@ public class Elevator extends SubsystemBase {
       case DOWN:
         return ElevatorState.DOWN;
       default:
-        return ElevatorState.IDLE;
+        return ElevatorState.OFF;
     }
   }
 
