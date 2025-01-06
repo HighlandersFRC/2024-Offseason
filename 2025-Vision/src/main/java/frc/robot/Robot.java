@@ -24,7 +24,6 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit() {
 
-
     System.out.println("Robot Init");
     Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
@@ -38,6 +37,7 @@ public class Robot extends LoggedRobot {
     m_robotContainer.drive.init(m_fieldSide);
     m_robotContainer.elevator.init();
     motortest.init();
+    Constants.init();
 
     PortForwarder.add(5800, "orangepi1.local", 5800);
     PortForwarder.add(5801, "orangepi1.local", 5801);

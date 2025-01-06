@@ -272,8 +272,8 @@ public class Drive extends SubsystemBase {
 
   public void teleopInit() {
     angleSetpoint = peripherals.getPigeonAngle();
-    if(getFieldSide() == "red"){
-      angleSetpoint -=180;
+    if (getFieldSide() == "red") {
+      angleSetpoint -= 180;
     }
     turningPID.setSetPoint(angleSetpoint);
   }
@@ -786,6 +786,48 @@ public class Drive extends SubsystemBase {
       backLeft.drive(controllerVector, turn, pigeonAngle);
       backRight.drive(controllerVector, turn, pigeonAngle);
     }
+  }
+
+  public void driveToPoint(double x, double y, double theta) {
+    xPID.setSetPoint(x);
+    yPID.setSetPoint(y);
+    thetaPID.setSetPoint(theta);
+
+    xPID.updatePID(getMT2OdometryX());
+    yPID.updatePID(getMT2OdometryY());
+    thetaPID.updatePID(getMT2OdometryAngle());
+
+    double xVelNoFF = xPID.getResult();
+    double yVelNoFF = yPID.getResult();
+    double thetaVelNoFF = -thetaPID.getResult();
+
+    // double feedForwardX = targetPoint.getDouble("x_velocity") *
+    // Constants.Autonomous.FEED_FORWARD_MULTIPLIER;
+    // double feedForwardY = targetPoint.getDouble("y_velocity") *
+    // Constants.Autonomous.FEED_FORWARD_MULTIPLIER;
+    // double feedForwardTheta = -targetPoint.getDouble("angular_velocity") *
+    // Constants.Autonomous.FEED_FORWARD_MULTIPLIER;
+
+    double finalX = xVelNoFF;
+    double finalY = yVelNoFF;
+    double finalTheta = thetaVelNoFF;
+    if (m_fieldSide == "blue") {
+      finalX = -finalX;
+      finalTheta = -finalTheta;
+    }
+    Number[] velocityArray = new Number[] {
+        finalX,
+        -finalY,
+        finalTheta,
+    };
+
+    Vector velocityVector = new Vector();
+    double desiredThetaChange = 0;
+    velocityVector.setI(velocityArray[0].doubleValue());
+    velocityVector.setJ(velocityArray[1].doubleValue());
+    desiredThetaChange = velocityArray[2].doubleValue();
+
+    autoDrive(velocityVector, desiredThetaChange);
   }
 
   /**

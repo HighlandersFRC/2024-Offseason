@@ -105,4 +105,12 @@ public class Vector {
     public void setJ(double j) {
         this.j = j;
     }
+
+    public Vector add(Vector other) {
+        return new Vector(this.i + other.getI(), this.j + other.getJ());
+    }
+
+    public Vector subtract(Vector other) {
+        return new Vector(this.i - other.getI(), this.j - other.getJ());
+    }
 }

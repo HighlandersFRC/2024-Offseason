@@ -4,7 +4,14 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+
 import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import frc.robot.tools.math.Vector;
 
 public final class Constants {
   public static final class Autonomous {
@@ -75,6 +82,46 @@ public final class Constants {
     }
   }
 
+  public static void init() {
+    for (int i = 0; i < Constants.Vision.redSideReefTags.length; i++) {
+      Vector tagVector = new Vector(Constants.Vision.redSideReefTags[i][0], Constants.Vision.redSideReefTags[i][1]);
+      Vector offsetXVector = new Vector(
+          Constants.Physical.CORAL_PLACEMENT_X * Math.cos(Constants.Vision.redSideReefTags[i][3]),
+          Constants.Physical.CORAL_PLACEMENT_X * Math.sin(Constants.Vision.redSideReefTags[i][3]));
+      Vector offsetYVector = new Vector(
+          Constants.Physical.CORAL_PLACEMENT_Y * Math.sin(Constants.Vision.redSideReefTags[i][3]),
+          Constants.Physical.CORAL_PLACEMENT_Y * Math.cos(Constants.Vision.redSideReefTags[i][3]));
+      Vector leftVector = tagVector.add(offsetXVector.add(offsetYVector));
+      Vector rightVector = tagVector.add(offsetXVector.subtract(offsetYVector));
+      Constants.Physical.redCoralScoringPositions
+          .add(new Pose2d(new Translation2d(leftVector.getI(), leftVector.getJ()),
+              new Rotation2d(Constants.Vision.redSideReefTags[i][3] + Math.PI)));
+      Constants.Physical.redCoralScoringPositions
+          .add(new Pose2d(new Translation2d(rightVector.getI(), rightVector.getJ()),
+              new Rotation2d(Constants.Vision.redSideReefTags[i][3] + Math.PI)));
+    }
+    for (int i = 0; i < Constants.Vision.blueSideReefTags.length; i++) {
+      Vector tagVector = new Vector(Constants.Vision.blueSideReefTags[i][0], Constants.Vision.blueSideReefTags[i][1]);
+      Vector offsetXVector = new Vector(
+          Constants.Physical.CORAL_PLACEMENT_X * Math.cos(Constants.Vision.blueSideReefTags[i][3]),
+          Constants.Physical.CORAL_PLACEMENT_X * Math.sin(Constants.Vision.blueSideReefTags[i][3]));
+      Vector offsetYVector = new Vector(
+          Constants.Physical.CORAL_PLACEMENT_Y * Math.sin(Constants.Vision.blueSideReefTags[i][3]),
+          Constants.Physical.CORAL_PLACEMENT_Y * Math.cos(Constants.Vision.blueSideReefTags[i][3]));
+      Vector leftVector = tagVector.add(offsetXVector.add(offsetYVector));
+      Vector rightVector = tagVector.add(offsetXVector.subtract(offsetYVector));
+      Constants.Physical.blueCoralScoringPositions
+          .add(new Pose2d(new Translation2d(leftVector.getI(), leftVector.getJ()),
+              new Rotation2d(Constants.Vision.blueSideReefTags[i][3] + Math.PI)));
+      Constants.Physical.blueCoralScoringPositions
+          .add(new Pose2d(new Translation2d(rightVector.getI(), rightVector.getJ()),
+              new Rotation2d(Constants.Vision.blueSideReefTags[i][3] + Math.PI)));
+    }
+
+    Logger.recordOutput("red side scoring", Constants.Physical.redCoralScoringPositions.toString());
+    Logger.recordOutput("blue side scoring", Constants.Physical.blueCoralScoringPositions.toString());
+  }
+
   // Physical constants (e.g. field and robot dimensions)
   public static final class Physical {
     public static final double FIELD_WIDTH = 8.052;
@@ -92,6 +139,12 @@ public final class Constants {
         ROBOT_WIDTH / 2 - WHEEL_TO_FRAME_DISTANCE);
 
     public static final double GRAVITY_ACCEL_MS2 = 9.806;
+    public static final double CORAL_PLACEMENT_X = inchesToMeters(27);
+    public static final double CORAL_PLACEMENT_Y = inchesToMeters(6.25);
+
+    // x, y, theta
+    public static final ArrayList<Pose2d> redCoralScoringPositions = new ArrayList<Pose2d>();
+    public static final ArrayList<Pose2d> blueCoralScoringPositions = new ArrayList<Pose2d>();
   }
 
   // Subsystem setpoint constants
@@ -121,25 +174,49 @@ public final class Constants {
 
   // Vision constants (e.g. camera offsets)
   public static final class Vision {
-    // Poses of all 16 AprilTags, {x, y, z, theta}, in meters and radians
+    // Poses of all 16 AprilTags, {x, y, z, yaw, pitch}, in meters and radians
     public static final double[][] TAG_POSES = {
-        { 15.079502159004317, 0.2458724917449835, 1.3558547117094235, 2.0943951023931953 },
-        { 16.18516637033274, 0.8836677673355348, 1.3558547117094235, 2.0943951023931953 },
-        { 16.57937515875032, 4.982727965455931, 1.4511049022098046, 3.141592653589793 },
-        { 16.57937515875032, 5.547879095758192, 1.4511049022098046, 3.141592653589793 },
-        { 14.700787401574804, 8.204216408432817, 1.3558547117094235, 4.71238898038469 },
-        { 1.841503683007366, 8.204216408432817, 1.3558547117094235, 4.71238898038469 },
-        { -0.038100076200152405, 5.547879095758192, 1.4511049022098046, 0.0 },
-        { -0.038100076200152405, 4.982727965455931, 1.4511049022098046, 0.0 },
-        { 0.35610871221742446, 0.8836677673355348, 1.3558547117094235, 1.0471975511965976 },
-        { 1.4615189230378463, 0.2458724917449835, 1.3558547117094235, 1.0471975511965976 },
-        { 11.90474980949962, 3.713233426466853, 1.3208026416052834, 5.235987755982989 },
-        { 11.90474980949962, 4.4983489966979935, 1.3208026416052834, 1.0471975511965976 },
-        { 11.220218440436883, 4.105156210312421, 1.3208026416052834, 3.141592653589793 },
-        { 5.320802641605283, 4.105156210312421, 1.3208026416052834, 0.0 },
-        { 4.641351282702566, 4.4983489966979935, 1.3208026416052834, 2.0943951023931953 },
-        { 4.641351282702566, 3.713233426466853, 1.3208026416052834, 4.1887902047863905 }
+        { inchesToMeters(657.37), inchesToMeters(25.8), inchesToMeters(58.5), Math.toRadians(126), Math.toRadians(0) },
+        { inchesToMeters(657.37), inchesToMeters(291.2), inchesToMeters(58.5), Math.toRadians(234), Math.toRadians(0) },
+        { inchesToMeters(455.15), inchesToMeters(317.15), inchesToMeters(51.25), Math.toRadians(270),
+            Math.toRadians(0) },
+        { inchesToMeters(365.2), inchesToMeters(241.64), inchesToMeters(73.54), Math.toRadians(0), Math.toRadians(30) },
+        { inchesToMeters(365.2), inchesToMeters(75.39), inchesToMeters(73.54), Math.toRadians(0), Math.toRadians(30) },
+        { inchesToMeters(530.49), inchesToMeters(130.17), inchesToMeters(12.13), Math.toRadians(300),
+            Math.toRadians(0) },
+        { inchesToMeters(546.87), inchesToMeters(158.5), inchesToMeters(12.13), Math.toRadians(0), Math.toRadians(0) },
+        { inchesToMeters(530.49), inchesToMeters(186.83), inchesToMeters(12.13), Math.toRadians(60),
+            Math.toRadians(0) },
+        { inchesToMeters(497.77), inchesToMeters(186.83), inchesToMeters(12.13), Math.toRadians(120),
+            Math.toRadians(0) },
+        { inchesToMeters(481.39), inchesToMeters(158.5), inchesToMeters(12.13), Math.toRadians(180),
+            Math.toRadians(0) },
+        { inchesToMeters(497.77), inchesToMeters(130.17), inchesToMeters(12.13), Math.toRadians(240),
+            Math.toRadians(0) },
+        { inchesToMeters(33.51), inchesToMeters(25.8), inchesToMeters(58.5), Math.toRadians(54), Math.toRadians(0) },
+        { inchesToMeters(33.51), inchesToMeters(291.2), inchesToMeters(58.5), Math.toRadians(306), Math.toRadians(0) },
+        { inchesToMeters(325.68), inchesToMeters(241.64), inchesToMeters(73.54), Math.toRadians(180),
+            Math.toRadians(30) },
+        { inchesToMeters(325.68), inchesToMeters(75.39), inchesToMeters(73.54), Math.toRadians(180),
+            Math.toRadians(30) },
+        { inchesToMeters(235.73), inchesToMeters(-0.15), inchesToMeters(51.25), Math.toRadians(90), Math.toRadians(0) },
+        { inchesToMeters(160.39), inchesToMeters(130.17), inchesToMeters(12.13), Math.toRadians(240),
+            Math.toRadians(0) },
+        { inchesToMeters(144), inchesToMeters(158.5), inchesToMeters(12.13), Math.toRadians(180), Math.toRadians(0) },
+        { inchesToMeters(160.39), inchesToMeters(186.83), inchesToMeters(12.13), Math.toRadians(120),
+            Math.toRadians(0) },
+        { inchesToMeters(193.1), inchesToMeters(186.83), inchesToMeters(12.13), Math.toRadians(60), Math.toRadians(0) },
+        { inchesToMeters(209.49), inchesToMeters(158.5), inchesToMeters(12.13), Math.toRadians(0), Math.toRadians(0) },
+        { inchesToMeters(193.1), inchesToMeters(130.17), inchesToMeters(12.13), Math.toRadians(300), Math.toRadians(0) }
     };
+
+    public static final double[][] redSideReefTags = {
+        TAG_POSES[6 - 1], TAG_POSES[7 - 1], TAG_POSES[8 - 1], TAG_POSES[9 - 1], TAG_POSES[10 - 1], TAG_POSES[11 - 1] };
+
+    public static final double[][] blueSideReefTags = {
+        TAG_POSES[6 + 11 - 1], TAG_POSES[7 + 11 - 1], TAG_POSES[8 + 11 - 1], TAG_POSES[9 + 11 - 1],
+        TAG_POSES[10 + 11 - 1], TAG_POSES[11
+            + 11 - 1] };
 
     // Poses of cameras relative to robot, {x, y, z, rx, ry, rz}, in meters and
     // radians
