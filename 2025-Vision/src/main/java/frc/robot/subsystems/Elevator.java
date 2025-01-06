@@ -30,6 +30,8 @@ public class Elevator extends SubsystemBase {
     MID,
     DOWN,
     OFF,
+    L3,
+    L2,
   }
 
   private double idleTime;
@@ -110,6 +112,10 @@ public class Elevator extends SubsystemBase {
         return ElevatorState.MID;
       case DOWN:
         return ElevatorState.DOWN;
+      case L3:
+        return ElevatorState.L3;
+      case L2:
+      return ElevatorState.L2;
       default:
         return ElevatorState.OFF;
     }
@@ -137,6 +143,14 @@ public class Elevator extends SubsystemBase {
       firstTimeIdle = true;
         moveElevatorToPosition(Constants.SetPoints.ElevatorPosition.kDOWN);
         break;
+      case L3:
+      firstTimeIdle = true;
+      moveElevatorToPosition(Constants.SetPoints.ElevatorPosition.kL3);
+      break;
+      case L2:
+      firstTimeIdle = true;
+      moveElevatorToPosition(Constants.SetPoints.ElevatorPosition.kL2);
+      break;
       case IDLE:
         
         if(firstTimeIdle) {

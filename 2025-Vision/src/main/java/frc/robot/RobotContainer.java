@@ -21,6 +21,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DoNothing;
 import frc.robot.commands.FullSendFollower;
+import frc.robot.commands.L2Place;
+import frc.robot.commands.L3Place;
+import frc.robot.commands.L3Setup;
 import frc.robot.commands.MoveTestMotor;
 import frc.robot.commands.PolarAutoFollower;
 import frc.robot.commands.RunIntake;
@@ -132,13 +135,14 @@ public class RobotContainer {
     // COMPETITION CONTROLS
     // Driver
 
-    OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverA.whileTrue(new SetElevatorPercent(elevator, 0.3));
-    OI.driverY.whileTrue(new SetElevatorPercent(elevator, -0.3));
-    OI.driverLT.whileTrue(new SetIntake(intake, 0.3));
-    OI.driverRT.whileTrue(new RunIntake(intake));
-    OI.driverX.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_MID));
-    OI.driverB.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_UP));
+    OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive)); // zero pidgeon
+    OI.driverA.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_L2)); // elevator up for placement L2
+    OI.driverA.onFalse(new L2Place(elevator, intake, superstructure)); // placement sequence for L2
+    OI.driverLT.whileTrue(new SetIntake(intake, 0.3)); // outake
+    OI.driverRT.whileTrue(new RunIntake(intake)); // intake
+    OI.driverRT.whileTrue(new SetRobotState(superstructure, SuperState.CYCLING));
+    OI.driverX.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_MID)); // elevator mid setpoint
+    OI.driverB.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_UP)); // elevator 
   }
 
   /**
