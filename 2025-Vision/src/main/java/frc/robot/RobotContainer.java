@@ -63,21 +63,21 @@ public class RobotContainer {
   HashMap<String, Supplier<Command>> commandMap = new HashMap<String, Supplier<Command>>() {
     {
       put("Instant", () -> new InstantCommand());
+      put("Elevator Down", () -> new SetRobotState(superstructure, SuperState.IDLE));
       put("Wait", () -> new DoNothing());
       put("Print", () -> new PrintCommand("10s"));
       put("Full Send", () -> new FullSendFollower(drive, null, false));
       put("Place Coral High", () -> new SequentialCommandGroup(
       new ParallelRaceGroup(
-        new SetRobotState(superstructure, SuperState.ELEVATOR_UP),
+        new SetRobotState(superstructure, SuperState.ELEVATOR_L2),
         new WaitCommand(0.8)
         ),
         new ParallelRaceGroup(
-        new SetRobotState(superstructure, SuperState.IDLE),
+        new SetRobotState(superstructure, SuperState.ELEVATOR_MID),
         new WaitCommand(0.2)
         ),
         new ParallelRaceGroup(
         new SetIntake(intake, 0.3),
-        new SetRobotState(superstructure, SuperState.ELEVATOR_OFF),
         new WaitCommand(0.2)
         )
       )
