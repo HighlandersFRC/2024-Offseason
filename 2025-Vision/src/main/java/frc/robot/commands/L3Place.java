@@ -20,18 +20,16 @@ public class L3Place extends SequentialCommandGroup {
   Elevator elevator;
   Intake intake;
   Superstructure superstructure;
+
   public L3Place(Elevator elevator, Intake intake, Superstructure superstructure) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
         new ParallelRaceGroup(
-        new SetRobotState(superstructure, SuperState.IDLE),
-        new WaitCommand(0.2)
-        ),
+            new SetRobotState(superstructure, SuperState.IDLE),
+            new WaitCommand(0.2)),
         new ParallelRaceGroup(
-        new SetIntake(intake, 0.3),
-        new SetRobotState(superstructure, SuperState.ELEVATOR_UP)
-        )
-    );
+            new SetIntake(intake, 0.3),
+            new SetRobotState(superstructure, SuperState.ELEVATOR_OFF)));
   }
 }

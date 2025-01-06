@@ -68,20 +68,15 @@ public class RobotContainer {
       put("Print", () -> new PrintCommand("10s"));
       put("Full Send", () -> new FullSendFollower(drive, null, false));
       put("Place Coral High", () -> new SequentialCommandGroup(
-      new ParallelRaceGroup(
-        new SetRobotState(superstructure, SuperState.ELEVATOR_L2),
-        new WaitCommand(0.8)
-        ),
-        new ParallelRaceGroup(
-        new SetRobotState(superstructure, SuperState.ELEVATOR_MID),
-        new WaitCommand(0.2)
-        ),
-        new ParallelRaceGroup(
-        new SetIntake(intake, 0.3),
-        new WaitCommand(0.2)
-        )
-      )
-      );
+          new ParallelRaceGroup(
+              new SetRobotState(superstructure, SuperState.ELEVATOR_L2),
+              new WaitCommand(0.8)),
+          new ParallelRaceGroup(
+              new SetRobotState(superstructure, SuperState.ELEVATOR_MID),
+              new WaitCommand(0.2)),
+          new ParallelRaceGroup(
+              new SetIntake(intake, 0.3),
+              new WaitCommand(0.2))));
       put("Intake Coral", () -> new RunIntake(intake));
     }
   };
@@ -138,11 +133,15 @@ public class RobotContainer {
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive)); // zero pidgeon
     OI.driverA.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_L2)); // elevator up for placement L2
     OI.driverA.onFalse(new L2Place(elevator, intake, superstructure)); // placement sequence for L2
+
+    OI.driverY.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_L3)); // elevator up for placement L3
+    OI.driverY.onFalse(new L3Place(elevator, intake, superstructure)); // placement sequence for L3
     OI.driverLT.whileTrue(new SetIntake(intake, 0.3)); // outake
     OI.driverRT.whileTrue(new RunIntake(intake)); // intake
     OI.driverRT.whileTrue(new SetRobotState(superstructure, SuperState.CYCLING));
-    OI.driverX.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_MID)); // elevator mid setpoint
-    OI.driverB.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_UP)); // elevator 
+    OI.driverX.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_MID)); // elevator mid setpoint to remove
+                                                                                      // algae
+    OI.driverB.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_UP)); // elevator
   }
 
   /**
