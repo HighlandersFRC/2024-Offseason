@@ -24,7 +24,7 @@ import frc.robot.Constants;
 import frc.robot.tools.math.Vector;
 
 public class Peripherals {
-  private PhotonCamera frontCam = new PhotonCamera("9281_Front");
+  // private PhotonCamera frontCam = new PhotonCamera("9281_Front"); //TODO: uncomment when using camera
 
   AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
 
@@ -57,27 +57,27 @@ public class Peripherals {
     zeroPigeon();
   }
 
-  public double getFrontCamYaw() {
-    double yaw = 0.0;
-    var result = frontCam.getLatestResult();
-    Logger.recordOutput("has target", result.hasTargets());
-    if (result.hasTargets()) {
-      PhotonTrackedTarget target = result.getBestTarget();
-      yaw = target.getYaw();
-    }
-    return yaw;
-  }
+  // public double getFrontCamYaw() { //TODO: uncomment when using camera
+  //   double yaw = 0.0;
+  //   var result = frontCam.getLatestResult();
+  //   Logger.recordOutput("has target", result.hasTargets());
+  //   if (result.hasTargets()) {
+  //     PhotonTrackedTarget target = result.getBestTarget();
+  //     yaw = target.getYaw();
+  //   }
+  //   return yaw;
+  // }
 
-  public double getFrontCamPitch() {
-    double pitch = 0.0;
-    var result = frontCam.getLatestResult();
-    if (result.hasTargets()) {
-      PhotonTrackedTarget target = result.getBestTarget();
-      pitch = target.getPitch();
-    }
+  // public double getFrontCamPitch() {
+  //   double pitch = 0.0;
+  //   var result = frontCam.getLatestResult();
+  //   if (result.hasTargets()) {
+  //     PhotonTrackedTarget target = result.getBestTarget();
+  //     pitch = target.getPitch();
+  //   }
 
-    return pitch;
-  }
+  //   return pitch;
+  // }
 
   private Pose2d getRobotPoseViaTrig(PhotonTrackedTarget trackedTarget, double[] cameraPositionOnRobot,
       double robotAngle) {
@@ -110,35 +110,35 @@ public class Peripherals {
     return pose;
   }
 
-  public Pose2d getFrontCamTrigPose() {
-    var result = frontCam.getLatestResult();
-    if (result.hasTargets() && result.getBestTarget().getPoseAmbiguity() < 0.3) {
-      PhotonTrackedTarget target = result.getBestTarget();
-      Pose2d robotPose = getRobotPoseViaTrig(target, Constants.Vision.FRONT_CAMERA_POSE, getPigeonAngle());
-      Logger.recordOutput("Trig Localiazation", robotPose);
-      return robotPose;
-    } else {
-      Pose2d defaultPose = new Pose2d(0.0, 0.0, new Rotation2d(0.0));
-      return defaultPose;
-    }
-  }
+  // public Pose2d getFrontCamTrigPose() { //TODO: uncomment when using camera
+  //   var result = frontCam.getLatestResult();
+  //   if (result.hasTargets() && result.getBestTarget().getPoseAmbiguity() < 0.3) {
+  //     PhotonTrackedTarget target = result.getBestTarget();
+  //     Pose2d robotPose = getRobotPoseViaTrig(target, Constants.Vision.FRONT_CAMERA_POSE, getPigeonAngle());
+  //     Logger.recordOutput("Trig Localiazation", robotPose);
+  //     return robotPose;
+  //   } else {
+  //     Pose2d defaultPose = new Pose2d(0.0, 0.0, new Rotation2d(0.0));
+  //     return defaultPose;
+  //   }
+  // }
 
-  public Pose3d getFrontCamPnPPose() {
-    var result = frontCam.getLatestResult();
-    Optional<EstimatedRobotPose> multiTagResult = photonPoseEstimator.update(result);
-    if (multiTagResult.isPresent()) {
-      Pose3d robotPose = multiTagResult.get().estimatedPose;
-      Logger.recordOutput("multitag result", robotPose);
-      return robotPose;
-    } else {
-      Pose3d robotPose = new Pose3d();
-      return robotPose;
-    }
-  }
+  // public Pose3d getFrontCamPnPPose() {
+  //   var result = frontCam.getLatestResult();
+  //   Optional<EstimatedRobotPose> multiTagResult = photonPoseEstimator.update(result);
+  //   if (multiTagResult.isPresent()) {
+  //     Pose3d robotPose = multiTagResult.get().estimatedPose;
+  //     Logger.recordOutput("multitag result", robotPose);
+  //     return robotPose;
+  //   } else {
+  //     Pose3d robotPose = new Pose3d();
+  //     return robotPose;
+  //   }
+  // }
 
-  public double getFrontCamLatency() {
-    return frontCam.getLatestResult().getTimestampSeconds();
-  }
+  // public double getFrontCamLatency() {
+  //   return frontCam.getLatestResult().getTimestampSeconds();
+  // }
 
   /**
    * Sets the IMU angle to 0
@@ -202,12 +202,12 @@ public class Peripherals {
   }
 
   public void periodic() {
-    getFrontCamPnPPose();
-    var result = frontCam.getLatestResult();
-    if (result.hasTargets()) {
-      PhotonTrackedTarget target = result.getBestTarget();
-      Pose2d robotPose = getRobotPoseViaTrig(target, Constants.Vision.FRONT_CAMERA_POSE, getPigeonAngle());
-      Logger.recordOutput("Trig Localiazation", robotPose);
-    }
+    // getFrontCamPnPPose(); //TODO: uncomment when using camera
+    // var result = frontCam.getLatestResult();
+    // if (result.hasTargets()) {
+    //   PhotonTrackedTarget target = result.getBestTarget();
+    //   Pose2d robotPose = getRobotPoseViaTrig(target, Constants.Vision.FRONT_CAMERA_POSE, getPigeonAngle());
+    //   Logger.recordOutput("Trig Localiazation", robotPose);
+    // }
   }
 }

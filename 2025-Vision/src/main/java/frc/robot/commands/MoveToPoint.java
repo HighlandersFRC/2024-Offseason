@@ -4,6 +4,9 @@
 
 package frc.robot.commands;
 
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Drive.DriveState;
@@ -13,13 +16,15 @@ import frc.robot.tools.math.Vector;
 public class MoveToPoint extends Command {
   Drive drive;
   double x, y, theta;
+  Boolean auto;
 
   /** Creates a new MoveToPoint. */
-  public MoveToPoint(Drive drive, double x, double y, double theta) {
+  public MoveToPoint(Drive drive, double x, double y, double theta, Boolean auto) {
     this.drive = drive;
     this.x = x;
     this.y = y;
     this.theta = theta;
+    this.auto = auto;
     addRequirements(drive);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -27,6 +32,24 @@ public class MoveToPoint extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if(auto) {
+      x = drive.getReefClosestSetpoint(drive.getMT2Odometry())[0];
+      y = drive.getReefClosestSetpoint(drive.getMT2Odometry())[1];
+      theta = drive.getReefClosestSetpoint(drive.getMT2Odometry())[2];
+
+      System.out.println("X: " + x);
+      System.out.println("y: " + y);
+      System.out.println("theta: " + theta);
+
+      while(Math.abs(theta - drive.getMT2OdometryAngle()) > Math.PI) {
+        if(theta - drive.getMT2OdometryAngle() > Math.PI) {
+          theta -= 2*Math.PI;
+        } else {
+          theta += 2*Math.PI;
+        }
+      }   
+
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -34,6 +57,9 @@ public class MoveToPoint extends Command {
   public void execute() {
     drive.setWantedState(DriveState.IDLE);
     drive.driveToPoint(x, y, theta);
+    Logger.recordOutput("Setpoint X", x);
+    Logger.recordOutput("Setpoint Y", y);
+    Logger.recordOutput("Setpoint Theta", theta);
   }
 
   // Called once the command ends or is interrupted.
@@ -46,6 +72,10 @@ public class MoveToPoint extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if(auto && Math.sqrt(Math.pow((x - drive.getMT2OdometryX()), 2) + Math.pow((y - drive.getMT2OdometryY()), 2)) < 0.1 && Math.abs(theta - drive.getMT2OdometryAngle()) < 0.1) {
+      return true;
+    }
+
     return false;
   }
 }

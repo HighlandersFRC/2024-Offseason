@@ -6,47 +6,41 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.Superstructure.SuperState;
+import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Peripherals;
+import frc.robot.subsystems.Drive.DriveState;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class L2Setup extends Command {
-  /** Creates a new L3Setup. */
-  Superstructure superstructure;
-  Elevator elevator;
-  Boolean auto;
-  public L2Setup(Superstructure superstructure, Elevator elevator, Boolean auto) {
-    this.superstructure = superstructure;
-    this.elevator = elevator;
-    this.auto = auto;
-    addRequirements(this.superstructure);
+public class SetDriveThetaSetpoint extends Command {
+  /** Creates a new SetDriveThetaSetpoint. */
+  Drive drive;
+  Peripherals peripherals;
+  public SetDriveThetaSetpoint(Drive drive, Peripherals peripherals) {
+    this.drive = drive;
+    this.peripherals = peripherals;
+    addRequirements(this.drive);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    superstructure.setWantedState(SuperState.ELEVATOR_L2);
-
+    drive.setSetpointAngle(peripherals.getPigeonAngle());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    superstructure.setWantedState(SuperState.ELEVATOR_L2);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(auto && Math.abs(Constants.SetPoints.ELEVATOR_L2_POSITION_M - elevator.getElevatorPosition()) < 0.1) {
-      return true;
-    }
     return false;
   }
 }

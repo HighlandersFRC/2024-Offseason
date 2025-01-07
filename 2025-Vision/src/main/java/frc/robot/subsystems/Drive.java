@@ -236,6 +236,7 @@ public class Drive extends SubsystemBase {
 
   public void setSetpointAngle(double angle) {
     this.angleSetpoint = angle;
+    Logger.recordOutput("Setpoint Theta: ", angle);
   }
 
   /**
@@ -464,16 +465,16 @@ public class Drive extends SubsystemBase {
     m_currentTheta = navxOffset;
     Pose2d defaultPose = new Pose2d(0.0, 0.0, new Rotation2d(0.0));
 
-    Pose2d frontCamTrigPose = peripherals.getFrontCamTrigPose();
-    if (isPoseInField(frontCamTrigPose) && !frontCamTrigPose.equals(defaultPose)) {
-      mt2Odometry.addVisionMeasurement(frontCamTrigPose,
-          peripherals.getFrontCamLatency());
-    }
+    // Pose2d frontCamTrigPose = peripherals.getFrontCamTrigPose(); //TODO: uncomment when using camera
+    // if (isPoseInField(frontCamTrigPose) && !frontCamTrigPose.equals(defaultPose)) {
+    //   mt2Odometry.addVisionMeasurement(frontCamTrigPose,
+    //       peripherals.getFrontCamLatency());
+    // }
 
-    Pose2d frontCamPnPPose = peripherals.getFrontCamPnPPose().toPose2d();
-    if (isPoseInField(frontCamPnPPose) && !frontCamPnPPose.equals(defaultPose)) {
-      mt2Odometry.addVisionMeasurement(frontCamPnPPose, peripherals.getFrontCamLatency());
-    }
+    // Pose2d frontCamPnPPose = peripherals.getFrontCamPnPPose().toPose2d();
+    // if (isPoseInField(frontCamPnPPose) && !frontCamPnPPose.equals(defaultPose)) {
+    //   mt2Odometry.addVisionMeasurement(frontCamPnPPose, peripherals.getFrontCamLatency());
+    // }
 
     m_currentTime = Timer.getFPGATimestamp() - m_initTime;
 
@@ -558,6 +559,7 @@ public class Drive extends SubsystemBase {
     return odometry;
   }
 
+
   public double[] getLocalizationOdometry() {
     double[] odometry = {
         getLocalizationOdometryX(), getLocalizationOdometryY(), getLocalizationOdometryAngle()
@@ -570,6 +572,37 @@ public class Drive extends SubsystemBase {
         getMT2OdometryX(), getMT2OdometryY(), getMT2OdometryAngle()
     };
     return odometry;
+  }
+
+  public double[] getReefClosestSetpoint(double[] currentOdometry /* {x, y, thetaRadians} */) {
+    double x = currentOdometry[0];
+    double y = currentOdometry[1];
+    double theta = currentOdometry[2];
+    double dist = 100.0;
+    double currentDist = 100.0;
+    double[] chosenSetpoint = {x, y, theta};
+    if(getFieldSide() == "red") {
+      for(int i = 0; i < Constants.Physical.redCoralScoringPositions.size(); i++) {
+        currentDist = Math.sqrt(Math.pow((x - Constants.Physical.redCoralScoringPositions.get(i).getX()), 2) + Math.pow((y - Constants.Physical.redCoralScoringPositions.get(i).getY()), 2));
+        if(currentDist < dist) {
+          dist = currentDist;
+          chosenSetpoint[0] = Constants.Physical.redCoralScoringPositions.get(i).getX();
+          chosenSetpoint[1] = Constants.Physical.redCoralScoringPositions.get(i).getY();
+          chosenSetpoint[2] = Constants.Physical.redCoralScoringPositions.get(i).getRotation().getRadians();
+        }
+      }
+    } else {
+        for(int i = 0; i < Constants.Physical.blueCoralScoringPositions.size(); i++) {
+          currentDist = Math.sqrt(Math.pow((x - Constants.Physical.blueCoralScoringPositions.get(i).getX()), 2) + Math.pow((y - Constants.Physical.blueCoralScoringPositions.get(i).getY()), 2));
+          if(currentDist < dist) {
+            dist = currentDist;
+            chosenSetpoint[0] = Constants.Physical.redCoralScoringPositions.get(i).getX();
+            chosenSetpoint[1] = Constants.Physical.redCoralScoringPositions.get(i).getY();
+            chosenSetpoint[2] = Constants.Physical.redCoralScoringPositions.get(i).getRotation().getRadians();
+          }
+        }
+    }
+    return chosenSetpoint;
   }
 
   /**
@@ -789,6 +822,15 @@ public class Drive extends SubsystemBase {
   }
 
   public void driveToPoint(double x, double y, double theta) {
+    
+    while(Math.abs(theta - getMT2OdometryAngle()) > Math.PI) {
+      if(theta - getMT2OdometryAngle() > Math.PI) {
+        theta -= 2*Math.PI;
+      } else {
+        theta += 2*Math.PI;
+      }
+    }    
+    
     xPID.setSetPoint(x);
     yPID.setSetPoint(y);
     thetaPID.setSetPoint(theta);
