@@ -66,7 +66,9 @@ public class MoveToPoint extends Command {
   @Override
   public void end(boolean interrupted) {
     drive.autoRobotCentricDrive(new Vector(0, 0), 0);
-    drive.setWantedState(DriveState.DEFAULT);
+    if(!auto) {
+      drive.setWantedState(DriveState.DEFAULT);
+    }
   }
 
   // Returns true when the command should end.

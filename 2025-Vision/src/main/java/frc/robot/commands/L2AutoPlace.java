@@ -39,8 +39,8 @@ public class L2AutoPlace extends SequentialCommandGroup {
       new ParallelRaceGroup(
         new RunOutake(intake),
         new WaitCommand(0.1)
-      )
-      
+      ),
+      new SetDriveState(drive, peripherals, DriveState.DEFAULT)
 
       );
   }

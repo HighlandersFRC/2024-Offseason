@@ -31,6 +31,7 @@ import frc.robot.commands.PolarAutoFollower;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.SetElevatorPercent;
 import frc.robot.commands.SetIntake;
+import frc.robot.commands.SetRobotPose;
 import frc.robot.commands.SetRobotState;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.subsystems.Drive;
@@ -147,6 +148,7 @@ public class RobotContainer {
     OI.driverB.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_UP)); // elevator
     OI.driverRB.whileTrue(new MoveToPoint(drive, 1, 1, Math.PI / 2, false));
     OI.driverLB.onTrue(new L2AutoPlace(superstructure, elevator, drive, intake, peripherals));
+    OI.driverMenuButton.whileTrue(new SetRobotPose(drive, 10.375, 1.5, 0));
   }
 
   /**

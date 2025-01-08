@@ -426,6 +426,14 @@ public class Drive extends SubsystemBase {
         timestamp);
   }
 
+  public void setOdometry(Pose2d pose) {
+    Logger.recordOutput("Odometry Reset to:", pose.toString());
+    System.out.println("New Odometry Pose: " + pose.toString());
+    m_odometry.resetPose(pose);
+    loggingOdometry.resetPose(pose);
+    mt2Odometry.resetPose(pose);
+  }
+
   public boolean isPoseInField(Pose2d pose) {
     if (pose.getY() < 0 || pose.getY() > Constants.Physical.FIELD_WIDTH || pose.getX() < 0
         || pose.getX() > Constants.Physical.FIELD_LENGTH) {
@@ -1113,6 +1121,7 @@ public class Drive extends SubsystemBase {
 
   @Override
   public void periodic() {
+    Logger.recordOutput("Robot Odometry", getMT2Odometry());
     updateOdometryFusedArray();
     // process inputs
     DriveState newState = handleStateTransition();
