@@ -230,9 +230,9 @@ public class Peripherals {
     // }
   }
 
-  // public double getFrontCamLatency() {
-  // return frontCam.getLatestResult().getTimestampSeconds();
-  // }
+  public double getFrontCamLatency() {
+    return frontCam.getLatestResult().getTimestampSeconds();
+  }
 
   /**
    * Sets the IMU angle to 0
