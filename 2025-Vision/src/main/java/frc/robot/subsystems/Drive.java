@@ -10,6 +10,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -464,15 +465,17 @@ public class Drive extends SubsystemBase {
     m_currentTheta = navxOffset;
     Pose2d defaultPose = new Pose2d(0.0, 0.0, new Rotation2d(0.0));
 
-    Pose2d frontCamTrigPose = peripherals.getFrontCamTrigPose();
-    if (isPoseInField(frontCamTrigPose) && !frontCamTrigPose.equals(defaultPose)) {
-      mt2Odometry.addVisionMeasurement(frontCamTrigPose,
-          peripherals.getFrontCamLatency());
-    }
+    // Pose2d frontCamTrigPose = peripherals.getFrontCamTrigPose();
+    // if (isPoseInField(frontCamTrigPose) && !frontCamTrigPose.equals(defaultPose))
+    // {
+    // mt2Odometry.addVisionMeasurement(frontCamTrigPose,
+    // peripherals.getFrontCamLatency());
+    // }
 
     Pose2d frontCamPnPPose = peripherals.getFrontCamPnPPose().toPose2d();
     if (isPoseInField(frontCamPnPPose) && !frontCamPnPPose.equals(defaultPose)) {
-      mt2Odometry.addVisionMeasurement(frontCamPnPPose, peripherals.getFrontCamLatency());
+      mt2Odometry.addVisionMeasurement(frontCamPnPPose,
+          peripherals.getFrontCamLatency());
     }
 
     m_currentTime = Timer.getFPGATimestamp() - m_initTime;

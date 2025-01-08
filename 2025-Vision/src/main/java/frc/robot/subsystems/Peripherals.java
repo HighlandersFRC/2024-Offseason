@@ -7,6 +7,7 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.MultiTargetPNPResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
@@ -20,20 +21,28 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.Constants;
 import frc.robot.tools.math.Vector;
 
 public class Peripherals {
-  private PhotonCamera frontCam = new PhotonCamera("9281_Front");
+  private PhotonCamera frontCam = new PhotonCamera("Front_Cam");
 
-  AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+  AprilTagFieldLayout aprilTagFieldLayout;
 
   private Pigeon2 pigeon = new Pigeon2(0, "Canivore");
   private Pigeon2Configuration pigeonConfig = new Pigeon2Configuration();
-  Transform3d robotToCam = new Transform3d(new Translation3d(0.0, 0.0, 0.5), new Rotation3d(0, 0, 0));
+  Transform3d robotToCam = new Transform3d(
+      new Translation3d(Constants.inchesToMeters(1.75), Constants.inchesToMeters(11.625),
+          Constants.inchesToMeters(33.5)),
+      new Rotation3d(0, Math.toRadians(33.3), 0));
+  // Pose3d cameraOffset = new Pose3d(
+  // new Translation3d(Constants.inchesToMeters(1.75),
+  // Constants.inchesToMeters(11.625),
+  // Constants.inchesToMeters(33.5)),
+  // new Rotation3d(0, Math.toRadians(-33.5), 0));
 
-  PhotonPoseEstimator photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout,
-      PoseStrategy.AVERAGE_BEST_TARGETS, robotToCam);
+  PhotonPoseEstimator photonPoseEstimator;
 
   public Peripherals() {
   }
@@ -45,6 +54,14 @@ public class Peripherals {
    * It also applies the default command to the Peripherals subsystem.
    */
   public void init() {
+    try {
+      aprilTagFieldLayout = new AprilTagFieldLayout(
+          Filesystem.getDeployDirectory().getPath() + "/" + "2025-reefscape.json");
+    } catch (Exception e) {
+      System.out.println("error with april tag: " + e.getMessage());
+    }
+    photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout,
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCam);
     // Set the mount pose configuration for the IMU
     pigeonConfig.MountPose.MountPosePitch = 0.3561480641365051;
     pigeonConfig.MountPose.MountPoseRoll = -0.10366992652416229;
@@ -94,27 +111,92 @@ public class Peripherals {
     double tagHeight = tagPose[2];
     double tagX = tagPose[0];
     double tagY = tagPose[1];
+    double tagYaw = tagPose[3];
 
     double distToTag = (tagHeight - cameraZOffset) / Math.tan(Math.toRadians(pitch + cameraRYOffset));
     Logger.recordOutput("Distance to Tag", distToTag);
     Logger.recordOutput("yaw to Tag", yaw);
-    // double txProjOntoGroundPlane = Math.atan((Math.tan(yaw)) / Math.cos(pitch));
-    double xFromTag = distToTag * Math.cos(Math.toRadians(yaw + robotAngle + cameraRZOffset));
-    double yFromTag = distToTag * Math.sin(Math.toRadians(yaw + robotAngle + cameraRZOffset));
+    double txProjOntoGroundPlane = Math.atan((Math.tan(yaw)) / Math.cos(pitch));
+    double xFromTag = distToTag * Math.cos(Math.toRadians(txProjOntoGroundPlane + robotAngle + cameraRZOffset));
+    double yFromTag = distToTag * Math.sin(Math.toRadians(txProjOntoGroundPlane + robotAngle + cameraRZOffset));
     Logger.recordOutput("x to Tag", xFromTag);
     Logger.recordOutput("y to Tag", yFromTag);
 
-    double fieldPoseX = xFromTag + tagX - cameraXOffset;
-    double fieldPoseY = yFromTag + tagY - cameraYOffset;
-    Pose2d pose = new Pose2d(fieldPoseX, fieldPoseY, new Rotation2d(getPigeonAngle()));
+    double fieldPoseX = -xFromTag + tagX - cameraXOffset;
+    double fieldPoseY = -yFromTag + tagY - cameraYOffset;
+    Pose2d pose = new Pose2d(fieldPoseX, fieldPoseY, new Rotation2d(Math.toRadians(getPigeonAngle())));
     return pose;
+  }
+
+  /**
+   * Calculates the robot's position based on the camera offset, angles to the
+   * tag, and tag position.
+   *
+   * @param cameraOffset    Pose3d representing the camera's position and
+   *                        orientation relative to the robot center.
+   * @param horizontalAngle Horizontal angle (radians) from the camera to the tag.
+   * @param verticalAngle   Vertical angle (radians) from the camera to the tag.
+   * @param tagPosition     Pose3d representing the position of the tag in the
+   *                        field coordinate system.
+   * @param robotYaw        Yaw (rotation around the Z-axis) of the robot in
+   *                        radians.
+   * @return Pose3d representing the robot's position in the field coordinate
+   *         system.
+   */
+  public static Pose3d calculateRobotPosition(
+      Pose3d cameraOffset, double horizontalAngle, double verticalAngle, Pose3d tagPosition, double robotYaw) {
+
+    // Extract the camera's offset from the robot in its local frame
+    Translation3d cameraTranslation = cameraOffset.getTranslation();
+
+    // Rotate the camera's offset into the field frame using the robot's yaw
+    double cosYaw = Math.cos(robotYaw);
+    double sinYaw = Math.sin(robotYaw);
+    Translation3d cameraInFieldTranslation = new Translation3d(
+        cosYaw * cameraTranslation.getX() - sinYaw * cameraTranslation.getY(),
+        sinYaw * cameraTranslation.getX() + cosYaw * cameraTranslation.getY(),
+        cameraTranslation.getZ());
+
+    // Calculate the relative position of the tag to the camera
+    double dx = tagPosition.getTranslation().getX() - cameraInFieldTranslation.getX();
+    double dy = tagPosition.getTranslation().getY() - cameraInFieldTranslation.getY();
+    double dz = tagPosition.getTranslation().getZ() - cameraInFieldTranslation.getZ();
+
+    // Calculate the distance from the camera to the tag
+    double distanceToTag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+    // Translation from the camera to the tag in the camera's local space
+    Translation3d tagInCameraSpace = new Translation3d(
+        distanceToTag * Math.cos(horizontalAngle) * Math.cos(verticalAngle), // X
+        distanceToTag * Math.sin(horizontalAngle) * Math.cos(verticalAngle), // Y
+        distanceToTag * Math.sin(verticalAngle) // Z
+    );
+
+    // Transform the tag position from the camera space to the field space
+    Translation3d tagInFieldSpace = cameraInFieldTranslation.plus(tagInCameraSpace);
+
+    // Calculate the robot's position in the field frame
+    Translation3d robotTranslation = tagPosition.getTranslation().minus(tagInFieldSpace);
+
+    // Return the robot's position with its yaw in the field coordinate system
+    return new Pose3d(robotTranslation, new Rotation3d(0, 0, robotYaw));
   }
 
   public Pose2d getFrontCamTrigPose() {
     var result = frontCam.getLatestResult();
     if (result.hasTargets() && result.getBestTarget().getPoseAmbiguity() < 0.3) {
       PhotonTrackedTarget target = result.getBestTarget();
-      Pose2d robotPose = getRobotPoseViaTrig(target, Constants.Vision.FRONT_CAMERA_POSE, getPigeonAngle());
+      // Pose3d robotPose = calculateRobotPosition(cameraOffset, target.getYaw(),
+      // target.getPitch(),
+      // new Pose3d(
+      // new Translation3d(Constants.Vision.TAG_POSES[10][0],
+      // Constants.Vision.TAG_POSES[10][1],
+      // Constants.Vision.TAG_POSES[10][2]),
+      // new Rotation3d(0.0, Constants.Vision.TAG_POSES[10][4],
+      // Constants.Vision.TAG_POSES[10][3])),
+      // Math.toRadians(getPigeonAngle()));
+      Pose2d robotPose = getRobotPoseViaTrig(target,
+          Constants.Vision.FRONT_CAMERA_POSE, getPigeonAngle());
       Logger.recordOutput("Trig Localiazation", robotPose);
       return robotPose;
     } else {
@@ -124,6 +206,7 @@ public class Peripherals {
   }
 
   public Pose3d getFrontCamPnPPose() {
+    // Logger.recordOutput("April Tag", aprilTagFieldLayout.getTagPose(1).get());
     var result = frontCam.getLatestResult();
     Optional<EstimatedRobotPose> multiTagResult = photonPoseEstimator.update(result);
     if (multiTagResult.isPresent()) {
@@ -134,6 +217,17 @@ public class Peripherals {
       Pose3d robotPose = new Pose3d();
       return robotPose;
     }
+    // var result = frontCam.getLatestResult();
+    // Logger.recordOutput("Is presetn", result.getMultiTagResult().isPresent());
+    // if (result.getMultiTagResult().isPresent()) {
+    // Transform3d fieldToCamera =
+    // result.getMultiTagResult().get().estimatedPose.best;
+    // Logger.recordOutput("Camera pose: ", fieldToCamera);
+    // return fieldToCamera;
+    // } else {
+    // System.out.println("in else");
+    // return new Transform3d();
+    // }
   }
 
   public double getFrontCamLatency() {

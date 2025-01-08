@@ -10,7 +10,10 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import frc.robot.tools.math.Vector;
 
 public final class Constants {
@@ -220,7 +223,8 @@ public final class Constants {
 
     // Poses of cameras relative to robot, {x, y, z, rx, ry, rz}, in meters and
     // radians
-    public static final double[] FRONT_CAMERA_POSE = { 0.0, 0.0, 0.5, 0.0, 0.0, 0.0 };
+    public static final double[] FRONT_CAMERA_POSE = { Constants.inchesToMeters(1.75), Constants.inchesToMeters(11.625),
+        Constants.inchesToMeters(33.5), 0, -33.5, 0 };
 
     // Standard deviation adjustments
     public static final double STANDARD_DEVIATION_SCALAR = 1;
