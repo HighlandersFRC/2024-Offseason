@@ -25,7 +25,11 @@ public class RunIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.setIntakeTorque(-30, 0.7);
+    if(Math.abs(intake.getIntakeRPS()) > 10) {
+    intake.setIntakeTorque(-20, 0.7);
+    } else {
+      intake.setIntakePercent(-0.7);
+    }
   }
 
   // Called once the command ends or is interrupted.

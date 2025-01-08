@@ -11,14 +11,17 @@ import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.SuperState;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class L2Setup extends Command {
+public class SetElevatorState extends Command {
   /** Creates a new L3Setup. */
   Superstructure superstructure;
   Elevator elevator;
+  SuperState superState;
   Boolean auto;
-  public L2Setup(Superstructure superstructure, Elevator elevator, Boolean auto) {
+
+  public SetElevatorState(Superstructure superstructure, Elevator elevator, SuperState superState, Boolean auto) {
     this.superstructure = superstructure;
     this.elevator = elevator;
+    this.superState = superState;
     this.auto = auto;
     addRequirements(this.superstructure);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -27,14 +30,15 @@ public class L2Setup extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    superstructure.setWantedState(SuperState.ELEVATOR_L2);
+    superstructure.setWantedState(superState);
 
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    superstructure.setWantedState(SuperState.ELEVATOR_L2);
+    superstructure.setWantedState(superState);
+    System.out.println("Elevator State Updating: " + superState);
   }
 
   // Called once the command ends or is interrupted.

@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DoNothing;
 import frc.robot.commands.FullSendFollower;
+import frc.robot.commands.L2AutoPlace;
 import frc.robot.commands.L2Place;
 import frc.robot.commands.L3Place;
 import frc.robot.commands.L3Setup;
@@ -30,6 +31,7 @@ import frc.robot.commands.PolarAutoFollower;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.SetElevatorPercent;
 import frc.robot.commands.SetIntake;
+import frc.robot.commands.SetRobotPose;
 import frc.robot.commands.SetRobotState;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.subsystems.Drive;
@@ -71,13 +73,14 @@ public class RobotContainer {
       put("Place Coral High", () -> new SequentialCommandGroup(
           new ParallelRaceGroup(
               new SetRobotState(superstructure, SuperState.ELEVATOR_L2),
-              new WaitCommand(0.8)),
+              new WaitCommand(1)),
           new ParallelRaceGroup(
               new SetRobotState(superstructure, SuperState.ELEVATOR_MID),
               new WaitCommand(0.2)),
           new ParallelRaceGroup(
               new SetIntake(intake, 0.3),
-              new WaitCommand(0.2))));
+              new WaitCommand(0.2))
+          ));
       put("Intake Coral", () -> new RunIntake(intake));
     }
   };
@@ -143,7 +146,9 @@ public class RobotContainer {
     OI.driverX.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_MID)); // elevator mid setpoint to remove
                                                                                       // algae
     OI.driverB.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_UP)); // elevator
-    OI.driverRB.whileTrue(new MoveToPoint(drive, 1, 1, Math.PI / 2));
+    OI.driverRB.whileTrue(new MoveToPoint(drive, 1, 1, Math.PI / 2, false));
+    OI.driverLB.onTrue(new L2AutoPlace(superstructure, elevator, drive, intake, peripherals));
+    OI.driverMenuButton.whileTrue(new SetRobotPose(drive, 10.375, 1.5, 0));
   }
 
   /**
