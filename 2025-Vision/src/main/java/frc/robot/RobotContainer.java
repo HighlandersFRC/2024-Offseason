@@ -29,6 +29,7 @@ import frc.robot.commands.MoveTestMotor;
 import frc.robot.commands.MoveToPoint;
 import frc.robot.commands.PolarAutoFollower;
 import frc.robot.commands.RunIntake;
+import frc.robot.commands.RunOutake;
 import frc.robot.commands.SetElevatorPercent;
 import frc.robot.commands.SetElevatorState;
 import frc.robot.commands.SetIntake;
@@ -69,6 +70,7 @@ public class RobotContainer {
   HashMap<String, Supplier<Command>> commandMap = new HashMap<String, Supplier<Command>>() {
     {
       put("Instant", () -> new InstantCommand());
+      put("Outake", () -> new RunOutake(intake));
       put("Elevator Down", () -> new SetRobotStateSimple(superstructure, SuperState.IDLE));
       put("Elevator L2", () -> new SetRobotStateSimple(superstructure, SuperState.ELEVATOR_L2));
       put("Elevator Mid", () -> new SetRobotStateSimple(superstructure, SuperState.ELEVATOR_MID));
