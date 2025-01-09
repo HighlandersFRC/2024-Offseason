@@ -6,27 +6,41 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Superstructure.SuperState;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class RunOutake extends Command {
+public class IntakeAlgae extends Command {
   /** Creates a new MoveTestMotor. */
   Intake intake;
-  public RunOutake(Intake intake) {
+  Superstructure superstructure;
+  SuperState superState;
+  public IntakeAlgae(Intake intake, Superstructure superstructure, SuperState superState) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.intake = intake;
+    this.superstructure = superstructure;
+    this.superState = superState;
     addRequirements(this.intake);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.setIntakePercent(0.3);
+    if(Math.abs(intake.getIntakeRPS()) > 10) {
+        intake.setIntakeTorque(20, 0.7);
+        } else {
+          intake.setIntakePercent(0.7);
+        }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.setIntakePercent(0.3);
+    if(Math.abs(intake.getIntakeRPS()) > 10) {
+        intake.setIntakeTorque(20, 0.7);
+        } else {
+          intake.setIntakePercent(0.7);
+        }
   }
 
   // Called once the command ends or is interrupted.

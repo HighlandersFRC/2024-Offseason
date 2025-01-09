@@ -85,7 +85,7 @@ public class VariableSpeedFollower extends AutoFollower {
     // call PIDController function
     currentPathPointIndex = returnPathPointIndex;
     desiredVelocityArray = drive.purePursuitController(odometryFusedX, odometryFusedY, odometryFusedTheta,
-        currentPathPointIndex, path, false);
+        currentPathPointIndex, path, false, false);
 
     returnPathPointIndex = desiredVelocityArray[3].intValue();
     if (returnPathPointIndex == currentPathPointIndex && returnPathPointIndex != path.length() - 1) {

@@ -30,6 +30,7 @@ public final class Constants {
     public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
     // Feed Forward Multiplier
     public static final double FEED_FORWARD_MULTIPLIER = 0.5;
+    public static final double ACCURATE_FOLLOWER_FEED_FORWARD_MULTIPLIER = 1;
     public static final String[] paths = new String[] {
         "Test.polarauto",
         "4piece.polarauto"
@@ -178,20 +179,20 @@ public final class Constants {
     public static final Rotation2d redRotationSetpoint2 = new Rotation2d(0.0);
     public static final Pose2d redSetpoint2 = new Pose2d(redTranslationSetpoint2, redRotationSetpoint2);
 
-    public static final Translation2d redTranslationSetpoint3 = new Translation2d(0.0, 0.0);
-    public static final Rotation2d redRotationSetpoint3 = new Rotation2d(0.0);
+    public static final Translation2d redTranslationSetpoint3 = new Translation2d(13.75, 2.69);
+    public static final Rotation2d redRotationSetpoint3 = new Rotation2d(2.094);
     public static final Pose2d redSetpoint3 = new Pose2d(redTranslationSetpoint3, redRotationSetpoint3);
 
-    public static final Translation2d redTranslationSetpoint4 = new Translation2d(0.0, 0.0);
-    public static final Rotation2d redRotationSetpoint4 = new Rotation2d(0.0);
+    public static final Translation2d redTranslationSetpoint4 = new Translation2d(14.06, 2.91);
+    public static final Rotation2d redRotationSetpoint4 = new Rotation2d(2.094);
     public static final Pose2d redSetpoint4 = new Pose2d(redTranslationSetpoint4, redRotationSetpoint4);
 
-    public static final Translation2d redTranslationSetpoint5 = new Translation2d(0.0, 0.0);
-    public static final Rotation2d redRotationSetpoint5 = new Rotation2d(0.0);
+    public static final Translation2d redTranslationSetpoint5 = new Translation2d(14.51, 3.97);
+    public static final Rotation2d redRotationSetpoint5 = new Rotation2d(3.142);
     public static final Pose2d redSetpoint5 = new Pose2d(redTranslationSetpoint5, redRotationSetpoint5);
 
-    public static final Translation2d redTranslationSetpoint6 = new Translation2d(0.0, 0.0);
-    public static final Rotation2d redRotationSetpoint6 = new Rotation2d(0.0);
+    public static final Translation2d redTranslationSetpoint6 = new Translation2d(14.54, 4.33);
+    public static final Rotation2d redRotationSetpoint6 = new Rotation2d(3.142);
     public static final Pose2d redSetpoint6 = new Pose2d(redTranslationSetpoint6, redRotationSetpoint6);
 
     public static final Translation2d redTranslationSetpoint7 = new Translation2d(0.0, 0.0);
