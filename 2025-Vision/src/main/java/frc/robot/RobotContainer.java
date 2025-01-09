@@ -12,25 +12,21 @@ import org.json.JSONTokener;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.AccurateFollower;
 import frc.robot.commands.DoNothing;
 import frc.robot.commands.FullSendFollower;
 import frc.robot.commands.L2AutoPlace;
 import frc.robot.commands.L2Place;
 import frc.robot.commands.L3Place;
-import frc.robot.commands.L3Setup;
-import frc.robot.commands.MoveTestMotor;
 import frc.robot.commands.MoveToPoint;
 import frc.robot.commands.PolarAutoFollower;
 import frc.robot.commands.RunIntake;
-import frc.robot.commands.SetElevatorPercent;
-import frc.robot.commands.SetElevatorState;
 import frc.robot.commands.SetIntake;
 import frc.robot.commands.SetRobotPose;
 import frc.robot.commands.SetRobotState;
@@ -43,7 +39,6 @@ import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.MotorTest;
 import frc.robot.subsystems.Peripherals;
 import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.Superstructure.SuperState;
 
 /**
@@ -75,6 +70,7 @@ public class RobotContainer {
       put("Wait", () -> new DoNothing());
       put("Print", () -> new PrintCommand("10s"));
       put("Full Send", () -> new FullSendFollower(drive, null, false));
+      put("Accurate", () -> new AccurateFollower(drive, null, false));
       put("Place Coral High", () -> new SequentialCommandGroup(
           new ParallelRaceGroup(
               new SetRobotState(superstructure, SuperState.ELEVATOR_L2),
@@ -84,8 +80,7 @@ public class RobotContainer {
               new WaitCommand(0.2)),
           new ParallelRaceGroup(
               new SetIntake(intake, 0.3),
-              new WaitCommand(0.2))
-          ));
+              new WaitCommand(0.2))));
       put("Intake Coral", () -> new RunIntake(intake));
     }
   };
