@@ -30,9 +30,11 @@ import frc.robot.commands.MoveToPoint;
 import frc.robot.commands.PolarAutoFollower;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.SetElevatorPercent;
+import frc.robot.commands.SetElevatorState;
 import frc.robot.commands.SetIntake;
 import frc.robot.commands.SetRobotPose;
 import frc.robot.commands.SetRobotState;
+import frc.robot.commands.SetRobotStateSimple;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator;
@@ -41,6 +43,7 @@ import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.MotorTest;
 import frc.robot.subsystems.Peripherals;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.Superstructure.SuperState;
 
 /**
@@ -66,7 +69,9 @@ public class RobotContainer {
   HashMap<String, Supplier<Command>> commandMap = new HashMap<String, Supplier<Command>>() {
     {
       put("Instant", () -> new InstantCommand());
-      put("Elevator Down", () -> new SetRobotState(superstructure, SuperState.IDLE));
+      put("Elevator Down", () -> new SetRobotStateSimple(superstructure, SuperState.IDLE));
+      put("Elevator L2", () -> new SetRobotStateSimple(superstructure, SuperState.ELEVATOR_L2));
+      put("Elevator Mid", () -> new SetRobotStateSimple(superstructure, SuperState.ELEVATOR_MID));
       put("Wait", () -> new DoNothing());
       put("Print", () -> new PrintCommand("10s"));
       put("Full Send", () -> new FullSendFollower(drive, null, false));
