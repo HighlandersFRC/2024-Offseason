@@ -10,10 +10,7 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import frc.robot.tools.math.Vector;
 
 public final class Constants {
@@ -25,13 +22,15 @@ public final class Constants {
     public static final double FULL_SEND_LOOKAHEAD = 0.48;
     public static final double MIN_LOOKAHEAD_DISTANCE = 0.01; // Lookahead distance at 0m/s
     // Path follower will end if within this radius of the final point
-    public static final double AUTONOMOUS_END_ACCURACY = 0.10;
+    public static final double AUTONOMOUS_END_ACCURACY = 0.25;
+    public static final double ACCURATE_FOLLOWER_AUTONOMOUS_END_ACCURACY = 0.03;
     // When calculating the point distance, will divide x and y by this constant
     public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1.0;
     // When calculating the point distance, will divide theta by this constant
     public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
     // Feed Forward Multiplier
     public static final double FEED_FORWARD_MULTIPLIER = 0.5;
+    public static final double ACCURATE_FOLLOWER_FEED_FORWARD_MULTIPLIER = 1;
     public static final String[] paths = new String[] {
         "Test.polarauto",
         "4piece.polarauto"
@@ -220,8 +219,6 @@ public final class Constants {
     public static final Rotation2d redRotationSetpoint12 = new Rotation2d(0.0);
     public static final Pose2d redSetpoint12 = new Pose2d(redTranslationSetpoint12, redRotationSetpoint12);
 
-
-
     public static final Translation2d blueTranslationSetpoint1 = new Translation2d(0.0, 0.0);
     public static final Rotation2d blueRotationSetpoint1 = new Rotation2d(0.0);
     public static final Pose2d blueSetpoint1 = new Pose2d(blueTranslationSetpoint1, blueRotationSetpoint1);
@@ -269,7 +266,6 @@ public final class Constants {
     public static final Translation2d blueTranslationSetpoint12 = new Translation2d(0.0, 0.0);
     public static final Rotation2d blueRotationSetpoint12 = new Rotation2d(0.0);
     public static final Pose2d blueSetpoint12 = new Pose2d(blueTranslationSetpoint12, blueRotationSetpoint12);
-
 
     // x, y, theta
     public static final ArrayList<Pose2d> redCoralScoringPositions = new ArrayList<Pose2d>();

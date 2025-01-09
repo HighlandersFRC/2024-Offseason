@@ -997,7 +997,7 @@ public class Drive extends SubsystemBase {
   }
 
   public Number[] purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex,
-      JSONArray pathPoints, boolean fullSend) {
+      JSONArray pathPoints, boolean fullSend, boolean accurate) {
     JSONObject targetPoint = pathPoints.getJSONObject(pathPoints.length() - 1);
     int targetIndex = pathPoints.length() - 1;
     if (this.m_fieldSide == "blue") {
@@ -1054,10 +1054,11 @@ public class Drive extends SubsystemBase {
     double xVelNoFF = xPID.getResult();
     double yVelNoFF = yPID.getResult();
     double thetaVelNoFF = -thetaPID.getResult();
-
-    double feedForwardX = targetPoint.getDouble("x_velocity") * Constants.Autonomous.FEED_FORWARD_MULTIPLIER;
-    double feedForwardY = targetPoint.getDouble("y_velocity") * Constants.Autonomous.FEED_FORWARD_MULTIPLIER;
-    double feedForwardTheta = -targetPoint.getDouble("angular_velocity") * Constants.Autonomous.FEED_FORWARD_MULTIPLIER;
+    double f = (accurate ? Constants.Autonomous.ACCURATE_FOLLOWER_AUTONOMOUS_END_ACCURACY
+        : Constants.Autonomous.FEED_FORWARD_MULTIPLIER);
+    double feedForwardX = targetPoint.getDouble("x_velocity") * f;
+    double feedForwardY = targetPoint.getDouble("y_velocity") * f;
+    double feedForwardTheta = -targetPoint.getDouble("angular_velocity") * f;
 
     double finalX = xVelNoFF + feedForwardX;
     double finalY = yVelNoFF + feedForwardY;

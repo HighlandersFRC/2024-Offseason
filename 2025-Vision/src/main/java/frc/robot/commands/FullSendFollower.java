@@ -83,7 +83,7 @@ public class FullSendFollower extends AutoFollower {
     // call PIDController function
     currentPathPointIndex = returnPathPointIndex;
     desiredVelocityArray = drive.purePursuitController(odometryFusedX, odometryFusedY, odometryFusedTheta,
-        currentPathPointIndex, path, true);
+        currentPathPointIndex, path, true, false);
 
     returnPathPointIndex = desiredVelocityArray[3].intValue();
     if (returnPathPointIndex == currentPathPointIndex && returnPathPointIndex != path.length() - 1) {
