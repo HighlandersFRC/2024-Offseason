@@ -14,12 +14,11 @@ public class IntakeAlgae extends Command {
   /** Creates a new MoveTestMotor. */
   Intake intake;
   Superstructure superstructure;
-  SuperState superState;
-  public IntakeAlgae(Intake intake, Superstructure superstructure, SuperState superState) {
+
+  public IntakeAlgae(Intake intake, Superstructure superstructure) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.intake = intake;
     this.superstructure = superstructure;
-    this.superState = superState;
     addRequirements(this.intake);
   }
 

@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DoNothing;
 import frc.robot.commands.FullSendFollower;
+import frc.robot.commands.IntakeAlgae;
 import frc.robot.commands.L2AutoPlace;
 import frc.robot.commands.L2Place;
 import frc.robot.commands.L3Place;
@@ -77,7 +78,7 @@ public class RobotContainer {
       put("Wait", () -> new DoNothing());
       put("Print", () -> new PrintCommand("10s"));
       put("Full Send", () -> new FullSendFollower(drive, null, false));
-      put("Place Coral High", () -> new SequentialCommandGroup(
+      put("Place Coral High", () -> new SequentialCommandGroup( // don't use
           new ParallelRaceGroup(
               new SetRobotState(superstructure, SuperState.ELEVATOR_L2),
               new WaitCommand(1)),
@@ -147,7 +148,7 @@ public class RobotContainer {
 
     OI.driverY.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_L3)); // elevator up for placement L3
     OI.driverY.onFalse(new L3Place(elevator, intake, superstructure)); // placement sequence for L3
-    OI.driverLT.whileTrue(new SetIntake(intake, 0.3)); // outake
+    OI.driverLT.whileTrue(new IntakeAlgae(intake, superstructure)); // outake
     OI.driverRT.whileTrue(new RunIntake(intake)); // intake
     OI.driverRT.whileTrue(new SetRobotState(superstructure, SuperState.CYCLING));
     OI.driverX.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_MID)); // elevator mid setpoint to remove

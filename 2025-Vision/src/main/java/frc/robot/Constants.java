@@ -25,7 +25,7 @@ public final class Constants {
     public static final double FULL_SEND_LOOKAHEAD = 0.48;
     public static final double MIN_LOOKAHEAD_DISTANCE = 0.01; // Lookahead distance at 0m/s
     // Path follower will end if within this radius of the final point
-    public static final double AUTONOMOUS_END_ACCURACY = 0.15;
+    public static final double AUTONOMOUS_END_ACCURACY = 0.10;
     // When calculating the point distance, will divide x and y by this constant
     public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1.0;
     // When calculating the point distance, will divide theta by this constant
