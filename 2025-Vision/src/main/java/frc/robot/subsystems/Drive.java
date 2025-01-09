@@ -278,6 +278,15 @@ public class Drive extends SubsystemBase {
       angleSetpoint -= 180;
     }
     turningPID.setSetPoint(angleSetpoint);
+    if(Math.abs(turningPID.getSetPoint() - angleSetpoint) > 100) {
+      turningPID.setSetPoint(angleSetpoint);
+    }
+  }
+
+  public void teleopPeriodic() {
+    if(Math.abs(turningPID.getSetPoint() - angleSetpoint) > 100) {
+      turningPID.setSetPoint(angleSetpoint);
+    }
   }
 
   /**

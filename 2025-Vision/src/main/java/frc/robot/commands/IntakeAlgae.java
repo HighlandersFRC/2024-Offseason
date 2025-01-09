@@ -30,6 +30,7 @@ public class IntakeAlgae extends Command {
         } else {
           intake.setIntakePercent(0.7);
         }
+    superstructure.setWantedState(SuperState.ELEVATOR_ALGAE);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -45,6 +46,7 @@ public class IntakeAlgae extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    intake.setIntakePercent(0.0);
   }
 
   // Returns true when the command should end.

@@ -20,6 +20,7 @@ public class Superstructure extends SubsystemBase {
     ELEVATOR_OFF,
     ELEVATOR_L3,
     ELEVATOR_L2,
+    ELEVATOR_ALGAE,
   }
 
   private SuperState wantedSuperState = SuperState.IDLE;
@@ -65,6 +66,9 @@ public class Superstructure extends SubsystemBase {
         case ELEVATOR_L2:
           handleElevatorL2State();
           break;
+      case ELEVATOR_ALGAE:
+      handeElevatorAlgaeState();
+      break;
       default:
         handleIDLEState();
         break;
@@ -107,8 +111,11 @@ public class Superstructure extends SubsystemBase {
       case ELEVATOR_L3:
         currentSuperState = SuperState.ELEVATOR_L3;
         break;
-        case ELEVATOR_L2:
+      case ELEVATOR_L2:
           currentSuperState = SuperState.ELEVATOR_L2;
+          break;
+      case ELEVATOR_ALGAE:
+          currentSuperState = SuperState.ELEVATOR_ALGAE;
           break;
       default:
         currentSuperState = SuperState.IDLE;
@@ -153,6 +160,10 @@ public class Superstructure extends SubsystemBase {
 
   public void handleElevatorL2State() {
     elevator.setWantedState(ElevatorState.L2);
+  }
+
+  public void handeElevatorAlgaeState() {
+    elevator.setWantedState(ElevatorState.ALGAE);
   }
 
   public void handleElevatorL3State() {

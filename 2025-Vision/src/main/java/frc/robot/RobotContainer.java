@@ -75,7 +75,7 @@ public class RobotContainer {
       put("Wait", () -> new DoNothing());
       put("Print", () -> new PrintCommand("10s"));
       put("Full Send", () -> new FullSendFollower(drive, null, false));
-      put("Accurate", () -> new AccurateFollower(drive, null, false));
+      put("Accurate", () -> new AccurateFollower(drive, false));
       put("Place Coral High", () -> new SequentialCommandGroup(
           new ParallelRaceGroup(
               new SetRobotState(superstructure, SuperState.ELEVATOR_L2),

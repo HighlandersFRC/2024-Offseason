@@ -48,12 +48,10 @@ public class AccurateFollower extends AutoFollower {
         return currentPathPointIndex;
     }
 
-    public AccurateFollower(Drive drive, JSONArray pathPoints,
+    public AccurateFollower(Drive drive,
             boolean record) {
         this.drive = drive;
-        this.path = pathPoints;
         this.record = record;
-        pathStartTime = pathPoints.getJSONObject(0).getDouble("time");
         addRequirements(drive);
     }
 

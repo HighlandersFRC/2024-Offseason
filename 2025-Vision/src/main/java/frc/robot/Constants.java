@@ -279,13 +279,15 @@ public final class Constants {
     public static final double ELEVATOR_TOP_POSITION_M = inchesToMeters(43.0);
     public static final double ELEVATOR_L3_POSITION_M = inchesToMeters(54);
     public static final double ELEVATOR_L2_POSITION_M = inchesToMeters(40);
+    public static final double ELEVATOR_ALGAE_POSITION_M = inchesToMeters(5);
 
     public enum ElevatorPosition {
       kDOWN(ELEVATOR_BOTTOM_POSITION_M, Ratios.elevatorMetersToRotations(ELEVATOR_BOTTOM_POSITION_M)),
       kMID(ELEVATOR_MID_POSITION_M, Ratios.elevatorMetersToRotations(ELEVATOR_MID_POSITION_M)),
       kUP(ELEVATOR_TOP_POSITION_M, Ratios.elevatorMetersToRotations(ELEVATOR_TOP_POSITION_M)),
       kL2(ELEVATOR_L2_POSITION_M, Ratios.elevatorMetersToRotations(ELEVATOR_L2_POSITION_M)),
-      kL3(ELEVATOR_L3_POSITION_M, Ratios.elevatorMetersToRotations(ELEVATOR_L3_POSITION_M));
+      kL3(ELEVATOR_L3_POSITION_M, Ratios.elevatorMetersToRotations(ELEVATOR_L3_POSITION_M)),
+      kALGAE(ELEVATOR_ALGAE_POSITION_M, Ratios.elevatorMetersToRotations(ELEVATOR_ALGAE_POSITION_M));
 
       public final double meters;
       public final double rotations;
