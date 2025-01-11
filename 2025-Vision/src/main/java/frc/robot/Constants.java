@@ -23,7 +23,7 @@ public final class Constants {
     public static final double MIN_LOOKAHEAD_DISTANCE = 0.01; // Lookahead distance at 0m/s
     // Path follower will end if within this radius of the final point
     public static final double AUTONOMOUS_END_ACCURACY = 0.25;
-    public static final double ACCURATE_FOLLOWER_AUTONOMOUS_END_ACCURACY = 0.03;
+    public static final double ACCURATE_FOLLOWER_AUTONOMOUS_END_ACCURACY = 0.05;
     // When calculating the point distance, will divide x and y by this constant
     public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1.0;
     // When calculating the point distance, will divide theta by this constant
@@ -278,8 +278,8 @@ public final class Constants {
     public static final double ELEVATOR_MID_POSITION_M = inchesToMeters(24); // L2 after placement
     public static final double ELEVATOR_TOP_POSITION_M = inchesToMeters(43.0);
     public static final double ELEVATOR_L3_POSITION_M = inchesToMeters(54);
-    public static final double ELEVATOR_L2_POSITION_M = inchesToMeters(40);
-    public static final double ELEVATOR_ALGAE_POSITION_M = inchesToMeters(5);
+    public static final double ELEVATOR_L2_POSITION_M = inchesToMeters(41.5);
+    public static final double ELEVATOR_ALGAE_POSITION_M = inchesToMeters(10);
 
     public enum ElevatorPosition {
       kDOWN(ELEVATOR_BOTTOM_POSITION_M, Ratios.elevatorMetersToRotations(ELEVATOR_BOTTOM_POSITION_M)),

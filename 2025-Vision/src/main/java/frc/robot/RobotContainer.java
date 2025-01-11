@@ -87,6 +87,7 @@ public class RobotContainer {
               new SetIntake(intake, 0.3),
               new WaitCommand(0.2))));
       put("Intake Coral", () -> new RunIntake(intake));
+      put("Raise 2in", () -> new SetRobotStateSimple(superstructure, SuperState.ELEVATOR_ALGAE));
     }
   };
 
@@ -142,7 +143,7 @@ public class RobotContainer {
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive)); // zero pidgeon
     OI.driverA.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_L2)); // elevator up for placement L2
     OI.driverA.onFalse(new L2Place(elevator, intake, superstructure)); // placement sequence for L2
-
+    OI.driverPOVLeft.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_ALGAE));
     OI.driverY.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_L3)); // elevator up for placement L3
     OI.driverY.onFalse(new L3Place(elevator, intake, superstructure)); // placement sequence for L3
     OI.driverLT.whileTrue(new IntakeAlgae(intake, superstructure)); // outake

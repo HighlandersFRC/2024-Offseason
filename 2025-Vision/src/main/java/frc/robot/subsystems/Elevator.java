@@ -40,8 +40,6 @@ public class Elevator extends SubsystemBase {
   private ElevatorState wantedState = ElevatorState.IDLE;
   private ElevatorState systemState = ElevatorState.IDLE;
 
-  
-
   public Elevator() {
   }
 
@@ -61,7 +59,7 @@ public class Elevator extends SubsystemBase {
     elevatorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     elevatorConfig.CurrentLimits.StatorCurrentLimit = 60;
     elevatorConfig.CurrentLimits.SupplyCurrentLimit = 60;
-    // elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 
+    // elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
 
     elevatorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
@@ -87,7 +85,8 @@ public class Elevator extends SubsystemBase {
     elevatorMotorMaster
         .setControl(positionTorqueFOCRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(position.meters)));
     elevatorMotorFollower
-        .setControl(positionTorqueFOCRequest.withPosition(-Constants.Ratios.elevatorMetersToRotations(position.meters)));
+        .setControl(
+            positionTorqueFOCRequest.withPosition(-Constants.Ratios.elevatorMetersToRotations(position.meters)));
   }
 
   public double getElevatorPosition() {
@@ -116,9 +115,9 @@ public class Elevator extends SubsystemBase {
       case L3:
         return ElevatorState.L3;
       case L2:
-      return ElevatorState.L2;
+        return ElevatorState.L2;
       case ALGAE:
-      return ElevatorState.ALGAE;
+        return ElevatorState.ALGAE;
       default:
         return ElevatorState.OFF;
     }
@@ -135,45 +134,49 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("2 position", elevatorMotorFollower.getPosition().getValueAsDouble());
     switch (systemState) {
       case UP:
-      firstTimeIdle = true;
+        firstTimeIdle = true;
         moveElevatorToPosition(Constants.SetPoints.ElevatorPosition.kUP);
         break;
       case MID:
-      firstTimeIdle = true;
+        firstTimeIdle = true;
         moveElevatorToPosition(Constants.SetPoints.ElevatorPosition.kMID);
         break;
       case DOWN:
-      firstTimeIdle = true;
+        firstTimeIdle = true;
         moveElevatorToPosition(Constants.SetPoints.ElevatorPosition.kDOWN);
         break;
       case L3:
-      firstTimeIdle = true;
-      moveElevatorToPosition(Constants.SetPoints.ElevatorPosition.kL3);
-      break;
+        firstTimeIdle = true;
+        moveElevatorToPosition(Constants.SetPoints.ElevatorPosition.kL3);
+        break;
       case L2:
-      firstTimeIdle = true;
-      moveElevatorToPosition(Constants.SetPoints.ElevatorPosition.kL2);
-      break;
+        firstTimeIdle = true;
+        moveElevatorToPosition(Constants.SetPoints.ElevatorPosition.kL2);
+        break;
       case ALGAE:
-      firstTimeIdle = true;
-      moveElevatorToPosition(Constants.SetPoints.ElevatorPosition.kALGAE);
+        firstTimeIdle = true;
+        moveElevatorToPosition(Constants.SetPoints.ElevatorPosition.kALGAE);
+        break;
       case IDLE:
-        
-        if(firstTimeIdle) {
+
+        if (firstTimeIdle) {
           idleTime = Timer.getFPGATimestamp();
           firstTimeIdle = false;
         }
-        if(Math.abs(Constants.Ratios.elevatorRotationsToMeters(elevatorMotorMaster.getVelocity().getValueAsDouble())) < 0.1 && Timer.getFPGATimestamp() - idleTime > 0.1) {
+        if (Math
+            .abs(Constants.Ratios.elevatorRotationsToMeters(elevatorMotorMaster.getVelocity().getValueAsDouble())) < 0.1
+            && Timer.getFPGATimestamp() - idleTime > 0.1) {
           moveWithPercent(0.0);
           setElevatorEncoderPosition(0.0);
         } else {
           moveWithTorque(-25, 0.6);
         }
         Logger.recordOutput("Elevator Current", elevatorMotorMaster.getStatorCurrent().getValueAsDouble());
-        Logger.recordOutput("Elevator MPS", Constants.Ratios.elevatorRotationsToMeters(elevatorMotorMaster.getVelocity().getValueAsDouble()));
+        Logger.recordOutput("Elevator MPS",
+            Constants.Ratios.elevatorRotationsToMeters(elevatorMotorMaster.getVelocity().getValueAsDouble()));
         break;
       default:
-      firstTimeIdle = true;
+        firstTimeIdle = true;
         moveWithPercent(0.0);
     }
   }

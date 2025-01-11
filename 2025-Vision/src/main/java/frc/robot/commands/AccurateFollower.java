@@ -99,9 +99,9 @@ public class AccurateFollower extends AutoFollower {
         Vector velocityVector = new Vector();
 
         if (currentPathPointIndex == path.length() - 1) {
-            velocityVector.setI(desiredVelocityArray[0].doubleValue() * 2);
-            velocityVector.setJ(desiredVelocityArray[1].doubleValue() * 2);
-            desiredThetaChange = desiredVelocityArray[2].doubleValue() * 2;
+            velocityVector.setI(desiredVelocityArray[0].doubleValue() * 6);
+            velocityVector.setJ(desiredVelocityArray[1].doubleValue() * 6);
+            desiredThetaChange = desiredVelocityArray[2].doubleValue() * 6;
         } else {
             velocityVector.setI(desiredVelocityArray[0].doubleValue());
             velocityVector.setJ(desiredVelocityArray[1].doubleValue());
