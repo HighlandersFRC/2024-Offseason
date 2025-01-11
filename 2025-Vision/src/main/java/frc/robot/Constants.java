@@ -33,7 +33,8 @@ public final class Constants {
     public static final double ACCURATE_FOLLOWER_FEED_FORWARD_MULTIPLIER = 1;
     public static final String[] paths = new String[] {
         "Test.polarauto",
-        "4piece.polarauto"
+        "4piece.polarauto",
+        "3piece.polarauto"
     };
 
     public static int getSelectedPathIndex() {
@@ -86,66 +87,66 @@ public final class Constants {
 
   public static void init() {
 
-    // Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint1);
-    // Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint2);
-    // Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint3);
-    // Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint4);
-    // Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint5);
-    // Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint6);
-    // Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint7);
-    // Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint8);
-    // Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint9);
-    // Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint10);
-    // Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint11);
-    // Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint12);
+    Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint1);
+    Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint2);
+    Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint3); ///////
+    Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint4); // Only have these 4 now
+    Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint5); // The rest are 0, 0
+    Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint6); ///////
+    Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint7);
+    Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint8);
+    Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint9);
+    Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint10);
+    Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint11);
+    Constants.Physical.redCoralScoringPositions.add(Constants.Physical.redSetpoint12);
 
-    // Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint1);
-    // Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint2);
-    // Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint3);
-    // Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint4);
-    // Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint5);
-    // Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint6);
-    // Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint7);
-    // Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint8);
-    // Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint9);
-    // Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint10);
-    // Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint11);
-    // Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint12);
+    Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint1);
+    Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint2);
+    Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint3);
+    Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint4);
+    Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint5);
+    Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint6);
+    Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint7);
+    Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint8);
+    Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint9);
+    Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint10);
+    Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint11);
+    Constants.Physical.blueCoralScoringPositions.add(Constants.Physical.blueSetpoint12);
 
-    for (int i = 0; i < Constants.Vision.redSideReefTags.length; i++) {
-      Vector tagVector = new Vector(Constants.Vision.redSideReefTags[i][0], Constants.Vision.redSideReefTags[i][1]);
-      Vector offsetXVector = new Vector(
-          Constants.Physical.CORAL_PLACEMENT_X * Math.cos(Constants.Vision.redSideReefTags[i][3]),
-          Constants.Physical.CORAL_PLACEMENT_X * Math.sin(Constants.Vision.redSideReefTags[i][3]));
-      Vector offsetYVector = new Vector(
-          Constants.Physical.CORAL_PLACEMENT_Y * Math.sin(Constants.Vision.redSideReefTags[i][3]),
-          Constants.Physical.CORAL_PLACEMENT_Y * Math.cos(Constants.Vision.redSideReefTags[i][3]));
-      Vector leftVector = tagVector.add(offsetXVector.add(offsetYVector));
-      Vector rightVector = tagVector.add(offsetXVector.subtract(offsetYVector));
-      Constants.Physical.redCoralScoringPositions
-          .add(new Pose2d(new Translation2d(leftVector.getI(), leftVector.getJ()),
-              new Rotation2d(Constants.Vision.redSideReefTags[i][3] + Math.PI)));
-      Constants.Physical.redCoralScoringPositions
-          .add(new Pose2d(new Translation2d(rightVector.getI(), rightVector.getJ()),
-              new Rotation2d(Constants.Vision.redSideReefTags[i][3] + Math.PI)));
-    }
-    for (int i = 0; i < Constants.Vision.blueSideReefTags.length; i++) {
-      Vector tagVector = new Vector(Constants.Vision.blueSideReefTags[i][0], Constants.Vision.blueSideReefTags[i][1]);
-      Vector offsetXVector = new Vector(
-          Constants.Physical.CORAL_PLACEMENT_X * Math.cos(Constants.Vision.blueSideReefTags[i][3]),
-          Constants.Physical.CORAL_PLACEMENT_X * Math.sin(Constants.Vision.blueSideReefTags[i][3]));
-      Vector offsetYVector = new Vector(
-          Constants.Physical.CORAL_PLACEMENT_Y * Math.sin(Constants.Vision.blueSideReefTags[i][3]),
-          Constants.Physical.CORAL_PLACEMENT_Y * Math.cos(Constants.Vision.blueSideReefTags[i][3]));
-      Vector leftVector = tagVector.add(offsetXVector.add(offsetYVector));
-      Vector rightVector = tagVector.add(offsetXVector.subtract(offsetYVector));
-      Constants.Physical.blueCoralScoringPositions
-          .add(new Pose2d(new Translation2d(leftVector.getI(), leftVector.getJ()),
-              new Rotation2d(Constants.Vision.blueSideReefTags[i][3] + Math.PI)));
-      Constants.Physical.blueCoralScoringPositions
-          .add(new Pose2d(new Translation2d(rightVector.getI(), rightVector.getJ()),
-              new Rotation2d(Constants.Vision.blueSideReefTags[i][3] + Math.PI)));
-    }
+    // for (int i = 0; i < Constants.Vision.redSideReefTags.length; i++) {
+    //   Vector tagVector = new Vector(Constants.Vision.redSideReefTags[i][0], Constants.Vision.redSideReefTags[i][1]);
+    //   Vector offsetXVector = new Vector(
+    //       Constants.Physical.CORAL_PLACEMENT_X * Math.cos(Constants.Vision.redSideReefTags[i][3]),
+    //       Constants.Physical.CORAL_PLACEMENT_X * Math.sin(Constants.Vision.redSideReefTags[i][3]));
+    //   Vector offsetYVector = new Vector(
+    //       Constants.Physical.CORAL_PLACEMENT_Y * Math.sin(Constants.Vision.redSideReefTags[i][3]),
+    //       Constants.Physical.CORAL_PLACEMENT_Y * Math.cos(Constants.Vision.redSideReefTags[i][3]));
+    //   Vector leftVector = tagVector.add(offsetXVector.add(offsetYVector));
+    //   Vector rightVector = tagVector.add(offsetXVector.subtract(offsetYVector));
+    //   Constants.Physical.redCoralScoringPositions
+    //       .add(new Pose2d(new Translation2d(leftVector.getI(), leftVector.getJ()),
+    //           new Rotation2d(Constants.Vision.redSideReefTags[i][3] + Math.PI)));
+    //   Constants.Physical.redCoralScoringPositions
+    //       .add(new Pose2d(new Translation2d(rightVector.getI(), rightVector.getJ()),
+    //           new Rotation2d(Constants.Vision.redSideReefTags[i][3] + Math.PI)));
+    // }
+    // for (int i = 0; i < Constants.Vision.blueSideReefTags.length; i++) {
+    //   Vector tagVector = new Vector(Constants.Vision.blueSideReefTags[i][0], Constants.Vision.blueSideReefTags[i][1]);
+    //   Vector offsetXVector = new Vector(
+    //       Constants.Physical.CORAL_PLACEMENT_X * Math.cos(Constants.Vision.blueSideReefTags[i][3]),
+    //       Constants.Physical.CORAL_PLACEMENT_X * Math.sin(Constants.Vision.blueSideReefTags[i][3]));
+    //   Vector offsetYVector = new Vector(
+    //       Constants.Physical.CORAL_PLACEMENT_Y * Math.sin(Constants.Vision.blueSideReefTags[i][3]),
+    //       Constants.Physical.CORAL_PLACEMENT_Y * Math.cos(Constants.Vision.blueSideReefTags[i][3]));
+    //   Vector leftVector = tagVector.add(offsetXVector.add(offsetYVector));
+    //   Vector rightVector = tagVector.add(offsetXVector.subtract(offsetYVector));
+    //   Constants.Physical.blueCoralScoringPositions
+    //       .add(new Pose2d(new Translation2d(leftVector.getI(), leftVector.getJ()),
+    //           new Rotation2d(Constants.Vision.blueSideReefTags[i][3] + Math.PI)));
+    //   Constants.Physical.blueCoralScoringPositions
+    //       .add(new Pose2d(new Translation2d(rightVector.getI(), rightVector.getJ()),
+    //           new Rotation2d(Constants.Vision.blueSideReefTags[i][3] + Math.PI)));
+    // }
 
     Logger.recordOutput("red side scoring", Constants.Physical.redCoralScoringPositions.toString());
     Logger.recordOutput("blue side scoring", Constants.Physical.blueCoralScoringPositions.toString());
@@ -179,19 +180,19 @@ public final class Constants {
     public static final Rotation2d redRotationSetpoint2 = new Rotation2d(0.0);
     public static final Pose2d redSetpoint2 = new Pose2d(redTranslationSetpoint2, redRotationSetpoint2);
 
-    public static final Translation2d redTranslationSetpoint3 = new Translation2d(13.75, 2.69);
+    public static final Translation2d redTranslationSetpoint3 = new Translation2d(13.77, 2.695);
     public static final Rotation2d redRotationSetpoint3 = new Rotation2d(2.094);
     public static final Pose2d redSetpoint3 = new Pose2d(redTranslationSetpoint3, redRotationSetpoint3);
 
-    public static final Translation2d redTranslationSetpoint4 = new Translation2d(14.06, 2.91);
+    public static final Translation2d redTranslationSetpoint4 = new Translation2d(14.09, 2.88);
     public static final Rotation2d redRotationSetpoint4 = new Rotation2d(2.094);
     public static final Pose2d redSetpoint4 = new Pose2d(redTranslationSetpoint4, redRotationSetpoint4);
 
-    public static final Translation2d redTranslationSetpoint5 = new Translation2d(14.51, 3.97);
+    public static final Translation2d redTranslationSetpoint5 = new Translation2d(14.582, 3.97);
     public static final Rotation2d redRotationSetpoint5 = new Rotation2d(3.142);
     public static final Pose2d redSetpoint5 = new Pose2d(redTranslationSetpoint5, redRotationSetpoint5);
 
-    public static final Translation2d redTranslationSetpoint6 = new Translation2d(14.54, 4.33);
+    public static final Translation2d redTranslationSetpoint6 = new Translation2d(14.582, 4.3002);
     public static final Rotation2d redRotationSetpoint6 = new Rotation2d(3.142);
     public static final Pose2d redSetpoint6 = new Pose2d(redTranslationSetpoint6, redRotationSetpoint6);
 
@@ -275,11 +276,11 @@ public final class Constants {
   // Subsystem setpoint constants
   public static final class SetPoints {
     public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;
-    public static final double ELEVATOR_MID_POSITION_M = inchesToMeters(24); // L2 after placement
+    public static final double ELEVATOR_MID_POSITION_M = inchesToMeters(26); // L2 after placement
     public static final double ELEVATOR_TOP_POSITION_M = inchesToMeters(43.0);
     public static final double ELEVATOR_L3_POSITION_M = inchesToMeters(54);
-    public static final double ELEVATOR_L2_POSITION_M = inchesToMeters(41.5);
-    public static final double ELEVATOR_ALGAE_POSITION_M = inchesToMeters(10);
+    public static final double ELEVATOR_L2_POSITION_M = inchesToMeters(40.5);
+    public static final double ELEVATOR_ALGAE_POSITION_M = inchesToMeters(7);
 
     public enum ElevatorPosition {
       kDOWN(ELEVATOR_BOTTOM_POSITION_M, Ratios.elevatorMetersToRotations(ELEVATOR_BOTTOM_POSITION_M)),

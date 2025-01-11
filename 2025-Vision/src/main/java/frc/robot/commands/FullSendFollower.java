@@ -74,7 +74,7 @@ public class FullSendFollower extends AutoFollower {
 
   @Override
   public void execute() {
-    System.out.println("Full Send");
+    // System.out.println("Full Send");
     drive.updateOdometryFusedArray();
     odometryFusedX = drive.getMT2OdometryX();
     odometryFusedY = drive.getMT2OdometryY();

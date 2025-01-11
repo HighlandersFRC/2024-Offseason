@@ -35,7 +35,7 @@ public class RunIntake extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intake.setIntakePercent(0.0);
+    intake.setIntakeTorque(-10, 0.2);
   }
 
   // Returns true when the command should end.

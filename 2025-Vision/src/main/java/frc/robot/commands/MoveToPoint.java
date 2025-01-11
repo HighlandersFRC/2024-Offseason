@@ -17,6 +17,8 @@ public class MoveToPoint extends Command {
   Drive drive;
   double x, y, theta;
   Boolean auto;
+  double setpointTime;
+  int hitSetpoint;
 
   /** Creates a new MoveToPoint. */
   public MoveToPoint(Drive drive, double x, double y, double theta, Boolean auto) {
@@ -32,6 +34,8 @@ public class MoveToPoint extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    setpointTime = 0;
+    hitSetpoint = 0;
     if(auto) {
       x = drive.getReefClosestSetpoint(drive.getMT2Odometry())[0];
       y = drive.getReefClosestSetpoint(drive.getMT2Odometry())[1];
@@ -60,6 +64,12 @@ public class MoveToPoint extends Command {
     Logger.recordOutput("Setpoint X", x);
     Logger.recordOutput("Setpoint Y", y);
     Logger.recordOutput("Setpoint Theta", theta);
+    if(auto && Math.sqrt(Math.pow((x - drive.getMT2OdometryX()), 2) + Math.pow((y - drive.getMT2OdometryY()), 2)) < 0.06 && Math.abs(theta - drive.getMT2OdometryAngle()) < 0.06) {
+      hitSetpoint += 1;
+    }
+    if(hitSetpoint > 3 && setpointTime != 0) {
+      setpointTime = Timer.getFPGATimestamp();
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -74,9 +84,10 @@ public class MoveToPoint extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(auto && Math.sqrt(Math.pow((x - drive.getMT2OdometryX()), 2) + Math.pow((y - drive.getMT2OdometryY()), 2)) < 0.1 && Math.abs(theta - drive.getMT2OdometryAngle()) < 0.1) {
+    if(hitSetpoint > 3 && Timer.getFPGATimestamp() - setpointTime > 0.2) {
       return true;
     }
+    
 
     return false;
   }

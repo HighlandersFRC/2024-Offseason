@@ -35,7 +35,7 @@ public class Peripherals {
   Transform3d robotToCam = new Transform3d(
       new Translation3d(Constants.inchesToMeters(1.75), Constants.inchesToMeters(11.625),
           Constants.inchesToMeters(33.5)),
-      new Rotation3d(0, Math.toRadians(33.3), 0));
+      new Rotation3d(0, Math.toRadians(30.6), 0));
   // Pose3d cameraOffset = new Pose3d(
   // new Translation3d(Constants.inchesToMeters(1.75),
   // Constants.inchesToMeters(11.625),

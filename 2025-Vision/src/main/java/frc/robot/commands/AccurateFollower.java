@@ -74,7 +74,7 @@ public class AccurateFollower extends AutoFollower {
 
     @Override
     public void execute() {
-        System.out.println("Variable Speed");
+        // System.out.println("Variable Speed");
         drive.updateOdometryFusedArray();
         odometryFusedX = drive.getMT2OdometryX();
         odometryFusedY = drive.getMT2OdometryY();
