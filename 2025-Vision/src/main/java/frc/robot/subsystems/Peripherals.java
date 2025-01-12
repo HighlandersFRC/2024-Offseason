@@ -27,6 +27,7 @@ import frc.robot.tools.math.Vector;
 
 public class Peripherals {
   private PhotonCamera frontCam = new PhotonCamera("Front_Cam");
+  private PhotonCamera gamePieceCamera = new PhotonCamera("Game_Piece_Camera");
 
   AprilTagFieldLayout aprilTagFieldLayout;
 
@@ -74,27 +75,49 @@ public class Peripherals {
     zeroPigeon();
   }
 
-  // public double getFrontCamYaw() { //TODO: uncomment when using camera
-  // double yaw = 0.0;
-  // var result = frontCam.getLatestResult();
-  // Logger.recordOutput("has target", result.hasTargets());
-  // if (result.hasTargets()) {
-  // PhotonTrackedTarget target = result.getBestTarget();
-  // yaw = target.getYaw();
-  // }
-  // return yaw;
-  // }
+  public double getFrontCamYaw() {
+    double yaw = 0.0;
+    var result = frontCam.getLatestResult();
+    Logger.recordOutput("has target", result.hasTargets());
+    if (result.hasTargets()) {
+      PhotonTrackedTarget target = result.getBestTarget();
+      yaw = target.getYaw();
+    }
+    return yaw;
+  }
 
-  // public double getFrontCamPitch() {
-  // double pitch = 0.0;
-  // var result = frontCam.getLatestResult();
-  // if (result.hasTargets()) {
-  // PhotonTrackedTarget target = result.getBestTarget();
-  // pitch = target.getPitch();
-  // }
+  public double getFrontCamPitch() {
+    double pitch = 0.0;
+    var result = frontCam.getLatestResult();
+    if (result.hasTargets()) {
+      PhotonTrackedTarget target = result.getBestTarget();
+      pitch = target.getPitch();
+    }
 
-  // return pitch;
-  // }
+    return pitch;
+  }
+
+  public double getGamePieceCamYaw() {
+    double yaw = 0.0;
+    var result = gamePieceCamera.getLatestResult();
+    Logger.recordOutput("has target", result.hasTargets());
+    if (result.hasTargets()) {
+      PhotonTrackedTarget target = result.getBestTarget();
+      yaw = target.getYaw();
+    }
+    return yaw;
+  }
+
+  public double getGamePiecePitch() {
+    double pitch = 0.0;
+    var result = gamePieceCamera.getLatestResult();
+    if (result.hasTargets()) {
+      PhotonTrackedTarget target = result.getBestTarget();
+      pitch = target.getPitch();
+    }
+
+    return pitch;
+  }
 
   private Pose2d getRobotPoseViaTrig(PhotonTrackedTarget trackedTarget, double[] cameraPositionOnRobot,
       double robotAngle) {

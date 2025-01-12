@@ -25,6 +25,7 @@ import frc.robot.commands.IntakeAlgae;
 import frc.robot.commands.L2AutoPlace;
 import frc.robot.commands.L2Place;
 import frc.robot.commands.L3Place;
+import frc.robot.commands.MoveToPiece;
 import frc.robot.commands.MoveToPoint;
 import frc.robot.commands.PolarAutoFollower;
 import frc.robot.commands.RunIntake;
@@ -152,7 +153,8 @@ public class RobotContainer {
     OI.driverX.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_MID)); // elevator mid setpoint to remove
                                                                                       // algae
     OI.driverB.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_UP)); // elevator
-    OI.driverRB.whileTrue(new MoveToPoint(drive, 1, 1, Math.PI / 2, false));
+    // OI.driverRB.whileTrue(new MoveToPoint(drive, 1, 1, Math.PI / 2, false));
+    OI.driverRB.whileTrue(new MoveToPiece(drive, peripherals, intake));
     OI.driverLB.onTrue(new L2AutoPlace(superstructure, elevator, drive, intake, peripherals));
     OI.driverMenuButton.whileTrue(new SetRobotPose(drive, 10.375, 1.5, 0));
   }

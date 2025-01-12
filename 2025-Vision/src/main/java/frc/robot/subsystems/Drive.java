@@ -278,13 +278,13 @@ public class Drive extends SubsystemBase {
       angleSetpoint -= 180;
     }
     turningPID.setSetPoint(angleSetpoint);
-    if(Math.abs(turningPID.getSetPoint() - angleSetpoint) > 100) {
+    if (Math.abs(turningPID.getSetPoint() - angleSetpoint) > 100) {
       turningPID.setSetPoint(angleSetpoint);
     }
   }
 
   public void teleopPeriodic() {
-    if(Math.abs(turningPID.getSetPoint() - angleSetpoint) > 100) {
+    if (Math.abs(turningPID.getSetPoint() - angleSetpoint) > 100) {
       turningPID.setSetPoint(angleSetpoint);
     }
   }
@@ -308,6 +308,11 @@ public class Drive extends SubsystemBase {
         new Rotation2d(backLeft.getCanCoderPositionRadians()));
     swerveModulePositions[3] = new SwerveModulePosition(backRight.getModuleDistance(),
         new Rotation2d(backRight.getCanCoderPositionRadians()));
+
+    m_pose = m_odometry.update(new Rotation2d((Math.toRadians(peripherals.getPigeonAngle()))), swerveModulePositions);
+    loggingPose = loggingOdometry.update(new Rotation2d(
+        Math.toRadians(peripherals.getPigeonAngle())), swerveModulePositions);
+    mt2Pose = mt2Odometry.update(new Rotation2d(Math.toRadians(peripherals.getPigeonAngle())), swerveModulePositions);
   }
 
   /**
