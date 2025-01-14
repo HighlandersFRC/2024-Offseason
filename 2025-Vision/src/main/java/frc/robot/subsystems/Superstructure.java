@@ -21,6 +21,8 @@ public class Superstructure extends SubsystemBase {
     ELEVATOR_L3,
     ELEVATOR_L2,
     ELEVATOR_ALGAE,
+    INTAKING,
+    OUTAKING
   }
 
   private SuperState wantedSuperState = SuperState.IDLE;
@@ -58,17 +60,23 @@ public class Superstructure extends SubsystemBase {
         handleElevatorMIDState();
         break;
       case ELEVATOR_OFF:
-      handleElevatorOFFState();
-      break;
+        handleElevatorOFFState();
+        break;
       case ELEVATOR_L3:
         handleElevatorL3State();
         break;
-        case ELEVATOR_L2:
-          handleElevatorL2State();
-          break;
+      case ELEVATOR_L2:
+        handleElevatorL2State();
+        break;
       case ELEVATOR_ALGAE:
-      handeElevatorAlgaeState();
-      break;
+        handeElevatorAlgaeState();
+        break;
+      case INTAKING:
+        handleINTAKINGSTATE();
+        break;
+      case OUTAKING:
+        handleOUTAKINGSTATE();
+        break;
       default:
         handleIDLEState();
         break;
@@ -107,16 +115,22 @@ public class Superstructure extends SubsystemBase {
         break;
       case ELEVATOR_OFF:
         currentSuperState = SuperState.ELEVATOR_OFF;
-      break;
+        break;
       case ELEVATOR_L3:
         currentSuperState = SuperState.ELEVATOR_L3;
         break;
       case ELEVATOR_L2:
-          currentSuperState = SuperState.ELEVATOR_L2;
-          break;
+        currentSuperState = SuperState.ELEVATOR_L2;
+        break;
       case ELEVATOR_ALGAE:
-          currentSuperState = SuperState.ELEVATOR_ALGAE;
-          break;
+        currentSuperState = SuperState.ELEVATOR_ALGAE;
+        break;
+      case INTAKING:
+        currentSuperState = SuperState.INTAKING;
+        break;
+      case OUTAKING:
+        currentSuperState = SuperState.OUTAKING;
+        break;
       default:
         currentSuperState = SuperState.IDLE;
         break;
@@ -168,6 +182,14 @@ public class Superstructure extends SubsystemBase {
 
   public void handleElevatorL3State() {
     elevator.setWantedState(ElevatorState.L3);
+  }
+
+  public void handleINTAKINGSTATE() {
+
+  }
+
+  public void handleOUTAKINGSTATE() {
+
   }
 
   @Override

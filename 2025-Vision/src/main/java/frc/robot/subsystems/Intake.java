@@ -4,10 +4,15 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.subsystems.Elevator.ElevatorState;
 
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
@@ -15,11 +20,21 @@ public class Intake extends SubsystemBase {
 
   private final TorqueCurrentFOC torqueCurrentFOCRequest = new TorqueCurrentFOC(0.0).withMaxAbsDutyCycle(0.0);
 
+  public enum IntakeState {
+    INTAKE,
+    OUTAKE,
+    DEFAULT,
+  }
+
+  private IntakeState wantedState = IntakeState.DEFAULT;
+  private IntakeState systemState = IntakeState.DEFAULT;
+
   public void setIntakeTorque(double current, double maxPercent) {
     intakeMotor.setControl(torqueCurrentFOCRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
   }
 
-  public Intake() {}
+  public Intake() {
+  }
 
   public void setIntakePercent(double percent) {
     intakeMotor.set(percent);
@@ -29,8 +44,41 @@ public class Intake extends SubsystemBase {
     return intakeMotor.getVelocity().getValueAsDouble();
   }
 
+  private IntakeState handleStateTransition() {
+    switch (wantedState) {
+      case INTAKE:
+        return IntakeState.INTAKE;
+      case OUTAKE:
+        return IntakeState.OUTAKE;
+      default:
+        return IntakeState.DEFAULT;
+    }
+  }
+
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    IntakeState newState = handleStateTransition();
+    if (newState != systemState) {
+      systemState = newState;
+    }
+    Logger.recordOutput("Intake State", systemState);
+    // switch (systemState) {
+    // case INTAKE:
+    // if (Math.abs(getIntakeRPS()) > 10) {
+    // setIntakeTorque(-20, 0.7);
+    // } else {
+    // setIntakePercent(-0.7);
+    // }
+    // break;
+    // case OUTAKE:
+    // if (Math.abs(getIntakeRPS()) > 10) {
+    // setIntakeTorque(20, 0.7);
+    // } else {
+    // setIntakePercent(0.7);
+    // }
+    // break;
+    // default:
+    // setIntakeTorque(-10, 0.2);
+    // }
   }
 }
