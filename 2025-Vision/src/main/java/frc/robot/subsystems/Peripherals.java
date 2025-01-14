@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
@@ -9,6 +11,7 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.MultiTargetPNPResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+import org.photonvision.targeting.TargetCorner;
 
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -37,13 +40,9 @@ public class Peripherals {
       new Translation3d(Constants.inchesToMeters(1.75), Constants.inchesToMeters(11.625),
           Constants.inchesToMeters(33.5)),
       new Rotation3d(0, Math.toRadians(30.6), 0));
-  // Pose3d cameraOffset = new Pose3d(
-  // new Translation3d(Constants.inchesToMeters(1.75),
-  // Constants.inchesToMeters(11.625),
-  // Constants.inchesToMeters(33.5)),
-  // new Rotation3d(0, Math.toRadians(-33.5), 0));
-
   PhotonPoseEstimator photonPoseEstimator;
+
+  double pigeonSetpoint = 0.0;
 
   public Peripherals() {
   }
@@ -106,6 +105,18 @@ public class Peripherals {
       yaw = target.getYaw();
     }
     return yaw;
+  }
+
+  public List<TargetCorner> getGamePieceCamCorners() {
+    List<TargetCorner> corners = new ArrayList<TargetCorner>();
+    var result = gamePieceCamera.getLatestResult();
+    Logger.recordOutput("has target", result.hasTargets());
+    if (result.hasTargets()) {
+      PhotonTrackedTarget target = result.getBestTarget();
+      corners = target.getDetectedCorners();
+      TargetCorner corner = corners.get(0);
+    }
+    return corners;
   }
 
   public double getGamePiecePitch() {

@@ -848,6 +848,88 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  public void teleopDriveToPiece(double yToPiece) {
+    updateOdometryFusedArray();
+    double turnLimit = 0.17;
+    double kP = 0.8;
+    // 0.35 before
+
+    if (OI.driverController.getLeftBumper()) {
+      // activate speedy spin
+      turnLimit = 1;
+    }
+
+    // this is correct, X is forward in field, so originalX should be the y on the
+    // joystick
+    double originalX = -(Math.copySign(OI.getDriverLeftY() * OI.getDriverLeftY(), OI.getDriverLeftY()));
+    double originalY = yToPiece * kP;
+
+    if (Math.abs(originalX) < 0.075) {
+      originalX = 0;
+    }
+
+    double turn = turnLimit
+        * (OI.getDriverRightX() * (Constants.Physical.TOP_SPEED) / (Constants.Physical.ROBOT_RADIUS));
+
+    if (Math.abs(turn) < 0.15) {
+      turn = 0.0;
+    }
+
+    if (turn == 0.0) {
+      turningPID.setSetPoint(angleSetpoint);
+      double yaw = peripherals.getPigeonAngle();
+      while (Math.abs(angleSetpoint - yaw) > 180) {
+        if (angleSetpoint - yaw > 180) {
+          yaw += 360;
+        } else {
+          yaw -= 360;
+        }
+      }
+      double result = -2 * turningPID.updatePID(yaw);
+      Logger.recordOutput("result", result);
+      updateOdometryFusedArray();
+
+      double x = -(Math.copySign(OI.getDriverLeftY() * OI.getDriverLeftY(), OI.getDriverLeftY()));
+      double y = yToPiece * kP;
+
+      if (Math.abs(originalX) < 0.05) {
+        originalX = 0;
+      }
+
+      double pigeonAngle = Math.toRadians(peripherals.getPigeonAngle());
+      double xPower = getAdjustedX(x, y);
+      double yPower = getAdjustedY(x, y);
+
+      double xSpeed = xPower * Constants.Physical.TOP_SPEED;
+      double ySpeed = yPower * Constants.Physical.TOP_SPEED;
+
+      Vector controllerVector = new Vector(xSpeed, ySpeed);
+
+      frontLeft.drive(controllerVector, result, pigeonAngle);
+      frontRight.drive(controllerVector, result, pigeonAngle);
+      backLeft.drive(controllerVector, result, pigeonAngle);
+      backRight.drive(controllerVector, result, pigeonAngle);
+    } else {
+      angleSetpoint = peripherals.getPigeonAngle();
+      double compensation = peripherals.getPigeonAngularVelocityW() * 0.050;
+      angleSetpoint += compensation;
+      Logger.recordOutput("setpoint", angleSetpoint);
+      turningPID.setSetPoint(angleSetpoint);
+      double pigeonAngle = Math.toRadians(peripherals.getPigeonAngle());
+      double xPower = getAdjustedX(originalX, originalY);
+      double yPower = getAdjustedY(originalX, originalY);
+
+      double xSpeed = xPower * Constants.Physical.TOP_SPEED;
+      double ySpeed = yPower * Constants.Physical.TOP_SPEED;
+
+      Vector controllerVector = new Vector(xSpeed, ySpeed);
+      frontLeft.drive(controllerVector, turn, pigeonAngle);
+      frontRight.drive(controllerVector, turn, pigeonAngle);
+      backLeft.drive(controllerVector, turn, pigeonAngle);
+      backRight.drive(controllerVector, turn, pigeonAngle);
+    }
+  }
+
   public void driveToPoint(double x, double y, double theta) {
 
     while (Math.abs(theta - getMT2OdometryAngle()) > Math.PI) {

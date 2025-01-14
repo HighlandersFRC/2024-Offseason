@@ -59,7 +59,7 @@ public class MoveToPiece extends Command {
     double limelightHeight = Constants.inchesToMeters(34.75);
     double limelightAngle = 33.0;
     // double limelightXOffset = -Constants.inchesToMeters(4.0);
-    double gamePieceHeight = Constants.inchesToMeters(19.5);
+    double gamePieceHeight = Constants.inchesToMeters(7.5);
     double intakeXOffset = Constants.inchesToMeters(26.5);
     double intakeYOffset = Constants.inchesToMeters(3.0);
 
@@ -69,16 +69,17 @@ public class MoveToPiece extends Command {
 
     double targetDistance = (limelightHeight - gamePieceHeight) / Math.tan(Math.toRadians(-limelightAngle + ty));
 
-    noteY = (targetDistance * Math.sin(Math.toRadians(tx)));
-    noteX = (-(targetDistance * Math.cos(Math.toRadians(tx))));
+    noteY = robotY + (targetDistance * Math.sin(Math.toRadians(tx)));
+    noteX = robotX + (-(targetDistance * Math.cos(Math.toRadians(tx))));
     double pieceXFromIntake = noteX - intakeXOffset;
     double pieceYFromIntake = noteY - intakeYOffset;
 
     Logger.recordOutput("Piece X", Constants.metersToInches(pieceXFromIntake));
     Logger.recordOutput("Piece Y", Constants.metersToInches(pieceYFromIntake));
 
-    drive.driveToPoint(noteX,
-        noteY, Math.toRadians(-tx + 1.6));
+    // drive.driveToPoint(noteX,
+    // noteY, Math.toRadians(-tx + 1.6));
+    drive.teleopDriveToPiece(-pieceYFromIntake);
     if (Math.abs(intake.getIntakeRPS()) > 10) {
       intake.setIntakeTorque(-20, 0.7);
     } else {

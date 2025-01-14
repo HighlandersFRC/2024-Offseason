@@ -154,8 +154,8 @@ public class RobotContainer {
                                                                                       // algae
     OI.driverB.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_UP)); // elevator
     // OI.driverRB.whileTrue(new MoveToPoint(drive, 1, 1, Math.PI / 2, false));
-    OI.driverRB.whileTrue(new MoveToPiece(drive, peripherals, intake));
-    OI.driverLB.onTrue(new L2AutoPlace(superstructure, elevator, drive, intake, peripherals));
+    OI.driverLB.whileTrue(new MoveToPiece(drive, peripherals, intake));
+    OI.driverRB.onTrue(new L2AutoPlace(superstructure, elevator, drive, intake, peripherals));
     OI.driverMenuButton.whileTrue(new SetRobotPose(drive, 10.375, 1.5, 0));
   }
 
