@@ -69,7 +69,7 @@ public class RobotContainer {
   HashMap<String, Supplier<Command>> commandMap = new HashMap<String, Supplier<Command>>() {
     {
       put("Instant", () -> new InstantCommand());
-      put("Outake", () -> new RunOutake(intake));
+      put("Outake", () -> new RunOutake(intake, superstructure));
       put("Elevator Down", () -> new SetRobotStateSimple(superstructure, SuperState.IDLE));
       put("Elevator L2", () -> new SetRobotStateSimple(superstructure, SuperState.ELEVATOR_L2));
       put("Elevator Mid", () -> new SetRobotStateSimple(superstructure, SuperState.ELEVATOR_MID));
@@ -87,7 +87,7 @@ public class RobotContainer {
           new ParallelRaceGroup(
               new SetIntake(intake, 0.3),
               new WaitCommand(0.2))));
-      put("Intake Coral", () -> new RunIntake(intake));
+      put("Intake Coral", () -> new RunIntake(intake, superstructure));
       put("Raise 2in", () -> new SetRobotStateSimple(superstructure, SuperState.ELEVATOR_ALGAE));
     }
   };
@@ -148,7 +148,7 @@ public class RobotContainer {
     OI.driverY.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_L3)); // elevator up for placement L3
     OI.driverY.onFalse(new L3Place(elevator, intake, superstructure)); // placement sequence for L3
     OI.driverLT.whileTrue(new IntakeAlgae(intake, superstructure)); // outake
-    OI.driverRT.whileTrue(new RunIntake(intake)); // intake
+    OI.driverRT.whileTrue(new RunIntake(intake, superstructure)); // intake
     OI.driverRT.whileTrue(new SetRobotState(superstructure, SuperState.CYCLING));
     OI.driverX.whileTrue(new SetRobotState(superstructure, SuperState.ELEVATOR_MID)); // elevator mid setpoint to remove
                                                                                       // algae

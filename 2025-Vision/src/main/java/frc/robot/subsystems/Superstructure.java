@@ -7,10 +7,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Drive.DriveState;
 import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.Intake.IntakeState;
 
 public class Superstructure extends SubsystemBase {
   private Drive drive;
   private Elevator elevator;
+  private Intake intake;
 
   public enum SuperState {
     CYCLING,
@@ -22,7 +24,8 @@ public class Superstructure extends SubsystemBase {
     ELEVATOR_L2,
     ELEVATOR_ALGAE,
     INTAKING,
-    OUTAKING
+    OUTAKING,
+    INTAKE_DEFAULT,
   }
 
   private SuperState wantedSuperState = SuperState.IDLE;
@@ -72,10 +75,13 @@ public class Superstructure extends SubsystemBase {
         handeElevatorAlgaeState();
         break;
       case INTAKING:
-        handleINTAKINGSTATE();
+        handleIntakingState();
         break;
       case OUTAKING:
-        handleOUTAKINGSTATE();
+        handleOutakingState();
+        break;
+      case INTAKE_DEFAULT:
+        handleIntakeDefaultState();
         break;
       default:
         handleIDLEState();
@@ -131,6 +137,9 @@ public class Superstructure extends SubsystemBase {
       case OUTAKING:
         currentSuperState = SuperState.OUTAKING;
         break;
+      case INTAKE_DEFAULT:
+        currentSuperState = SuperState.INTAKE_DEFAULT;
+        break;
       default:
         currentSuperState = SuperState.IDLE;
         break;
@@ -184,12 +193,16 @@ public class Superstructure extends SubsystemBase {
     elevator.setWantedState(ElevatorState.L3);
   }
 
-  public void handleINTAKINGSTATE() {
-
+  public void handleOutakingState() {
+    intake.setWantedState(IntakeState.OUTAKE);
   }
 
-  public void handleOUTAKINGSTATE() {
+  public void handleIntakingState() {
+    intake.setWantedState(IntakeState.INTAKE);
+  }
 
+  public void handleIntakeDefaultState() {
+    intake.setWantedState(IntakeState.DEFAULT);
   }
 
   @Override

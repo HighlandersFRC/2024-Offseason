@@ -125,10 +125,8 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    ElevatorState newState = handleStateTransition();
-    if (newState != systemState) {
-      systemState = newState;
-    }
+    systemState = handleStateTransition();
+
     Logger.recordOutput("Elevator State", systemState);
     Logger.recordOutput("1 position", elevatorMotorMaster.getPosition().getValueAsDouble());
     Logger.recordOutput("2 position", elevatorMotorFollower.getPosition().getValueAsDouble());
