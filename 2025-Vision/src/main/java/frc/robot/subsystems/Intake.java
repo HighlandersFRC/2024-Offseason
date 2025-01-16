@@ -33,6 +33,21 @@ public class Intake extends SubsystemBase {
     intakeMotor.setControl(torqueCurrentFOCRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
   }
 
+  public boolean hasCoral() {
+    Logger.recordOutput("Has Coral", (intakeMotor.getVelocity().getValueAsDouble() > -10
+        && intakeMotor.getTorqueCurrent().getValueAsDouble() < -15
+        && intakeMotor.getAcceleration().getValueAsDouble() < -100));
+    Logger.recordOutput("Intake Velocity", intakeMotor.getVelocity().getValueAsDouble());
+    Logger.recordOutput("Intake Torque", intakeMotor.getTorqueCurrent().getValueAsDouble());
+    Logger.recordOutput("Intake Acceleration", intakeMotor.getAcceleration().getValueAsDouble());
+    if (Math.abs(intakeMotor.getVelocity().getValueAsDouble()) < 1 && Math.abs(intakeMotor.getTorqueCurrent().getValueAsDouble()) > 8
+        && Math.abs(intakeMotor.getAcceleration().getValueAsDouble()) < 10) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public Intake() {
   }
 
@@ -55,30 +70,36 @@ public class Intake extends SubsystemBase {
     }
   }
 
+  public void setWantedState(IntakeState wantedState) {
+    this.wantedState = wantedState;
+  }
+
   @Override
   public void periodic() {
-    IntakeState newState = handleStateTransition();
-    if (newState != systemState) {
-      systemState = newState;
-    }
+    systemState = handleStateTransition();
+
     Logger.recordOutput("Intake State", systemState);
-    // switch (systemState) {
-    // case INTAKE:
-    // if (Math.abs(getIntakeRPS()) > 10) {
-    // setIntakeTorque(-20, 0.7);
-    // } else {
-    // setIntakePercent(-0.7);
-    // }
-    // break;
-    // case OUTAKE:
-    // if (Math.abs(getIntakeRPS()) > 10) {
-    // setIntakeTorque(20, 0.7);
-    // } else {
-    // setIntakePercent(0.7);
-    // }
-    // break;
-    // default:
-    // setIntakeTorque(-10, 0.2);
-    // }
+    Logger.recordOutput("Has Coral", hasCoral());
+    switch (systemState) {
+    case INTAKE:
+    if (hasCoral()) {
+    setIntakeTorque(-10, 0.2);
+    } else {
+    setIntakePercent(-0.7);
+    }
+    break;
+    case OUTAKE:
+    if (hasCoral()) {
+    setIntakeTorque(10, 0.2);
+    } else {
+    setIntakePercent(0.7);
+    }
+    break;
+    case DEFAULT:
+    setIntakeTorque(-10, 0.2);
+    break;
+    default:
+    setIntakeTorque(-10, 0.2);
+    }
   }
 }

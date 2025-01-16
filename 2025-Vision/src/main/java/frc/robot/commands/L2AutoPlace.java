@@ -37,7 +37,7 @@ public class L2AutoPlace extends SequentialCommandGroup {
       new SetElevatorState(superstructure, elevator, SuperState.ELEVATOR_MID, false)
       ),
       new ParallelRaceGroup(
-        new RunOutake(intake),
+        new RunOutake(intake, superstructure),
         new WaitCommand(0.1)
       ),
       new SetDriveState(drive, peripherals, DriveState.DEFAULT)
