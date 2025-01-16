@@ -183,6 +183,7 @@ public class Drive extends SubsystemBase {
   private String m_fieldSide = "blue";
 
   private double angleSetpoint = 0;
+  private double teleopInitTime = 0;
 
   public enum DriveState {
     DEFAULT,
@@ -273,6 +274,7 @@ public class Drive extends SubsystemBase {
   }
 
   public void teleopInit() {
+    teleopInitTime = Timer.getFPGATimestamp();
     angleSetpoint = peripherals.getPigeonAngle();
     if (getFieldSide() == "red") {
       angleSetpoint -= 180;
@@ -814,7 +816,7 @@ public class Drive extends SubsystemBase {
       turn = 0.0;
     }
 
-    if (turn == 0.0) {
+    if (turn == 0.0 && Timer.getFPGATimestamp() - teleopInitTime > 2.0) {
       turningPID.setSetPoint(angleSetpoint);
       double yaw = peripherals.getPigeonAngle();
       while (Math.abs(angleSetpoint - yaw) > 180) {
