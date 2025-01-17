@@ -180,7 +180,7 @@ public final class Constants {
     public static final Rotation2d redRotationSetpoint2 = new Rotation2d(0.0);
     public static final Pose2d redSetpoint2 = new Pose2d(redTranslationSetpoint2, redRotationSetpoint2);
 
-    public static final Translation2d redTranslationSetpoint3 = new Translation2d(13.77, 2.695);
+    public static final Translation2d redTranslationSetpoint3 = new Translation2d(13.78, 2.713);
     public static final Rotation2d redRotationSetpoint3 = new Rotation2d(2.094);
     public static final Pose2d redSetpoint3 = new Pose2d(redTranslationSetpoint3, redRotationSetpoint3);
 

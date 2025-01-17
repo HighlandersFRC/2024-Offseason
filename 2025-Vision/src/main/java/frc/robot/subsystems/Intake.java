@@ -96,10 +96,10 @@ public class Intake extends SubsystemBase {
     }
     break;
     case DEFAULT:
-    setIntakeTorque(-10, 0.2);
+    setIntakePercent(0.0);
     break;
     default:
-    setIntakeTorque(-10, 0.2);
+    setIntakePercent(0.0);
     }
   }
 }

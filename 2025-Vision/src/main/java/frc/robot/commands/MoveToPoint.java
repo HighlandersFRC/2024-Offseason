@@ -59,12 +59,13 @@ public class MoveToPoint extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
     drive.setWantedState(DriveState.IDLE);
     drive.driveToPoint(x, y, theta);
     Logger.recordOutput("Setpoint X", x);
     Logger.recordOutput("Setpoint Y", y);
     Logger.recordOutput("Setpoint Theta", theta);
-    if(auto && Math.sqrt(Math.pow((x - drive.getMT2OdometryX()), 2) + Math.pow((y - drive.getMT2OdometryY()), 2)) < 0.06 && Math.abs(theta - drive.getMT2OdometryAngle()) < 0.06) {
+    if(auto && Math.sqrt(Math.pow((x - drive.getMT2OdometryX()), 2) + Math.pow((y - drive.getMT2OdometryY()), 2)) < 0.03 && Math.abs(theta - drive.getMT2OdometryAngle()) < 0.05) {
       hitSetpoint += 1;
     }
     if(hitSetpoint > 3 && setpointTime != 0) {
