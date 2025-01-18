@@ -14,6 +14,7 @@ import frc.robot.subsystems.Peripherals;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Drive.DriveState;
 import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Superstructure.SuperState;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -30,10 +31,11 @@ public class L2AutoPlace extends SequentialCommandGroup {
       new MoveToPoint(drive, drive.getReefClosestSetpoint(drive.getMT2Odometry())[0], drive.getReefClosestSetpoint(drive.getMT2Odometry())[1], drive.getReefClosestSetpoint(drive.getMT2Odometry())[2], true),
       new ParallelRaceGroup(
       new SetDriveThetaSetpoint(drive, peripherals),
-      new WaitCommand(0.1)
+      new WaitCommand(0.05)
       ),
       new ParallelRaceGroup(
       new WaitCommand(0.2),
+      new SetIntakeState(intake, IntakeState.OFF),
       new SetElevatorState(superstructure, elevator, SuperState.ELEVATOR_MID, false)
       ),
       new ParallelRaceGroup(

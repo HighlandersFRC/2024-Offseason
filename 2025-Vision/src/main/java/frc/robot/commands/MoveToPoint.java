@@ -87,7 +87,7 @@ public class MoveToPoint extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (hitSetpoint > 6 && Timer.getFPGATimestamp() - setpointTime > 0.2) {
+    if (hitSetpoint > 6 /*&& Timer.getFPGATimestamp() - setpointTime > 0.2*/) {
       return true;
     }
 

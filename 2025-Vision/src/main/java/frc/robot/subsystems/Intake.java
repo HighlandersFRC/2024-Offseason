@@ -24,6 +24,7 @@ public class Intake extends SubsystemBase {
     INTAKE,
     OUTAKE,
     DEFAULT,
+    OFF,
   }
 
   private IntakeState wantedState = IntakeState.DEFAULT;
@@ -65,6 +66,8 @@ public class Intake extends SubsystemBase {
         return IntakeState.INTAKE;
       case OUTAKE:
         return IntakeState.OUTAKE;
+      case OFF:
+        return IntakeState.OFF;
       default:
         return IntakeState.DEFAULT;
     }
@@ -95,11 +98,11 @@ public class Intake extends SubsystemBase {
     setIntakePercent(0.7);
     }
     break;
-    case DEFAULT:
+    case OFF:
     setIntakePercent(0.0);
     break;
     default:
-    setIntakePercent(0.0);
+    setIntakeTorque(-20, 0.2);
     }
   }
 }
