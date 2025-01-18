@@ -632,7 +632,11 @@ public class Drive extends SubsystemBase {
         }
       }
     }
-    return chosenSetpoint;
+    if(Math.hypot(x - getMT2OdometryX(), y - getMT2OdometryY()) > 5) {
+      return getMT2Odometry();
+    } else {
+      return chosenSetpoint;
+    }
   }
 
   /**
