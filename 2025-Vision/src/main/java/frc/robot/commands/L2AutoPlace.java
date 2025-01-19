@@ -27,8 +27,8 @@ public class L2AutoPlace extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new SetElevatorState(superstructure, elevator, SuperState.ELEVATOR_L2, true),
-      new MoveToPoint(drive, drive.getReefClosestSetpoint(drive.getMT2Odometry())[0], drive.getReefClosestSetpoint(drive.getMT2Odometry())[1], drive.getReefClosestSetpoint(drive.getMT2Odometry())[2], true),
+      // new SetElevatorState(superstructure, elevator, SuperState.ELEVATOR_L2, true),
+      new MoveToPoint(drive, elevator, drive.getReefClosestSetpoint(drive.getMT2Odometry())[0], drive.getReefClosestSetpoint(drive.getMT2Odometry())[1], drive.getReefClosestSetpoint(drive.getMT2Odometry())[2], true),
       new ParallelRaceGroup(
       new SetDriveThetaSetpoint(drive, peripherals),
       new WaitCommand(0.05)

@@ -9,25 +9,29 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Drive.DriveState;
+import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.tools.math.Vector;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class MoveToPoint extends Command {
   Drive drive;
+  Elevator elevator;
   double x, y, theta;
   Boolean auto;
   double setpointTime;
   int hitSetpoint;
 
   /** Creates a new MoveToPoint. */
-  public MoveToPoint(Drive drive, double x, double y, double theta, Boolean auto) {
+  public MoveToPoint(Drive drive, Elevator elevator, double x, double y, double theta, Boolean auto) {
     this.drive = drive;
+    this.elevator = elevator;
     this.x = x;
     this.y = y;
     this.theta = theta;
     this.auto = auto;
-    addRequirements(drive);
+    addRequirements(this.drive, this.elevator);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -59,6 +63,10 @@ public class MoveToPoint extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    if(Math.hypot(x - drive.getMT2OdometryX(), y - drive.getMT2OdometryY()) < 2) {
+      elevator.setWantedState(ElevatorState.L2);
+    }
 
     drive.setWantedState(DriveState.IDLE);
     drive.driveToPoint(x, y, theta);
